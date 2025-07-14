@@ -42,183 +42,6 @@
     <meta name="twitter:title" content="Task Rock - Pet Rock Task Manager">
     <meta name="twitter:description" content="A fun task management app with Jerry the Rock, your virtual pet companion">
     <meta name="twitter:image" content="assets/images/icon-512x512.png">
-    
-    <!-- Firebase SDK v10.12.1 -->
-    <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js';
-        import { getMessaging, getToken, deleteToken, onMessage } from 'https://www.gstatic.com/firebasejs/10.12.1/firebase-messaging.js';
-        
-        // Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyBLGmPRuqGou8cB_A9QDQ-QF7b8QI_PLACEHOLDER",
-            authDomain: "task-rock.firebaseapp.com",
-            projectId: "task-rock",
-            storageBucket: "task-rock.firebasestorage.app",
-            messagingSenderId: "359134310",
-            appId: "1:359134310:web:8edf84d7b9334e4c6e83",
-            measurementId: "G-W4CTN7PJ"
-        };
-
-        // Initialize Firebase
-        let app, messaging;
-        try {
-            app = initializeApp(firebaseConfig);
-            messaging = getMessaging(app);
-            console.log('Task Rock: Firebase v10.12.1 initialized successfully');
-        } catch (error) {
-            console.error('Task Rock: Firebase initialization failed:', error);
-            // Fallback to basic notification system
-            window.firebaseInitialized = false;
-        }
-        
-        // VAPID Key for FCM
-        const VAPID_KEY = 'BDG25rX6YAZvxsKIzfbJ0pdKdZfYF0zx4vpyy3BEH8IMjAXN50WpaPSdHPPGxIDntUEc6cpk46na4Fc89HepDts';
-        
-        // Check if notifications are currently enabled
-        const checkNotificationState = async () => {
-            try {
-                // Check if Firebase is initialized
-                if (!messaging) {
-                    console.log('Task Rock: Firebase not initialized, checking basic notification permission');
-                    return Notification.permission === 'granted';
-                }
-                
-                const permission = Notification.permission;
-                const storedToken = localStorage.getItem('fcm-token');
-                
-                if (permission === 'granted' && storedToken) {
-                    // Verify token is still valid
-                    try {
-                        const currentToken = await getToken(messaging, { vapidKey: VAPID_KEY });
-                        if (currentToken) {
-                            localStorage.setItem('fcm-token', currentToken);
-                            return true;
-                        }
-                    } catch (error) {
-                        console.log('Task Rock: Token verification failed:', error);
-                        localStorage.removeItem('fcm-token');
-                    }
-                }
-                return false;
-            } catch (error) {
-                console.error('Task Rock: Error checking notification state:', error);
-                return false;
-            }
-        };
-        
-        // Request notification permission and get FCM token
-        const requestNotificationPermission = async () => {
-            try {
-                const permission = await Notification.requestPermission();
-                if (permission === 'granted') {
-                    // Check if Firebase is available
-                    if (!messaging) {
-                        console.log('Task Rock: Firebase not available, using basic notifications');
-                        return 'basic-notification-granted';
-                    }
-                    
-                    const token = await getToken(messaging, {
-                        vapidKey: VAPID_KEY
-                    });
-                    console.log('Task Rock: FCM Token obtained:', token);
-                    // Store token in localStorage for persistence
-                    localStorage.setItem('fcm-token', token);
-                    return token;
-                } else {
-                    console.log('Task Rock: Notifications permission not granted');
-                    throw new Error('Notification permission denied');
-                }
-            } catch (error) {
-                console.error('Task Rock: Error getting FCM token:', error);
-                throw error;
-            }
-        };
-        
-        // Enable notifications function
-        const enableNotifications = async () => {
-            return await requestNotificationPermission();
-        };
-        
-        // Disable notifications function
-        const disableNotifications = async () => {
-            try {
-                // Get the current token first
-                const currentToken = localStorage.getItem('fcm-token');
-                if (currentToken && messaging) {
-                    await deleteToken(messaging);
-                    console.log('Task Rock: FCM token deleted successfully');
-                } else if (!messaging) {
-                    console.log('Task Rock: Firebase not available, clearing local storage only');
-                }
-                localStorage.removeItem('fcm-token');
-                console.log('Task Rock: FCM notifications disabled');
-                return true;
-            } catch (error) {
-                console.error('Task Rock: Error disabling notifications:', error);
-                // Still remove from localStorage even if deleteToken fails
-                localStorage.removeItem('fcm-token');
-                return false;
-            }
-        };
-        
-        // Handle foreground messages
-        if (messaging) {
-            onMessage(messaging, (payload) => {
-                console.log('Task Rock: Foreground message received:', payload);
-                
-                // Show notification even when app is in foreground
-                if (payload.notification) {
-                    const notificationTitle = payload.notification.title || 'Task Rock';
-                    const notificationOptions = {
-                        body: payload.notification.body || 'You have a task notification',
-                        icon: '/assets/images/jerry.png',
-                        badge: '/assets/images/icon-192x192.png',
-                        tag: 'task-rock-notification',
-                        requireInteraction: true
-                    };
-                    
-                    new Notification(notificationTitle, notificationOptions);
-                }
-            });
-        } else {
-            console.log('Task Rock: Firebase messaging not available, foreground notifications disabled');
-        }
-        
-        // Register Firebase service worker
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker
-                .register('/firebase-messaging-sw.js')
-                .then((registration) => {
-                    console.log('Firebase Service Worker registered:', registration.scope);
-                })
-                .catch((err) => {
-                    console.error('Firebase Service Worker registration failed:', err);
-                });
-        }
-        
-        // Expose functions to global scope
-        window.enableNotifications = enableNotifications;
-        window.disableNotifications = disableNotifications;
-        window.checkNotificationState = checkNotificationState;
-        
-        // Initialize notification state on load
-        window.addEventListener('load', async () => {
-            const isEnabled = await checkNotificationState();
-            if (window.gameState) {
-                window.gameState.taskNotificationsEnabled = isEnabled;
-                if (window.saveGameState) window.saveGameState();
-                if (window.updateUI) window.updateUI();
-            }
-        });
-        
-        // Make Firebase functions available globally
-        window.firebaseMessaging = messaging;
-        window.firebaseApp = app;
-        window.enableNotifications = enableNotifications;
-        window.disableNotifications = disableNotifications;
-        window.requestNotificationPermission = requestNotificationPermission;
-    </script>
-    
     <style>
         * {
             margin: 0;
@@ -989,55 +812,49 @@
             transform: scale(0.98);
         }
 
-        /* Toggle Switch - iOS Style */
-        .toggle-switch {
-            position: relative;
-            display: inline-block;
-            width: 51px;
-            height: 31px;
+        /* Toggle Switch */
+        .toggle-container {
+            display: flex;
+            align-items: center;
         }
 
-        .toggle-switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
+        .toggle-input {
+            display: none;
+        }
+
+        .toggle-label {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 28px;
+            background-color: #ccc;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
         }
 
         .toggle-slider {
             position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #e5e5ea;
-            transition: .3s;
-            border-radius: 31px;
-        }
-
-        .toggle-slider:before {
-            position: absolute;
-            content: "";
-            height: 27px;
-            width: 27px;
+            top: 2px;
             left: 2px;
-            bottom: 2px;
+            width: 24px;
+            height: 24px;
             background-color: white;
-            transition: .3s;
             border-radius: 50%;
+            transition: transform 0.3s ease;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
-        input:checked + .toggle-slider {
-            background-color: #34c759;
+        .toggle-input:checked + .toggle-label {
+            background-color: #8FEB60;
         }
 
-        input:checked + .toggle-slider:before {
-            transform: translateX(20px);
+        .toggle-input:checked + .toggle-label .toggle-slider {
+            transform: translateX(22px);
         }
 
-        .toggle-slider:hover {
-            box-shadow: 0 0 0 3px rgba(52, 199, 89, 0.2);
+        .toggle-label:hover {
+            box-shadow: 0 0 0 3px rgba(143, 235, 96, 0.2);
         }
 
         /* Stats */
@@ -1703,17 +1520,6 @@
     </style>
 </head>
 <body>
-    <!-- Audio elements for celebration sounds -->
-    <audio id="taskCompleteSound" preload="auto">
-        <source src="assets/sounds/task_complete.wav" type="audio/wav">
-        Your browser does not support the audio element.
-    </audio>
-    
-    <audio id="dailyChallengeCompleteSound" preload="auto">
-        <source src="assets/sounds/daily_challenge_complete.wav" type="audio/wav">
-        Your browser does not support the audio element.
-    </audio>
-
     <div class="container">
         <!-- Logo Section -->
         <div class="logo-section">
@@ -1931,22 +1737,28 @@
             <div class="section-content collapsed" id="settingsContent">
                 <div class="settings-item">
                     <div class="settings-item-header">
-                        <div class="settings-item-title">🔔 Task Notifications</div>
-                        <div class="settings-item-desc">Get notified when tasks are due soon</div>
-                    </div>
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="notificationToggle" onchange="toggleNotifications()">
-                        <span class="toggle-slider"></span>
-                    </label>
-                </div>
-                <div class="settings-item">
-                    <div class="settings-item-header">
                         <div class="settings-item-title">🛍️ Share Rock Shop</div>
                         <div class="settings-item-desc">Help support us by sharing our Etsy store!</div>
                     </div>
                     <button class="share-btn" onclick="shareEtsyStore()">Share Store</button>
                 </div>
-            </div>  <!-- Create Task Modal -->
+                
+                <div class="settings-item">
+                    <div class="settings-item-header">
+                        <div class="settings-item-title">🔔 Task Notifications</div>
+                        <div class="settings-item-desc">Get notified when tasks are due soon</div>
+                    </div>
+                    <div class="toggle-container">
+                        <input type="checkbox" id="notificationToggle" class="toggle-input" onchange="toggleNotifications()">
+                        <label for="notificationToggle" class="toggle-label">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <!-- Create Task Modal -->
     <div id="createTaskModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -2205,32 +2017,7 @@
             }
 
             const points = { easy: 2, medium: 5, hard: 7 }[selectedDifficulty];
-            
-            // Fix date parsing - handle both date formats
-            let dueDate = null;
-            if (date && time) {
-                // Convert MM/DD/YYYY format to YYYY-MM-DD if needed
-                let formattedDate = date;
-                if (date.includes('/')) {
-                    const dateParts = date.split('/');
-                    if (dateParts.length === 3) {
-                        const month = dateParts[0].padStart(2, '0');
-                        const day = dateParts[1].padStart(2, '0');
-                        const year = dateParts[2];
-                        formattedDate = `${year}-${month}-${day}`;
-                    }
-                }
-                
-                // Create the ISO date string
-                dueDate = `${formattedDate}T${time}:00`;
-                
-                // Validate the date
-                const testDate = new Date(dueDate);
-                if (isNaN(testDate.getTime())) {
-                    alert('Please enter a valid date and time');
-                    return;
-                }
-            }
+            const dueDate = date && time ? `${date}T${time}:00` : null;
 
             const task = {
                 id: Date.now(),
@@ -2250,16 +2037,10 @@
                 removeDueSoonTracking(existingTask.id);
                 
                 gameState.tasks[editingTaskIndex] = { ...existingTask, ...task };
-                
-                // Send push notification for task edit
-                sendTaskNotification('edited', task);
             } else {
                 gameState.tasks.push(task);
                 // Make rock bounce when creating a task
                 showBounceAnimation();
-                
-                // Send push notification for task creation
-                sendTaskNotification('created', task);
                 
                 // Trigger Jerry's response to task creation
                 setTimeout(() => {
@@ -2272,44 +2053,9 @@
             closeModal();
         }
 
-        // Audio feedback functions
-        function playTaskCompleteSound() {
-            try {
-                const audio = document.getElementById('taskCompleteSound');
-                if (audio) {
-                    audio.currentTime = 0; // Reset to beginning
-                    audio.play().catch(error => {
-                        console.log('Task Rock: Audio play failed (user interaction required):', error);
-                    });
-                }
-            } catch (error) {
-                console.error('Task Rock: Error playing task complete sound:', error);
-            }
-        }
-
-        function playDailyChallengeCompleteSound() {
-            try {
-                const audio = document.getElementById('dailyChallengeCompleteSound');
-                if (audio) {
-                    audio.currentTime = 0; // Reset to beginning
-                    audio.play().catch(error => {
-                        console.log('Task Rock: Audio play failed (user interaction required):', error);
-                    });
-                }
-            } catch (error) {
-                console.error('Task Rock: Error playing daily challenge complete sound:', error);
-            }
-        }
-
         // Complete task
         function completeTask(index) {
             const task = gameState.tasks[index];
-            
-            // Clean up notification tracking
-            if (task.alertStarted) {
-                task.alertStarted = false;
-                updateTaskDueTimeColor(task.id, false);
-            }
             
             // Remove from due soon tracking since task is being completed
             removeDueSoonTracking(task.id);
@@ -2509,28 +2255,6 @@
             gameState.tasks.splice(index, 1);
             saveGameState();
             updateUI();
-        }
-
-        // Remove due soon tracking for a specific task
-        function removeDueSoonTracking(taskId) {
-            if (!gameState.notifiedTasks) {
-                return;
-            }
-            
-            // Remove all notification tracking entries for this task
-            gameState.notifiedTasks = gameState.notifiedTasks.filter(notificationKey => {
-                const keyTaskId = parseInt(notificationKey.split('_')[0]);
-                return keyTaskId !== taskId;
-            });
-            
-            // Clear any pending notifications for this task
-            if (gameState.pendingNotifications) {
-                gameState.pendingNotifications = gameState.pendingNotifications.filter(
-                    notification => notification.task.id !== taskId
-                );
-            }
-            
-            console.log(`Task Rock: Removed due soon tracking for task ${taskId}`);
         }
 
         // Toggle menu
@@ -2765,546 +2489,320 @@
 
         // Toggle notifications function
         function toggleNotifications() {
-            const currentState = gameState.taskNotificationsEnabled;
-            
-            if (!currentState) {
-                // Use Firebase FCM to enable notifications
-                if (window.enableNotifications) {
-                    window.enableNotifications()
-                        .then(token => {
-                            console.log('FCM Token obtained:', token);
-                            // Only update state after successful enable
-                            gameState.taskNotificationsEnabled = true;
-                            gameState.fcmToken = token;
-                            saveGameState();
-                            updateUI();
-                            showJerryDialog('🔔 Task notifications are now ON! I\'ll let you know when tasks are due soon!');
-                            startDueTaskChecker();
-                        })
-                        .catch(error => {
-                            console.error('Failed to enable notifications:', error);
-                            // Keep state as disabled
-                            gameState.taskNotificationsEnabled = false;
-                            saveGameState();
-                            updateUI();
-                            showJerryDialog('🔕 Notification permission denied. Please enable notifications in your browser settings.');
-                        });
-                } else {
-                    // Fallback to original logic if Firebase not loaded
-                    requestNotificationPermission().then(permission => {
-                        if (permission === 'granted') {
-                            gameState.taskNotificationsEnabled = true;
-                            saveGameState();
-                            updateUI();
-                            showJerryDialog('🔔 Task notifications are now ON! I\'ll let you know when tasks are due soon!');
-                            startDueTaskChecker();
-                        } else {
-                            gameState.taskNotificationsEnabled = false;
-                            saveGameState();
-                            updateUI();
-                            showJerryDialog('🔕 Notification permission denied. Please enable notifications in your browser settings.');
-                        }
-                    });
-                }
-            } else {
-                // Use Firebase FCM to disable notifications
-                if (window.disableNotifications) {
-                    window.disableNotifications()
-                        .then(() => {
-                            console.log('FCM notifications disabled');
-                            // Update state after successful disable
-                            gameState.taskNotificationsEnabled = false;
-                            delete gameState.fcmToken;
-                            saveGameState();
-                            updateUI();
-                            showJerryDialog('🔕 Task notifications are now OFF. You can turn them back on anytime!');
-                        })
-                        .catch(error => {
-                            console.error('Failed to disable notifications:', error);
-                            // Still disable in UI even if Firebase operation failed
-                            gameState.taskNotificationsEnabled = false;
-                            delete gameState.fcmToken;
-                            saveGameState();
-                            updateUI();
-                            showJerryDialog('🔕 Task notifications are now OFF. You can turn them back on anytime!');
-                        });
-                } else {
-                    // Fallback disable
-                    gameState.taskNotificationsEnabled = false;
-                    delete gameState.fcmToken;
-                    saveGameState();
-                    updateUI();
-                    showJerryDialog('🔕 Task notifications are now OFF. You can turn them back on anytime!');
-                }
-            }
-        }
-
-        // Aggressive notification system for iOS locked/sleeping devices
-        function sendTaskNotification(eventType, task) {
-            console.log(`Task Rock: Notification request for "${task.title}" (${eventType})`);
-            
-            if (!gameState.taskNotificationsEnabled) {
-                console.log('Task Rock: Notifications disabled, skipping');
-                return;
-            }
-            
-            // Only send notifications for due-soon events, not for created/edited
-            if (eventType !== 'due_soon') {
-                console.log(`Task Rock: Skipping notification for "${eventType}" - only due-soon notifications are sent`);
-                return;
-            }
-            
-            console.log(`Task Rock: Initiating aggressive due-soon notification for "${task.title}"`);
-            
-            const title = 'Task Due Soon';
-            const message = `⏰ Your task "${task.title}" is due soon!`;
-            
-            // Strategy 1: Immediate notification attempt
-            sendSingleNotification(title, message, task);
-            
-            // Strategy 2: Redundant notifications with staggered timing (iOS reliability)
-            const redundantDelays = [30000, 60000, 120000]; // 30s, 1min, 2min delays
-            redundantDelays.forEach((delay, index) => {
-                setTimeout(() => {
-                    console.log(`Task Rock: Redundant notification attempt ${index + 1} for "${task.title}"`);
-                    sendSingleNotification(title, message, task, `redundant-${index + 1}`);
-                }, delay);
-            });
-            
-            // Strategy 3: Background sync notification (iOS background processing)
-            scheduleBackgroundNotification(title, message, task);
-            
-            // Strategy 4: Foreground notification fallback
-            scheduleForegroundFallback(title, message, task);
-            
-            console.log(`Task Rock: Aggressive notification strategy initiated for "${task.title}"`);
-        }
-        
-        // Send a single notification with enhanced options for iOS
-        function sendSingleNotification(title, message, task, suffix = '') {
-            if ('Notification' in window && Notification.permission === 'granted') {
-                const notificationOptions = {
-                    body: message,
-                    icon: '/assets/images/jerry.png',
-                    badge: '/assets/images/icon-192x192.png',
-                    tag: `task-rock-${task.id}${suffix ? '-' + suffix : ''}`,
-                    requireInteraction: true, // Keep notification visible until user interacts
-                    silent: false, // Ensure sound/vibration
-                    renotify: true, // Allow re-notification with same tag
-                    timestamp: Date.now(),
-                    actions: [
-                        {
-                            action: 'view',
-                            title: 'View Task',
-                            icon: '/assets/images/jerry.png'
-                        },
-                        {
-                            action: 'snooze',
-                            title: 'Snooze 5min',
-                            icon: '/assets/images/jerry.png'
-                        }
-                    ],
-                    data: {
-                        taskId: task.id,
-                        eventType: 'task_notification',
-                        timestamp: Date.now()
-                    }
-                };
-                
-                try {
-                    const notification = new Notification(title, notificationOptions);
-                    
-                    // Enhanced notification event handling
-                    notification.onclick = function(event) {
-                        event.preventDefault();
-                        window.focus();
-                        this.close();
-                        
-                        // Scroll to the specific task
-                        const taskElement = document.querySelector(`[data-task-id="${task.id}"]`);
-                        if (taskElement) {
-                            taskElement.scrollIntoView({ behavior: 'smooth' });
-                        }
-                    };
-                    
-                    console.log(`Task Rock: Notification sent - "${title}"${suffix ? ' (' + suffix + ')' : ''}`);
-                } catch (error) {
-                    console.error('Task Rock: Notification failed:', error);
-                }
-            }
-        }
-        
-        // Background sync notification for iOS background processing
-        function scheduleBackgroundNotification(title, message, task) {
-            if ('serviceWorker' in navigator && 'sync' in window.ServiceWorkerRegistration.prototype) {
-                navigator.serviceWorker.ready.then(registration => {
-                    // Store notification data for background sync
-                    const notificationData = {
-                        title: title,
-                        message: message,
-                        task: task,
-                        timestamp: Date.now(),
-                        attempts: 0
-                    };
-                    
-                    // Store in IndexedDB for background sync
-                    storeNotificationForBackgroundSync(notificationData);
-                    
-                    // Register background sync
-                    return registration.sync.register(`task-notification-${task.id}-${Date.now()}`);
-                }).then(() => {
-                    console.log('Task Rock: Background sync notification scheduled');
-                }).catch(error => {
-                    console.error('Task Rock: Background sync failed:', error);
-                });
-            }
-        }
-        
-        // Foreground notification fallback system
-        function scheduleForegroundFallback(title, message, task) {
-            // Check if app becomes active and show missed notifications
-            const fallbackKey = `fallback-${task.id}-${Date.now()}`;
-            
-            // Store fallback notification
-            if (!gameState.pendingNotifications) {
-                gameState.pendingNotifications = [];
-            }
-            
-            gameState.pendingNotifications.push({
-                key: fallbackKey,
-                title: title,
-                message: message,
-                task: task,
-                timestamp: Date.now(),
-                shown: false
-            });
-            
+            gameState.taskNotificationsEnabled = !gameState.taskNotificationsEnabled;
             saveGameState();
             
-            // Schedule fallback check
-            setTimeout(() => {
-                checkAndShowForegroundFallbacks();
-            }, 300000); // 5 minutes
-        }
-        
-        // Check and show foreground fallback notifications
-        function checkAndShowForegroundFallbacks() {
-            if (!gameState.pendingNotifications) return;
-            
-            const now = Date.now();
-            const fiveMinutesAgo = now - 300000;
-            
-            gameState.pendingNotifications.forEach(notification => {
-                if (!notification.shown && notification.timestamp > fiveMinutesAgo) {
-                    // Show as in-app notification if main notification might have been missed
-                    showInAppNotification(notification.title, notification.message);
-                    notification.shown = true;
-                }
-            });
-            
-            // Clean up old notifications
-            gameState.pendingNotifications = gameState.pendingNotifications.filter(
-                notification => notification.timestamp > fiveMinutesAgo
-            );
-            
-            saveGameState();
-        }
-        
-        // In-app notification system for fallback
-        function showInAppNotification(title, message) {
-            // Create in-app notification element
-            const notificationElement = document.createElement('div');
-            notificationElement.className = 'in-app-notification';
-            notificationElement.innerHTML = `
-                <div class="notification-content">
-                    <strong>${title}</strong>
-                    <p>${message}</p>
-                    <button onclick="this.parentElement.parentElement.remove()">×</button>
-                </div>
-            `;
-            
-            // Add styles if not already present
-            if (!document.querySelector('#in-app-notification-styles')) {
-                const styles = document.createElement('style');
-                styles.id = 'in-app-notification-styles';
-                styles.textContent = `
-                    .in-app-notification {
-                        position: fixed;
-                        top: 20px;
-                        right: 20px;
-                        background: #34c759;
-                        color: white;
-                        padding: 15px;
-                        border-radius: 10px;
-                        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-                        z-index: 10000;
-                        max-width: 300px;
-                        animation: slideIn 0.3s ease-out;
-                    }
-                    
-                    .notification-content {
-                        position: relative;
-                    }
-                    
-                    .notification-content button {
-                        position: absolute;
-                        top: -5px;
-                        right: -5px;
-                        background: rgba(255,255,255,0.3);
-                        border: none;
-                        color: white;
-                        width: 25px;
-                        height: 25px;
-                        border-radius: 50%;
-                        cursor: pointer;
-                    }
-                    
-                    @keyframes slideIn {
-                        from { transform: translateX(100%); opacity: 0; }
-                        to { transform: translateX(0); opacity: 1; }
-                    }
-                `;
-                document.head.appendChild(styles);
-            }
-            
-            document.body.appendChild(notificationElement);
-            
-            // Auto-remove after 10 seconds
-            setTimeout(() => {
-                if (notificationElement.parentElement) {
-                    notificationElement.remove();
-                }
-            }, 10000);
-            
-            console.log('Task Rock: In-app fallback notification shown');
-        }
-        
-        // Store notification data for background sync
-        function storeNotificationForBackgroundSync(notificationData) {
-            // Use localStorage as fallback for IndexedDB
-            try {
-                const existingData = JSON.parse(localStorage.getItem('task-rock-pending-notifications') || '[]');
-                existingData.push(notificationData);
-                
-                // Keep only last 10 notifications to prevent storage bloat
-                const recentData = existingData.slice(-10);
-                localStorage.setItem('task-rock-pending-notifications', JSON.stringify(recentData));
-                
-                console.log('Task Rock: Notification stored for background sync');
-            } catch (error) {
-                console.error('Task Rock: Failed to store notification for background sync:', error);
-            }
-        }
-        
-        // Enhanced due task checking with aggressive scheduling
-        function startDueTaskChecker() {
-            console.log('Task Rock: Starting aggressive due task checker for iOS reliability');
-            
-            // Clear any existing intervals
-            if (window.taskRockDueTaskInterval) {
-                clearInterval(window.taskRockDueTaskInterval);
-            }
-            
-            // Primary check every 2 minutes (aggressive for iOS)
-            window.taskRockDueTaskInterval = setInterval(() => {
-                checkDueTasksAndNotify();
-                checkAndShowForegroundFallbacks();
-            }, 120000); // 2 minutes
-            
-            // Secondary check every 5 minutes (redundancy)
-            setInterval(() => {
-                console.log('Task Rock: Secondary due task check');
-                checkDueTasksAndNotify();
-            }, 300000); // 5 minutes
-            
-            // Immediate check
-            checkDueTasksAndNotify();
-            
-            console.log('Task Rock: Aggressive notification system active');
-        }
-
-        // Check for due tasks and send notifications
-        function checkDueTasksAndNotify() {
-            console.log('Task Rock: Checking for due tasks...', {
-                totalTasks: gameState.tasks.length,
-                currentTime: new Date().toLocaleString()
-            });
-            
-            const now = new Date().getTime();
-            
-            gameState.tasks.forEach(task => {
-                if (!task.dueDate) return;
-                
-                const dueTime = new Date(task.dueDate).getTime();
-                const timeDiff = dueTime - now;
-                const minutesUntilDue = Math.round(timeDiff / (1000 * 60));
-                
-                console.log(`Task Rock: Task "${task.title}" - Due in ${minutesUntilDue} minutes`);
-                
-                // Check if task is within 20 minutes of due time
-                if (minutesUntilDue <= 20 && minutesUntilDue > 0) {
-                    // Mark task as due soon and turn due time red
-                    if (!task.alertStarted) {
-                        task.alertStarted = true;
-                        console.log(`Task Rock: Marking task "${task.title}" as due soon`);
-                        
-                        // Update UI to show red due time
-                        updateTaskDueTimeColor(task.id, true);
-                        
-                        saveGameState();
-                    }
-                    
-                    // Send notifications at specific intervals (20, 15, 10, 2 minutes)
-                    if ([20, 15, 10, 2].includes(minutesUntilDue)) {
-                        const notificationKey = `${task.id}_${minutesUntilDue}min`;
-                        
-                        // Check if we already sent this specific notification
-                        if (!gameState.notifiedTasks) {
-                            gameState.notifiedTasks = [];
-                        }
-                        
-                        if (!gameState.notifiedTasks.includes(notificationKey)) {
-                            console.log(`Task Rock: Sending ${minutesUntilDue}-minute notification for "${task.title}"`);
-                            sendTaskNotification('due_soon', task);
-                            gameState.notifiedTasks.push(notificationKey);
-                            saveGameState();
-                        }
-                    }
-                } else if (minutesUntilDue <= 0 && task.alertStarted) {
-                    // Task is now overdue, reset alert status
-                    task.alertStarted = false;
-                    updateTaskDueTimeColor(task.id, false);
-                    saveGameState();
-                }
-            });
-            
-            // Clean up old notification tracking for completed tasks
-            if (gameState.notifiedTasks) {
-                const currentTaskIds = gameState.tasks.map(task => task.id);
-                gameState.notifiedTasks = gameState.notifiedTasks.filter(notificationKey => {
-                    const taskId = parseInt(notificationKey.split('_')[0]);
-                    return currentTaskIds.includes(taskId);
-                });
-            }
-        }
-        
-        // Update task due time color in DOM
-        function updateTaskDueTimeColor(taskId, isDueSoon) {
-            const taskElements = document.querySelectorAll(`[data-task-id="${taskId}"]`);
-            taskElements.forEach(element => {
-                const dueTimeElement = element.querySelector('.due-time');
-                if (dueTimeElement) {
-                    if (isDueSoon) {
-                        dueTimeElement.style.color = 'red';
-                        dueTimeElement.style.fontWeight = 'bold';
+            if (gameState.taskNotificationsEnabled) {
+                showJerryDialog('🔔 Task notifications are now ON! I\'ll let you know when tasks are due soon!');
+                // Request notification permission and start checking
+                requestNotificationPermission().then(permission => {
+                    if (permission === 'granted') {
+                        startDueTaskChecker();
                     } else {
-                        dueTimeElement.style.color = '';
-                        dueTimeElement.style.fontWeight = '';
+                        showJerryDialog('🔕 Notification permission denied. Please enable notifications in your browser settings.');
+                        gameState.taskNotificationsEnabled = false;
+                        saveGameState();
+                        updateUI();
                     }
-                }
-            });
-        }
-
-        // Initialize Firebase Cloud Messaging notification system
-        function initializeNotificationSystem() {
-            console.log('Task Rock: Initializing Firebase Cloud Messaging...');
-            
-            // Start the task checker
-            startDueTaskChecker();
-            
-            // Request notification permission
-            if ('Notification' in window) {
-                if (Notification.permission === 'default') {
-                    Notification.requestPermission().then((permission) => {
-                        console.log('Task Rock: Notification permission:', permission);
-                        if (permission === 'granted') {
-                            initializeFCM();
-                        }
-                    });
-                } else if (Notification.permission === 'granted') {
-                    console.log('Task Rock: Notification permission already granted');
-                    initializeFCM();
-                } else {
-                    console.log('Task Rock: Notification permission denied');
-                }
-            }
-        }
-        
-        // Initialize Firebase Cloud Messaging
-        async function initializeFCM() {
-            try {
-                // Wait for Firebase to be available
-                if (!window.firebaseMessaging || !window.firebaseGetToken || !window.firebaseOnMessage) {
-                    console.log('Task Rock: Waiting for Firebase to initialize...');
-                    setTimeout(initializeFCM, 100);
-                    return;
-                }
-                
-                // Register service worker
-                if ('serviceWorker' in navigator) {
-                    const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js', {
-                        type: 'module'
-                    });
-                    console.log('Task Rock: Firebase service worker registered:', registration);
-                    
-                    // Get FCM token using globally available function
-                    try {
-                        const currentToken = await window.firebaseGetToken(window.firebaseMessaging, { 
-                            vapidKey: 'BBsjFKkoxc-1845_UOkUcKvvS9BPQhoeA-Nw7xQ5Y4Nlt0L5gFAj8_P9CqUaaS2Aejsp1D2sT41NdhR5ZSzvRmU',
-                            serviceWorkerRegistration: registration 
-                        });
-                        
-                        if (currentToken) {
-                            console.log('Task Rock: FCM token:', currentToken);
-                            // Store token for sending notifications from server
-                            localStorage.setItem('fcm-token', currentToken);
-                        } else {
-                            console.log('Task Rock: No FCM token available');
-                        }
-                    } catch (err) {
-                        console.log('Task Rock: Error getting FCM token:', err);
-                    }
-                    
-                    // Handle foreground messages using globally available function
-                    window.firebaseOnMessage(window.firebaseMessaging, (payload) => {
-                        console.log('Task Rock: Foreground message received:', payload);
-                        
-                        // Show notification even when app is in foreground
-                        if (Notification.permission === 'granted') {
-                            new Notification(payload.notification?.title || 'Task Rock', {
-                                body: payload.notification?.body || 'You have a task reminder!',
-                                icon: '/assets/images/jerry.png',
-                                badge: '/assets/images/icon-192x192.png'
-                            });
-                        }
-                    });
-                }
-                
-            } catch (error) {
-                console.log('Task Rock: Error initializing FCM:', error);
+                });
+            } else {
+                showJerryDialog('🔕 Task notifications are now OFF. You can turn them back on anytime!');
             }
         }
 
-        // Check if task is due within 20 minutes (for visual styling)
+        // Check if task is due within 10 minutes (for UI styling)
         function isTaskDueSoon(task) {
             if (!task.dueDate) return false;
             
             const now = new Date().getTime();
             const dueTime = new Date(task.dueDate).getTime();
             const timeDiff = dueTime - now;
-            const minutesUntilDue = Math.round(timeDiff / (1000 * 60));
             
-            // Return true if due within 20 minutes
-            return minutesUntilDue <= 20 && minutesUntilDue > 0;
+            // Return true if due within 10 minutes (600000 milliseconds)
+            return timeDiff <= 600000 && timeDiff > 0;
         }
 
-        // Start periodic checking for due tasks (every 60 seconds)
+        // Check if task should trigger notification (exactly 20 minutes before)
+        function shouldNotifyForTask(task) {
+            if (!task.dueDate) return false;
+            
+            const now = new Date().getTime();
+            const dueTime = new Date(task.dueDate).getTime();
+            const timeDiff = dueTime - now;
+            
+            // Enhanced notification logic: notify every 10 minutes starting 20 minutes before
+            const twentyMinutes = 20 * 60 * 1000; // 20 minutes in milliseconds
+            const tenMinutes = 10 * 60 * 1000; // 10 minutes in milliseconds
+            
+            // Check if task is within the 20-minute notification window
+            if (timeDiff > twentyMinutes || timeDiff <= 0) {
+                return false;
+            }
+            
+            // Determine which notification intervals we should send
+            const notificationIntervals = [
+                { time: twentyMinutes, id: '20min' },
+                { time: tenMinutes, id: '10min' }
+            ];
+            
+            // Check if we should send a notification for any interval
+            for (const interval of notificationIntervals) {
+                const notificationId = `task_${task.id}_${interval.id}`;
+                
+                // Initialize notifiedTasks array if it doesn't exist
+                if (!gameState.notifiedTasks) {
+                    gameState.notifiedTasks = [];
+                }
+                
+                // Check if we're within the notification window for this interval
+                // Allow 1-minute window around each notification time for reliability
+                const windowStart = interval.time + (30 * 1000); // 30 seconds after the target time
+                const windowEnd = interval.time - (30 * 1000); // 30 seconds before the target time
+                
+                if (timeDiff <= windowStart && timeDiff > windowEnd) {
+                    // Check if we haven't already sent this specific notification
+                    if (!gameState.notifiedTasks.includes(notificationId)) {
+                        // Store which specific notification this is for
+                        task._currentNotificationId = notificationId;
+                        task._notificationInterval = interval.id;
+                        return true;
+                    }
+                }
+            }
+            
+            return false;
+        }
+
+        // Check if task should show red styling (persistent until action taken)
+        function shouldShowDueSoon(task) {
+            // Initialize dueSoonTasks array if it doesn't exist
+            if (!gameState.dueSoonTasks) {
+                gameState.dueSoonTasks = [];
+            }
+            
+            // If task is currently due soon, mark it
+            if (isTaskDueSoon(task)) {
+                if (!gameState.dueSoonTasks.includes(task.id)) {
+                    gameState.dueSoonTasks.push(task.id);
+                    saveGameState();
+                }
+                return true;
+            }
+            
+            // If task was previously marked as due soon, keep it red
+            return gameState.dueSoonTasks.includes(task.id);
+        }
+
+        // Remove task from due soon tracking (called when task is completed, deleted, or edited)
+        function removeDueSoonTracking(taskId) {
+            if (!gameState.dueSoonTasks) {
+                gameState.dueSoonTasks = [];
+                return;
+            }
+            
+            const index = gameState.dueSoonTasks.indexOf(taskId);
+            if (index > -1) {
+                gameState.dueSoonTasks.splice(index, 1);
+                saveGameState();
+            }
+        }
+
+        // Check for due tasks and send notifications (20 minutes before due time)
+        function checkDueTasksAndNotify() {
+            if (!gameState.taskNotificationsEnabled) return;
+            
+            const tasksToNotify = gameState.tasks.filter(task => shouldNotifyForTask(task));
+            
+            tasksToNotify.forEach(task => {
+                // Use the notification ID determined by shouldNotifyForTask
+                const notificationId = task._currentNotificationId;
+                const interval = task._notificationInterval;
+                
+                // Initialize notifiedTasks array if it doesn't exist
+                if (!gameState.notifiedTasks) {
+                    gameState.notifiedTasks = [];
+                }
+                
+                // Send the notification and mark it as sent
+                sendTaskDueNotification(task, interval);
+                gameState.notifiedTasks.push(notificationId);
+                saveGameState();
+                
+                // Clean up temporary properties
+                delete task._currentNotificationId;
+                delete task._notificationInterval;
+                
+                // Also trigger Jerry's dialogue about the upcoming task
+                setTimeout(() => {
+                    const timeUntilDue = Math.round((new Date(task.dueDate).getTime() - new Date().getTime()) / (1000 * 60));
+                    if (interval === '20min') {
+                        showJerryDialog(`⏰ Hey! "${task.title}" is due in 20 minutes. Time to get ready!`);
+                    } else if (interval === '10min') {
+                        showJerryDialog(`🚨 "${task.title}" is due in 10 minutes! Better wrap things up!`);
+                    }
+                }, 1000);
+            });
+            
+            // Clean up old notification IDs for completed tasks
+            if (gameState.notifiedTasks) {
+                const currentTaskIds = gameState.tasks.flatMap(task => [
+                    `task_${task.id}_20min`,
+                    `task_${task.id}_10min`
+                ]);
+                gameState.notifiedTasks = gameState.notifiedTasks.filter(id => 
+                    currentTaskIds.some(currentId => id.includes(currentId.split('_')[1]))
+                );
+            }
+        }
+
+        // Send notification for due task (20 minutes before due time)
+        function sendTaskDueNotification(task, interval = '20min') {
+            const now = new Date();
+            const dueTime = new Date(task.dueDate);
+            
+            // Customize notification message based on interval
+            let title, body, tag;
+            
+            if (interval === '20min') {
+                title = 'Task Rock - Task Due Soon!';
+                body = `"${task.title}" is due in 20 minutes! Time to get started! 🗿`;
+                tag = `task_${task.id}_20min`;
+            } else if (interval === '10min') {
+                title = 'Task Rock - Task Due Very Soon!';
+                body = `"${task.title}" is due in 10 minutes! Final reminder! 🚨`;
+                tag = `task_${task.id}_10min`;
+            }
+            
+            const options = {
+                body: body,
+                icon: 'assets/images/jerry.png',
+                badge: 'assets/images/logo.png',
+                tag: tag, // Prevents duplicate notifications for each interval
+                requireInteraction: true, // Keeps notification visible until user interacts
+                vibrate: [200, 100, 200], // Vibration pattern for mobile
+                data: {
+                    taskId: task.id,
+                    type: `task_due_${interval}`,
+                    dueTime: task.dueDate,
+                    interval: interval
+                },
+                actions: [
+                    {
+                        action: 'complete',
+                        title: 'Mark Complete',
+                        icon: 'assets/images/jerry.png'
+                    },
+                    {
+                        action: 'view',
+                        title: 'View Task',
+                        icon: 'assets/images/logo.png'
+                    }
+                ]
+            };
+
+            // Try different notification methods for maximum compatibility
+            if ('serviceWorker' in navigator && 'PushManager' in window) {
+                // Use service worker for better mobile support
+                navigator.serviceWorker.ready.then(registration => {
+                    registration.showNotification(title, options);
+                }).catch(error => {
+                    console.log('Service worker notification failed, falling back to regular notification');
+                    fallbackNotification(title, options);
+                });
+            } else {
+                fallbackNotification(title, options);
+            }
+        }
+
+        // Fallback notification method
+        function fallbackNotification(title, options) {
+            if ('Notification' in window) {
+                if (Notification.permission === 'granted') {
+                    new Notification(title, options);
+                } else if (Notification.permission === 'default') {
+                    Notification.requestPermission().then(permission => {
+                        if (permission === 'granted') {
+                            new Notification(title, options);
+                        }
+                    });
+                }
+            }
+        }
+
+        // Enhanced notification permission request for mobile
+        function requestNotificationPermission() {
+            if (!('Notification' in window)) {
+                console.log('This browser does not support notifications');
+                return Promise.resolve('denied');
+            }
+
+            if (Notification.permission === 'granted') {
+                return Promise.resolve('granted');
+            }
+
+            if (Notification.permission === 'denied') {
+                return Promise.resolve('denied');
+            }
+
+            // For mobile browsers, especially iOS Safari
+            return Notification.requestPermission().then(permission => {
+                // iOS Safari may return undefined, so handle that case
+                if (permission === undefined) {
+                    return Notification.permission;
+                }
+                return permission;
+            });
+        }
+
+        // Initialize notification system for mobile compatibility
+        function initializeNotificationSystem() {
+            // Request permission on first load if notifications are enabled
+            if (gameState.taskNotificationsEnabled) {
+                requestNotificationPermission().then(permission => {
+                    if (permission === 'granted') {
+                        console.log('Notification permission granted');
+                        // Start checking for due tasks
+                        startDueTaskChecker();
+                    } else {
+                        console.log('Notification permission denied');
+                        gameState.taskNotificationsEnabled = false;
+                        saveGameState();
+                    }
+                });
+            }
+
+            // Listen for service worker messages (notification clicks)
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.addEventListener('message', event => {
+                    if (event.data && event.data.type === 'notification_click') {
+                        handleNotificationClick(event.data);
+                    }
+                });
+            }
+        }
+
+        // Start periodic checking for due tasks (every 30 seconds for better accuracy)
         function startDueTaskChecker() {
-            // Check every 60 seconds for due tasks
-            setInterval(checkDueTasksAndNotify, 60000);
+            // Check every 30 seconds for due tasks (more frequent for 20-minute precision)
+            setInterval(checkDueTasksAndNotify, 30000);
             
             // Also check immediately
             checkDueTasksAndNotify();
+        }
+
+        // Handle notification click actions
+        function handleNotificationClick(data) {
+            if (data.action === 'complete' && data.taskId) {
+                const taskIndex = gameState.tasks.findIndex(task => task.id === data.taskId);
+                if (taskIndex !== -1) {
+                    completeTask(taskIndex);
+                }
+            } else if (data.action === 'view' || !data.action) {
+                // Just bring the app to focus - browser will handle this
+                if (window.focus) {
+                    window.focus();
+                }
+            }
         }
 
         // Update UI
@@ -3363,10 +2861,9 @@
                 tasksScrollableArea.style.display = 'block';
                 stickyCreateButton.style.display = 'block';
                 tasksList.innerHTML = gameState.tasks.map((task, index) => {
-                    const isDueSoon = isTaskDueSoon(task);
-                    const dueSoonStyle = isDueSoon ? 'color: red; font-weight: bold;' : '';
+                    const dueSoonClass = shouldShowDueSoon(task) ? ' due-soon' : '';
                     return `
-                    <div class="task-item" data-task-id="${task.id}">
+                    <div class="task-item">
                         <div class="task-header">
                             <div class="task-title">${task.title}</div>
                             <div class="task-actions">
@@ -3387,7 +2884,7 @@
                             </div>
                             <button class="complete-btn" onclick="completeTask(${index})">Complete</button>
                         </div>
-                        ${task.dueDate ? `<div class="due-time" style="${dueSoonStyle}">Due: ${new Date(task.dueDate).toLocaleDateString()} at ${new Date(task.dueDate).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>` : ''}
+                        ${task.dueDate ? `<div class="task-due${dueSoonClass}">Due: ${new Date(task.dueDate).toLocaleDateString()} at ${new Date(task.dueDate).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>` : ''}
                     </div>
                 `;
                 }).join('');
@@ -3829,10 +3326,6 @@
             if (challenge.progress >= challenge.target && !gameState.dailyChallengeCompleted) {
                 gameState.dailyChallengeCompleted = true;
                 gameState.taskPoints += challenge.reward;
-                
-                // Play celebration sound for daily challenge completion
-                playDailyChallengeCompleteSound();
-                
                 showCongratsMessage(`⚡ Daily Challenge Complete!\n${challenge.name}\n+${challenge.reward} bonus points!`, challenge.reward);
                 return true; // Return true to indicate daily challenge was completed
             }
@@ -3847,14 +3340,28 @@
             updateUI();
             checkHealthPenalties();
             
-            // Initialize Jerry's dialogue system (includes notification system)
+            // Initialize Jerry's dialogue system
             initializeJerryDialogue();
             
             // Initialize hydration reminders
             initializeHydrationReminders();
             
+            // Initialize notification system for mobile compatibility
+            initializeNotificationSystem();
+            
             // Set up periodic health checks
             setInterval(checkHealthPenalties, 60000); // Check every minute
+            
+            // Register service worker for PWA
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(function(registration) {
+                        console.log('Service Worker registered successfully');
+                    })
+                    .catch(function(error) {
+                        console.log('Service Worker registration failed');
+                    });
+            }
         });
 
         // Edit rock name function
@@ -4174,7 +3681,30 @@
             }
         }
 
-        // Firebase Service Worker Registration is handled in initializeFCM function
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(registration => {
+                        console.log('Task Rock: Service Worker registered successfully', registration.scope);
+                        
+                        // Check for updates
+                        registration.addEventListener('updatefound', () => {
+                            const newWorker = registration.installing;
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    // New content is available, show update notification
+                                    if (confirm('New version of Task Rock is available! Reload to update?')) {
+                                        window.location.reload();
+                                    }
+                                }
+                            });
+                        });
+                    })
+                    .catch(error => {
+                        console.log('Task Rock: Service Worker registration failed', error);
+                    });
+            });
 
             // Listen for messages from service worker
             navigator.serviceWorker.addEventListener('message', event => {
@@ -4260,6 +3790,7 @@
                     console.log('Task Rock: Background sync for notifications registered');
                 });
             }
+        }
 
         // PWA Install Prompt
         let deferredPrompt;
@@ -5193,9 +4724,6 @@
 
             // Initialize health mood monitoring system
             initializeHealthMoodMonitoring();
-
-            // Initialize notification system
-            initializeNotificationSystem();
 
             // Set up idle messages (every 2-3 minutes of inactivity)
             let idleTimer;
