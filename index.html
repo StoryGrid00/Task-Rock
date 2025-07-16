@@ -42,6 +42,17 @@
     <meta name="twitter:title" content="Task Rock - Pet Rock Task Manager">
     <meta name="twitter:description" content="A fun task management app with Jerry the Rock, your virtual pet companion">
     <meta name="twitter:image" content="assets/images/icon-512x512.png">
+    
+    <!-- OneSignal SDK -->
+   <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+<script>
+  window.OneSignalDeferred = window.OneSignalDeferred || [];
+  OneSignalDeferred.push(async function(OneSignal) {
+    await OneSignal.init({
+      appId: "96606bb5-0dd5-4057-aa2e-5dd66ae1e8d4",
+    });
+  });
+</script>
     <style>
         * {
             margin: 0;
@@ -2017,7 +2028,32 @@
             }
 
             const points = { easy: 2, medium: 5, hard: 7 }[selectedDifficulty];
-            const dueDate = date && time ? `${date}T${time}:00` : null;
+            
+            // Fix date parsing - handle both date formats
+            let dueDate = null;
+            if (date && time) {
+                // Convert MM/DD/YYYY format to YYYY-MM-DD if needed
+                let formattedDate = date;
+                if (date.includes('/')) {
+                    const dateParts = date.split('/');
+                    if (dateParts.length === 3) {
+                        const month = dateParts[0].padStart(2, '0');
+                        const day = dateParts[1].padStart(2, '0');
+                        const year = dateParts[2];
+                        formattedDate = `${year}-${month}-${day}`;
+                    }
+                }
+                
+                // Create the ISO date string
+                dueDate = `${formattedDate}T${time}:00`;
+                
+                // Validate the date
+                const testDate = new Date(dueDate);
+                if (isNaN(testDate.getTime())) {
+                    alert('Please enter a valid date and time');
+                    return;
+                }
+            }
 
             const task = {
                 id: Date.now(),
@@ -2056,6 +2092,12 @@
         // Complete task
         function completeTask(index) {
             const task = gameState.tasks[index];
+            
+            // Clean up notification tracking
+            if (task.alertStarted) {
+                task.alertStarted = false;
+                updateTaskDueTimeColor(task.id, false);
+            }
             
             // Remove from due soon tracking since task is being completed
             removeDueSoonTracking(task.id);
@@ -2510,7 +2552,7 @@
             }
         }
 
-        // Check if task is due within 10 minutes (for UI styling)
+        // Check if task is due within any notification interval (for UI styling)
         function isTaskDueSoon(task) {
             if (!task.dueDate) return false;
             
@@ -2518,11 +2560,20 @@
             const dueTime = new Date(task.dueDate).getTime();
             const timeDiff = dueTime - now;
             
-            // Return true if due within 10 minutes (600000 milliseconds)
-            return timeDiff <= 600000 && timeDiff > 0;
+            // Return true if due within any of the notification intervals
+            const twentyMinutes = 20 * 60 * 1000; // 20 minutes
+            const fifteenMinutes = 15 * 60 * 1000; // 15 minutes  
+            const tenMinutes = 10 * 60 * 1000; // 10 minutes
+            const fiveMinutes = 5 * 60 * 1000; // 5 minutes
+            
+            // Check if within any notification window
+            return (timeDiff <= twentyMinutes && timeDiff > fifteenMinutes) || // 20-15 min window
+                   (timeDiff <= fifteenMinutes && timeDiff > tenMinutes) ||   // 15-10 min window
+                   (timeDiff <= tenMinutes && timeDiff > fiveMinutes) ||      // 10-5 min window
+                   (timeDiff <= fiveMinutes && timeDiff > 0);                 // 5-0 min window
         }
 
-        // Check if task should trigger notification (exactly 20 minutes before)
+        // Check if task should trigger notification (at 20, 15, 10, and 5 minutes before)
         function shouldNotifyForTask(task) {
             if (!task.dueDate) return false;
             
@@ -2530,9 +2581,11 @@
             const dueTime = new Date(task.dueDate).getTime();
             const timeDiff = dueTime - now;
             
-            // Enhanced notification logic: notify every 10 minutes starting 20 minutes before
+            // Enhanced notification logic: notify at 20, 15, 10, and 5 minutes before
             const twentyMinutes = 20 * 60 * 1000; // 20 minutes in milliseconds
+            const fifteenMinutes = 15 * 60 * 1000; // 15 minutes in milliseconds
             const tenMinutes = 10 * 60 * 1000; // 10 minutes in milliseconds
+            const fiveMinutes = 5 * 60 * 1000; // 5 minutes in milliseconds
             
             // Check if task is within the 20-minute notification window
             if (timeDiff > twentyMinutes || timeDiff <= 0) {
@@ -2542,7 +2595,9 @@
             // Determine which notification intervals we should send
             const notificationIntervals = [
                 { time: twentyMinutes, id: '20min' },
-                { time: tenMinutes, id: '10min' }
+                { time: fifteenMinutes, id: '15min' },
+                { time: tenMinutes, id: '10min' },
+                { time: fiveMinutes, id: '5min' }
             ];
             
             // Check if we should send a notification for any interval
@@ -2555,9 +2610,9 @@
                 }
                 
                 // Check if we're within the notification window for this interval
-                // Allow 1-minute window around each notification time for reliability
-                const windowStart = interval.time + (30 * 1000); // 30 seconds after the target time
-                const windowEnd = interval.time - (30 * 1000); // 30 seconds before the target time
+                // Use 2-minute window around each notification time for better reliability
+                const windowStart = interval.time + (2 * 60 * 1000); // 2 minutes after the target time
+                const windowEnd = interval.time - (2 * 60 * 1000); // 2 minutes before the target time
                 
                 if (timeDiff <= windowStart && timeDiff > windowEnd) {
                     // Check if we haven't already sent this specific notification
@@ -2607,184 +2662,158 @@
             }
         }
 
-        // Check for due tasks and send notifications (20 minutes before due time)
+        // Check for due tasks and send OneSignal notifications
         function checkDueTasksAndNotify() {
-            if (!gameState.taskNotificationsEnabled) return;
-            
-            const tasksToNotify = gameState.tasks.filter(task => shouldNotifyForTask(task));
-            
-            tasksToNotify.forEach(task => {
-                // Use the notification ID determined by shouldNotifyForTask
-                const notificationId = task._currentNotificationId;
-                const interval = task._notificationInterval;
-                
-                // Initialize notifiedTasks array if it doesn't exist
-                if (!gameState.notifiedTasks) {
-                    gameState.notifiedTasks = [];
-                }
-                
-                // Send the notification and mark it as sent
-                sendTaskDueNotification(task, interval);
-                gameState.notifiedTasks.push(notificationId);
-                saveGameState();
-                
-                // Clean up temporary properties
-                delete task._currentNotificationId;
-                delete task._notificationInterval;
-                
-                // Also trigger Jerry's dialogue about the upcoming task
-                setTimeout(() => {
-                    const timeUntilDue = Math.round((new Date(task.dueDate).getTime() - new Date().getTime()) / (1000 * 60));
-                    if (interval === '20min') {
-                        showJerryDialog(`⏰ Hey! "${task.title}" is due in 20 minutes. Time to get ready!`);
-                    } else if (interval === '10min') {
-                        showJerryDialog(`🚨 "${task.title}" is due in 10 minutes! Better wrap things up!`);
-                    }
-                }, 1000);
+            console.log('Task Rock: Checking for due tasks...', {
+                notificationsEnabled: gameState.taskNotificationsEnabled,
+                totalTasks: gameState.tasks.length,
+                currentTime: new Date().toLocaleString()
             });
             
-            // Clean up old notification IDs for completed tasks
-            if (gameState.notifiedTasks) {
-                const currentTaskIds = gameState.tasks.flatMap(task => [
-                    `task_${task.id}_20min`,
-                    `task_${task.id}_10min`
-                ]);
-                gameState.notifiedTasks = gameState.notifiedTasks.filter(id => 
-                    currentTaskIds.some(currentId => id.includes(currentId.split('_')[1]))
-                );
-            }
-        }
-
-        // Send notification for due task (20 minutes before due time)
-        function sendTaskDueNotification(task, interval = '20min') {
-            const now = new Date();
-            const dueTime = new Date(task.dueDate);
-            
-            // Customize notification message based on interval
-            let title, body, tag;
-            
-            if (interval === '20min') {
-                title = 'Task Rock - Task Due Soon!';
-                body = `"${task.title}" is due in 20 minutes! Time to get started! 🗿`;
-                tag = `task_${task.id}_20min`;
-            } else if (interval === '10min') {
-                title = 'Task Rock - Task Due Very Soon!';
-                body = `"${task.title}" is due in 10 minutes! Final reminder! 🚨`;
-                tag = `task_${task.id}_10min`;
+            if (!gameState.taskNotificationsEnabled) {
+                console.log('Task Rock: Notifications disabled, skipping check');
+                return;
             }
             
-            const options = {
-                body: body,
-                icon: 'assets/images/jerry.png',
-                badge: 'assets/images/logo.png',
-                tag: tag, // Prevents duplicate notifications for each interval
-                requireInteraction: true, // Keeps notification visible until user interacts
-                vibrate: [200, 100, 200], // Vibration pattern for mobile
-                data: {
-                    taskId: task.id,
-                    type: `task_due_${interval}`,
-                    dueTime: task.dueDate,
-                    interval: interval
-                },
-                actions: [
-                    {
-                        action: 'complete',
-                        title: 'Mark Complete',
-                        icon: 'assets/images/jerry.png'
-                    },
-                    {
-                        action: 'view',
-                        title: 'View Task',
-                        icon: 'assets/images/logo.png'
-                    }
-                ]
-            };
-
-            // Try different notification methods for maximum compatibility
-            if ('serviceWorker' in navigator && 'PushManager' in window) {
-                // Use service worker for better mobile support
-                navigator.serviceWorker.ready.then(registration => {
-                    registration.showNotification(title, options);
-                }).catch(error => {
-                    console.log('Service worker notification failed, falling back to regular notification');
-                    fallbackNotification(title, options);
-                });
-            } else {
-                fallbackNotification(title, options);
-            }
-        }
-
-        // Fallback notification method
-        function fallbackNotification(title, options) {
-            if ('Notification' in window) {
-                if (Notification.permission === 'granted') {
-                    new Notification(title, options);
-                } else if (Notification.permission === 'default') {
-                    Notification.requestPermission().then(permission => {
-                        if (permission === 'granted') {
-                            new Notification(title, options);
-                        }
-                    });
-                }
-            }
-        }
-
-        // Enhanced notification permission request for mobile
-        function requestNotificationPermission() {
-            if (!('Notification' in window)) {
-                console.log('This browser does not support notifications');
-                return Promise.resolve('denied');
-            }
-
-            if (Notification.permission === 'granted') {
-                return Promise.resolve('granted');
-            }
-
-            if (Notification.permission === 'denied') {
-                return Promise.resolve('denied');
-            }
-
-            // For mobile browsers, especially iOS Safari
-            return Notification.requestPermission().then(permission => {
-                // iOS Safari may return undefined, so handle that case
-                if (permission === undefined) {
-                    return Notification.permission;
-                }
-                return permission;
-            });
-        }
-
-        // Initialize notification system for mobile compatibility
-        function initializeNotificationSystem() {
-            // Request permission on first load if notifications are enabled
-            if (gameState.taskNotificationsEnabled) {
-                requestNotificationPermission().then(permission => {
-                    if (permission === 'granted') {
-                        console.log('Notification permission granted');
-                        // Start checking for due tasks
-                        startDueTaskChecker();
-                    } else {
-                        console.log('Notification permission denied');
-                        gameState.taskNotificationsEnabled = false;
+            const now = new Date().getTime();
+            
+            gameState.tasks.forEach(task => {
+                if (!task.dueDate) return;
+                
+                const dueTime = new Date(task.dueDate).getTime();
+                const timeDiff = dueTime - now;
+                const minutesUntilDue = Math.round(timeDiff / (1000 * 60));
+                
+                console.log(`Task Rock: Task "${task.title}" - Due in ${minutesUntilDue} minutes`);
+                
+                // Check if task is within 20 minutes of due time
+                if (minutesUntilDue <= 20 && minutesUntilDue > 0) {
+                    // Mark task as due soon and turn due time red
+                    if (!task.alertStarted) {
+                        task.alertStarted = true;
+                        console.log(`Task Rock: Marking task "${task.title}" as due soon`);
+                        
+                        // Update UI to show red due time
+                        updateTaskDueTimeColor(task.id, true);
+                        
+                        // Send initial notification at 20 minutes
+                        sendOneSignalNotification(task);
+                        
                         saveGameState();
                     }
-                });
-            }
-
-            // Listen for service worker messages (notification clicks)
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.addEventListener('message', event => {
-                    if (event.data && event.data.type === 'notification_click') {
-                        handleNotificationClick(event.data);
+                    
+                    // Send notifications every 5 minutes (at 15, 10, 5 minutes)
+                    if (minutesUntilDue === 15 || minutesUntilDue === 10 || minutesUntilDue === 5) {
+                        const notificationKey = `${task.id}_${minutesUntilDue}min`;
+                        
+                        // Check if we already sent this specific notification
+                        if (!gameState.notifiedTasks) {
+                            gameState.notifiedTasks = [];
+                        }
+                        
+                        if (!gameState.notifiedTasks.includes(notificationKey)) {
+                            console.log(`Task Rock: Sending ${minutesUntilDue}-minute notification for "${task.title}"`);
+                            sendOneSignalNotification(task);
+                            gameState.notifiedTasks.push(notificationKey);
+                            saveGameState();
+                        }
                     }
+                } else if (minutesUntilDue <= 0 && task.alertStarted) {
+                    // Task is now overdue, reset alert status
+                    task.alertStarted = false;
+                    updateTaskDueTimeColor(task.id, false);
+                    saveGameState();
+                }
+            });
+            
+            // Clean up old notification tracking for completed tasks
+            if (gameState.notifiedTasks) {
+                const currentTaskIds = gameState.tasks.map(task => task.id);
+                gameState.notifiedTasks = gameState.notifiedTasks.filter(notificationKey => {
+                    const taskId = parseInt(notificationKey.split('_')[0]);
+                    return currentTaskIds.includes(taskId);
                 });
             }
         }
+        
+        // Send OneSignal notification for due task
+        function sendOneSignalNotification(task) {
+            const message = `⏰ Your task '${task.title}' is due soon!`;
+            
+            OneSignal.push(function() {
+                OneSignal.isPushNotificationsEnabled(function(isEnabled) {
+                    if (isEnabled) {
+                        OneSignal.sendSelfNotification(
+                            "Task Rock Reminder",
+                            message,
+                            "https://storygrid00.github.io/Task-Rock/",
+                            "assets/images/jerry.png",
+                            {
+                                taskId: task.id,
+                                taskTitle: task.title
+                            },
+                            [
+                                {
+                                    id: "complete-task",
+                                    text: "Mark Complete",
+                                    icon: "assets/images/jerry.png"
+                                }
+                            ]
+                        );
+                        console.log(`Task Rock: OneSignal notification sent for "${task.title}"`);
+                    } else {
+                        console.log('Task Rock: Push notifications not enabled, skipping notification');
+                    }
+                });
+            });
+        }
+        
+        // Update task due time color in DOM
+        function updateTaskDueTimeColor(taskId, isDueSoon) {
+            const taskElements = document.querySelectorAll(`[data-task-id="${taskId}"]`);
+            taskElements.forEach(element => {
+                const dueTimeElement = element.querySelector('.due-time');
+                if (dueTimeElement) {
+                    if (isDueSoon) {
+                        dueTimeElement.style.color = 'red';
+                        dueTimeElement.style.fontWeight = 'bold';
+                    } else {
+                        dueTimeElement.style.color = '';
+                        dueTimeElement.style.fontWeight = '';
+                    }
+                }
+            });
+        }
 
-        // Start periodic checking for due tasks (every 30 seconds for better accuracy)
+        // Initialize notification system with OneSignal
+        function initializeNotificationSystem() {
+            console.log('Task Rock: Initializing OneSignal notification system...');
+            
+            // Always start the task checker
+            startDueTaskChecker();
+            
+            // Initialize OneSignal and request permission if notifications are enabled
+            if (gameState.taskNotificationsEnabled) {
+                console.log('Task Rock: Notifications are enabled, initializing OneSignal...');
+                
+                OneSignal.push(function() {
+                    // Check if user is already subscribed
+                    OneSignal.isPushNotificationsEnabled(function(isEnabled) {
+                        if (!isEnabled) {
+                            // Show slidedown prompt to request permission
+                            OneSignal.showSlidedownPrompt();
+                        }
+                    });
+                });
+            } else {
+                console.log('Task Rock: Notifications are disabled in settings');
+            }
+        }
+
+        // Start periodic checking for due tasks (every 60 seconds as specified)
         function startDueTaskChecker() {
-            // Check every 30 seconds for due tasks (more frequent for 20-minute precision)
-            setInterval(checkDueTasksAndNotify, 30000);
+            // Check every 60 seconds for due tasks
+            setInterval(checkDueTasksAndNotify, 60000);
             
             // Also check immediately
             checkDueTasksAndNotify();
@@ -2862,8 +2891,9 @@
                 stickyCreateButton.style.display = 'block';
                 tasksList.innerHTML = gameState.tasks.map((task, index) => {
                     const dueSoonClass = shouldShowDueSoon(task) ? ' due-soon' : '';
+                    const isDueSoon = task.alertStarted ? 'color: red; font-weight: bold;' : '';
                     return `
-                    <div class="task-item">
+                    <div class="task-item" data-task-id="${task.id}">
                         <div class="task-header">
                             <div class="task-title">${task.title}</div>
                             <div class="task-actions">
@@ -2884,7 +2914,7 @@
                             </div>
                             <button class="complete-btn" onclick="completeTask(${index})">Complete</button>
                         </div>
-                        ${task.dueDate ? `<div class="task-due${dueSoonClass}">Due: ${new Date(task.dueDate).toLocaleDateString()} at ${new Date(task.dueDate).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>` : ''}
+                        ${task.dueDate ? `<div class="due-time${dueSoonClass}" style="${isDueSoon}">Due: ${new Date(task.dueDate).toLocaleDateString()} at ${new Date(task.dueDate).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>` : ''}
                     </div>
                 `;
                 }).join('');
@@ -3352,14 +3382,14 @@
             // Set up periodic health checks
             setInterval(checkHealthPenalties, 60000); // Check every minute
             
-            // Register service worker for PWA
+            // Register OneSignal service worker for push notifications
             if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('./sw.js')
+                navigator.serviceWorker.register('OneSignalSDKWorker.js')
                     .then(function(registration) {
-                        console.log('Service Worker registered successfully');
+                        console.log('OneSignal Service Worker registered successfully');
                     })
                     .catch(function(error) {
-                        console.log('Service Worker registration failed');
+                        console.log('OneSignal Service Worker registration failed');
                     });
             }
         });
@@ -3681,12 +3711,12 @@
             }
         }
 
-        // Service Worker Registration
+        // OneSignal Service Worker Registration
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
+                navigator.serviceWorker.register('OneSignalSDKWorker.js')
                     .then(registration => {
-                        console.log('Task Rock: Service Worker registered successfully', registration.scope);
+                        console.log('Task Rock: OneSignal Service Worker registered successfully', registration.scope);
                         
                         // Check for updates
                         registration.addEventListener('updatefound', () => {
@@ -3702,7 +3732,7 @@
                         });
                     })
                     .catch(error => {
-                        console.log('Task Rock: Service Worker registration failed', error);
+                        console.log('Task Rock: OneSignal Service Worker registration failed', error);
                     });
             });
 
