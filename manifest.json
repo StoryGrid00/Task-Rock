@@ -1,0 +1,62 @@
+{
+  "name": "Task Rock - Pet Rock Task Manager",
+  "short_name": "Task Rock",
+  "description": "A fun task management app with Jerry the Rock, your virtual pet companion",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f8f9fa",
+  "theme_color": "#8FEB60",
+  "orientation": "portrait-primary",
+  "scope": "./",
+  "lang": "en",
+  "categories": ["productivity", "games", "lifestyle"],
+  "icons": [
+    {
+      "src": "./assets/images/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/images/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/images/jerry.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Create Task",
+      "short_name": "New Task",
+      "description": "Quickly create a new task",
+      "url": "./?action=create-task",
+      "icons": [
+        {
+          "src": "./assets/images/logo.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Rock Shop",
+      "short_name": "Shop",
+      "description": "Customize Jerry with new items",
+      "url": "./?action=rock-shop",
+      "icons": [
+        {
+          "src": "./assets/images/jerry.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
+}
+
