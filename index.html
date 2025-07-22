@@ -266,6 +266,40 @@
     </script>
     
     <style>
+        /* Mobile Touch Support */
+        * {
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        /* Ensure all clickable elements have proper touch handling */
+        button, .section-header, .shop-item, .task-item, .achievement-item, 
+        .toggle-switch, .modal-content, .create-task-btn, .share-btn,
+        .clear-data-btn, .task-checkbox, .task-delete, .task-edit {
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+        }
+
+        /* Mobile-specific button styling */
+        @media (max-width: 768px) {
+            button, .shop-item, .task-item {
+                min-height: 44px; /* iOS recommended minimum touch target */
+                min-width: 44px;
+            }
+            
+            .section-header {
+                min-height: 48px;
+                display: flex;
+                align-items: center;
+            }
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -2808,6 +2842,53 @@
                 showJerryDialog('Thanks for visiting our store! 🛍️');
             }
         }
+
+        // Add touch event support for mobile devices
+        function addTouchSupport() {
+            // Add touch events to all clickable elements
+            const clickableElements = document.querySelectorAll(
+                'button, .section-header, .shop-item, .task-item, .achievement-item, ' +
+                '.toggle-switch, .create-task-btn, .share-btn, .clear-data-btn, ' +
+                '.task-checkbox, .task-delete, .task-edit, .close-btn'
+            );
+            
+            clickableElements.forEach(element => {
+                // Prevent default touch behaviors that might interfere
+                element.addEventListener('touchstart', function(e) {
+                    // Allow the touch to proceed normally
+                }, { passive: true });
+                
+                element.addEventListener('touchend', function(e) {
+                    e.preventDefault();
+                    // Trigger click event for touch devices
+                    if (this.onclick) {
+                        this.onclick(e);
+                    } else {
+                        // For elements without onclick, trigger click event
+                        this.click();
+                    }
+                }, { passive: false });
+            });
+        }
+
+        // Initialize touch support when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            addTouchSupport();
+            
+            // Re-add touch support when new elements are added dynamically
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.type === 'childList') {
+                        addTouchSupport();
+                    }
+                });
+            });
+            
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true
+            });
+        });
 
         // Toggle notifications function
         function toggleNotifications() {
