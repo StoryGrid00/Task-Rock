@@ -1,0 +1,72 @@
+{
+  "name": "task-rock",
+  "version": "1.2.0",
+  "description": "A fun PWA task manager with Jerry the Rock as your virtual companion, featuring Firebase push notifications",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx http-server . -p 3000 -o",
+    "dev": "npx http-server . -p 3000 -o",
+    "build": "echo 'No build step required - static files ready for deployment'",
+    "deploy": "echo 'Upload files to your web server or use deployment guide'",
+    "test": "echo 'Open in browser and test functionality'"
+  },
+  "keywords": [
+    "pwa",
+    "task-manager",
+    "productivity",
+    "firebase",
+    "push-notifications",
+    "virtual-pet",
+    "progressive-web-app",
+    "javascript",
+    "mobile-app"
+  ],
+  "author": "Task Rock Team",
+  "license": "MIT",
+  "homepage": "https://github.com/yourusername/task-rock",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/task-rock.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/task-rock/issues"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead",
+    "not ie 11"
+  ],
+  "pwa": {
+    "name": "Task Rock",
+    "short_name": "TaskRock",
+    "description": "Task management with Jerry the Rock",
+    "theme_color": "#9AE34A",
+    "background_color": "#1a1a1a",
+    "display": "standalone",
+    "orientation": "portrait-primary"
+  },
+  "firebase": {
+    "hosting": {
+      "public": ".",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ]
+    }
+  }
+}
+
