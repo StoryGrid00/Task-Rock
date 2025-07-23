@@ -266,43 +266,37 @@
     </script>
     
     <style>
-        /* Mobile Touch Support - Enhanced */
+        /* Mobile Touch Support - Simplified and Reliable */
         * {
             -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
             -webkit-touch-callout: none;
-            -webkit-user-select: none;
-            -khtml-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
         }
 
-        /* Allow text selection for inputs and text areas */
+        /* Allow text selection for inputs */
         input, textarea, [contenteditable] {
             -webkit-user-select: text;
-            -khtml-user-select: text;
             -moz-user-select: text;
             -ms-user-select: text;
             user-select: text;
         }
 
-        /* Ensure all interactive elements are properly sized for touch */
+        /* Ensure all interactive elements are properly sized and responsive */
         button, .section-header, .shop-item, .task-item, .achievement-item, 
-        .toggle-switch, .modal-content, .create-task-btn, .share-btn,
-        .clear-data-btn, .task-checkbox, .task-delete, .task-edit, .close-btn {
+        .toggle-switch, .create-task-btn, .share-btn, .clear-data-btn, 
+        .task-checkbox, .task-delete, .task-edit, .close-btn, [onclick] {
             touch-action: manipulation;
-            -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
             cursor: pointer;
             min-height: 44px;
             min-width: 44px;
             position: relative;
+            transition: transform 0.1s ease, opacity 0.1s ease;
         }
 
         /* Mobile-specific improvements */
         @media (max-width: 768px) {
             .section-header {
                 min-height: 56px;
-                padding: 12px 16px;
+                padding: 16px;
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
@@ -310,25 +304,18 @@
             
             .shop-item, .task-item {
                 min-height: 48px;
-                padding: 12px;
+                padding: 16px;
             }
             
             button {
                 min-height: 48px;
-                padding: 12px 16px;
+                padding: 12px 20px;
             }
             
             .toggle-switch {
                 min-height: 44px;
                 min-width: 60px;
             }
-        }
-
-        /* Add visual feedback for touch */
-        .touch-feedback {
-            background-color: rgba(0, 0, 0, 0.1) !important;
-            transform: scale(0.98);
-            transition: all 0.1s ease;
         }
 
         * {
@@ -2874,216 +2861,80 @@
             }
         }
 
-        // Enhanced Touch Support for Mobile Devices
-        class TouchHandler {
-            constructor() {
-                this.touchStartTime = 0;
-                this.touchStartPos = { x: 0, y: 0 };
-                this.maxTouchMove = 10; // Maximum pixels allowed for movement
-                this.maxTouchTime = 500; // Maximum time for a tap (ms)
-                this.init();
-            }
-
-            init() {
-                // Wait for DOM to be ready
-                if (document.readyState === 'loading') {
-                    document.addEventListener('DOMContentLoaded', () => this.setupTouchEvents());
-                } else {
-                    this.setupTouchEvents();
-                }
-            }
-
-            setupTouchEvents() {
-                // Get all interactive elements
-                const selectors = [
-                    'button',
-                    '.section-header',
-                    '.shop-item',
-                    '.task-item',
-                    '.achievement-item',
-                    '.toggle-switch',
-                    '.create-task-btn',
-                    '.share-btn',
-                    '.clear-data-btn',
-                    '.task-checkbox',
-                    '.task-delete',
-                    '.task-edit',
-                    '.close-btn',
-                    '[onclick]',
-                    '[data-action]'
-                ];
-
-                selectors.forEach(selector => {
-                    const elements = document.querySelectorAll(selector);
-                    elements.forEach(element => this.addTouchToElement(element));
-                });
-
-                // Set up mutation observer for dynamically added elements
-                this.setupMutationObserver();
-            }
-
-            addTouchToElement(element) {
-                // Skip if already has touch handler
-                if (element.hasAttribute('data-touch-enabled')) return;
-                element.setAttribute('data-touch-enabled', 'true');
-
-                // Remove existing event listeners to avoid duplicates
-                element.removeEventListener('touchstart', this.handleTouchStart);
-                element.removeEventListener('touchend', this.handleTouchEnd);
-                element.removeEventListener('touchmove', this.handleTouchMove);
-
-                // Add touch event listeners
-                element.addEventListener('touchstart', (e) => this.handleTouchStart(e, element), { passive: false });
-                element.addEventListener('touchend', (e) => this.handleTouchEnd(e, element), { passive: false });
-                element.addEventListener('touchmove', (e) => this.handleTouchMove(e, element), { passive: false });
-            }
-
-            handleTouchStart(e, element) {
-                this.touchStartTime = Date.now();
-                const touch = e.touches[0];
-                this.touchStartPos = { x: touch.clientX, y: touch.clientY };
+        // Simple and reliable touch support for mobile
+        function initializeTouchSupport() {
+            // Add touch events to all clickable elements
+            document.addEventListener('touchend', function(e) {
+                const target = e.target.closest('button, .section-header, .shop-item, .task-item, .toggle-switch, .create-task-btn, .share-btn, .clear-data-btn, .close-btn, [onclick]');
                 
-                // Add visual feedback
-                element.classList.add('touch-feedback');
-            }
-
-            handleTouchMove(e, element) {
-                const touch = e.touches[0];
-                const moveX = Math.abs(touch.clientX - this.touchStartPos.x);
-                const moveY = Math.abs(touch.clientY - this.touchStartPos.y);
-                
-                // If moved too much, cancel the touch
-                if (moveX > this.maxTouchMove || moveY > this.maxTouchMove) {
-                    element.classList.remove('touch-feedback');
-                }
-            }
-
-            handleTouchEnd(e, element) {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                // Remove visual feedback
-                element.classList.remove('touch-feedback');
-                
-                const touchTime = Date.now() - this.touchStartTime;
-                const touch = e.changedTouches[0];
-                const moveX = Math.abs(touch.clientX - this.touchStartPos.x);
-                const moveY = Math.abs(touch.clientY - this.touchStartPos.y);
-                
-                // Check if it's a valid tap
-                if (touchTime < this.maxTouchTime && moveX < this.maxTouchMove && moveY < this.maxTouchMove) {
-                    this.executeTap(element, e);
-                }
-            }
-
-            executeTap(element, originalEvent) {
-                // Handle different types of elements
-                if (element.onclick) {
-                    // Element has onclick handler
-                    element.onclick(originalEvent);
-                } else if (element.getAttribute('onclick')) {
-                    // Element has onclick attribute
-                    try {
-                        eval(element.getAttribute('onclick'));
-                    } catch (error) {
-                        console.error('Error executing onclick:', error);
-                    }
-                } else if (element.tagName === 'BUTTON' || element.type === 'button') {
-                    // Regular button
-                    element.click();
-                } else if (element.classList.contains('section-header')) {
-                    // Section header - find the onclick or call toggleSection
-                    const sectionId = this.getSectionId(element);
-                    if (sectionId && window.toggleSection) {
-                        window.toggleSection(sectionId);
-                    }
-                } else if (element.classList.contains('shop-item')) {
-                    // Shop item - extract onclick parameters
-                    this.handleShopItem(element);
-                } else if (element.classList.contains('toggle-switch') || element.querySelector('input[type="checkbox"]')) {
-                    // Toggle switch
-                    const checkbox = element.querySelector('input[type="checkbox"]') || element;
-                    if (checkbox.type === 'checkbox') {
-                        checkbox.checked = !checkbox.checked;
-                        // Trigger change event
-                        const changeEvent = new Event('change', { bubbles: true });
-                        checkbox.dispatchEvent(changeEvent);
-                        if (checkbox.onchange) {
-                            checkbox.onchange(changeEvent);
-                        }
-                    }
-                } else {
-                    // Fallback - trigger click event
-                    element.click();
-                }
-            }
-
-            getSectionId(element) {
-                // Extract section ID from various possible sources
-                const parent = element.closest('.section');
-                if (parent) {
-                    const content = parent.querySelector('.section-content');
-                    if (content) {
-                        return content.id.replace('Content', '');
-                    }
-                }
-                return null;
-            }
-
-            handleShopItem(element) {
-                // Extract shop item parameters from onclick attribute
-                const onclickAttr = element.getAttribute('onclick');
-                if (onclickAttr) {
-                    try {
-                        eval(onclickAttr);
-                    } catch (error) {
-                        console.error('Error executing shop item onclick:', error);
-                    }
-                }
-            }
-
-            setupMutationObserver() {
-                const observer = new MutationObserver((mutations) => {
-                    mutations.forEach((mutation) => {
-                        if (mutation.type === 'childList') {
-                            mutation.addedNodes.forEach((node) => {
-                                if (node.nodeType === Node.ELEMENT_NODE) {
-                                    // Check if the added node itself is interactive
-                                    const selectors = [
-                                        'button', '.section-header', '.shop-item', '.task-item',
-                                        '.achievement-item', '.toggle-switch', '.create-task-btn',
-                                        '.share-btn', '.clear-data-btn', '.task-checkbox',
-                                        '.task-delete', '.task-edit', '.close-btn', '[onclick]'
-                                    ];
-                                    
-                                    selectors.forEach(selector => {
-                                        if (node.matches && node.matches(selector)) {
-                                            this.addTouchToElement(node);
-                                        }
-                                        // Also check children
-                                        const children = node.querySelectorAll(selector);
-                                        children.forEach(child => this.addTouchToElement(child));
-                                    });
+                if (target) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    // Add visual feedback
+                    target.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        target.style.transform = '';
+                    }, 100);
+                    
+                    // Execute the appropriate action
+                    setTimeout(() => {
+                        if (target.onclick) {
+                            target.onclick(e);
+                        } else if (target.getAttribute('onclick')) {
+                            eval(target.getAttribute('onclick'));
+                        } else if (target.classList.contains('section-header')) {
+                            // Handle section headers
+                            const section = target.closest('.section');
+                            if (section) {
+                                const content = section.querySelector('.section-content');
+                                if (content) {
+                                    const sectionId = content.id.replace('Content', '');
+                                    if (window.toggleSection) {
+                                        window.toggleSection(sectionId);
+                                    }
                                 }
-                            });
+                            }
+                        } else if (target.classList.contains('toggle-switch')) {
+                            // Handle toggle switches
+                            const checkbox = target.querySelector('input[type="checkbox"]');
+                            if (checkbox) {
+                                checkbox.checked = !checkbox.checked;
+                                if (checkbox.onchange) {
+                                    checkbox.onchange();
+                                }
+                            }
+                        } else {
+                            // Fallback - trigger click
+                            target.click();
                         }
-                    });
-                });
-
-                observer.observe(document.body, {
-                    childList: true,
-                    subtree: true
-                });
-            }
+                    }, 50);
+                }
+            }, { passive: false });
+            
+            // Prevent default touch behaviors that might interfere
+            document.addEventListener('touchstart', function(e) {
+                const target = e.target.closest('button, .section-header, .shop-item, .task-item, .toggle-switch, .create-task-btn, .share-btn, .clear-data-btn, .close-btn, [onclick]');
+                if (target) {
+                    target.style.opacity = '0.7';
+                }
+            }, { passive: true });
+            
+            document.addEventListener('touchcancel', function(e) {
+                const target = e.target.closest('button, .section-header, .shop-item, .task-item, .toggle-switch, .create-task-btn, .share-btn, .clear-data-btn, .close-btn, [onclick]');
+                if (target) {
+                    target.style.opacity = '';
+                    target.style.transform = '';
+                }
+            }, { passive: true });
         }
 
-        // Initialize touch handler
-        const touchHandler = new TouchHandler();
-
-        // Also add click event fallback for desktop
-        document.addEventListener('click', function(e) {
-            // This ensures desktop functionality still works
-        }, true);
+        // Initialize when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeTouchSupport);
+        } else {
+            initializeTouchSupport();
+        }
 
         // Toggle notifications function
         function toggleNotifications() {

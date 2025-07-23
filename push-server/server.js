@@ -147,50 +147,83 @@ app.post('/send-test', async (req, res) => {
     }
 });
 
-// Get subscription count
-app.get('/subscriptions/count', (req, res) => {
-    res.json({ count: subscriptions.length });
-});
-
-// Helper function to send test notification
-async function sendTestNotification() {
+// Send test notification endpoint (ENHANCED FOR BACKGROUND)
+app.post('/send-test', (req, res) => {
+    console.log('📤 Sending test notification to all subscribers...');
+    console.log('Request body:', req.body);
+    
     if (subscriptions.length === 0) {
-        throw new Error('No subscriptions available');
+        console.log('❌ No active subscriptions');
+        return res.status(400).json({ 
+            success: false, 
+            error: 'No active subscriptions' 
+        });
     }
     
-    const testPayload = JSON.stringify({
-        title: 'Task Rock Test',
-        body: 'This is a test notification from your self-hosted push server! 🎉',
+    const payload = JSON.stringify({
+        title: req.body.title || 'Task Rock Test',
+        body: req.body.body || 'Background notification test - app can be closed!',
         icon: '/assets/images/jerry.png',
         badge: '/assets/images/logo.png',
         tag: 'task-rock-test',
+        requireInteraction: true,
         data: {
             url: '/',
+            test: true,
             timestamp: Date.now(),
-            action: 'test'
+            ...req.body.data
         }
     });
     
-    const promises = subscriptions.map(async (subscription) => {
+    console.log('📦 Notification payload:', payload);
+    
+    const notificationPromises = subscriptions.map(async (subscription, index) => {
         try {
-            await webpush.sendNotification(subscription, testPayload);
-            return { success: true, endpoint: subscription.endpoint };
+            console.log(`📤 Sending to subscription ${index + 1}/${subscriptions.length}`);
+            
+            const result = await webpush.sendNotification(subscription, payload);
+            console.log(`✅ Notification sent successfully to subscription ${index + 1}`);
+            console.log('Response status:', result.statusCode);
+            
+            return { success: true, subscription: index + 1 };
         } catch (error) {
-            console.error('Test notification error:', error.message);
-            return { success: false, endpoint: subscription.endpoint, error: error.message };
+            console.error(`❌ Failed to send notification to subscription ${index + 1}:`, error);
+            
+            // Remove invalid subscriptions
+            if (error.statusCode === 410 || error.statusCode === 404) {
+                console.log(`🗑️ Removing invalid subscription ${index + 1}`);
+                subscriptions.splice(index, 1);
+            }
+            
+            return { success: false, subscription: index + 1, error: error.message };
         }
     });
     
-    const results = await Promise.all(promises);
-    const successful = results.filter(r => r.success).length;
-    const failed = results.filter(r => !r.success).length;
-    
-    return {
-        success: true,
-        message: `Test notifications sent: ${successful} successful, ${failed} failed`,
-        results: results
-    };
-}
+    Promise.all(notificationPromises)
+        .then(results => {
+            const successful = results.filter(r => r.success).length;
+            const failed = results.filter(r => !r.success).length;
+            
+            console.log(`📊 Notification results: ${successful} successful, ${failed} failed`);
+            
+            res.json({ 
+                success: true, 
+                message: `Test notification sent to ${successful} subscribers`,
+                results: {
+                    successful,
+                    failed,
+                    total: subscriptions.length
+                }
+            });
+        })
+        .catch(error => {
+            console.error('❌ Error sending notifications:', error);
+            res.status(500).json({ 
+                success: false, 
+                error: 'Failed to send notifications' 
+            });
+        });
+});
 
 // Start server
 app.listen(PORT, '0.0.0.0', () => {

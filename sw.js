@@ -57,9 +57,10 @@ self.addEventListener('fetch', (event) => {
     );
 });
 
-// Push event - handle incoming push messages
+// Push event - handle incoming push messages (ENHANCED FOR BACKGROUND)
 self.addEventListener('push', (event) => {
     console.log('[SW] Push event received:', event);
+    console.log('[SW] Service worker is running in background');
     
     let notificationData = {
         title: 'Task Rock',
@@ -94,8 +95,10 @@ self.addEventListener('push', (event) => {
         badge: notificationData.badge,
         tag: notificationData.tag,
         data: notificationData.data,
-        requireInteraction: false,
+        requireInteraction: true, // Keep notification visible until user interacts
         silent: false,
+        vibrate: [200, 100, 200], // Vibration pattern for mobile
+        renotify: true, // Allow re-notification with same tag
         actions: [
             {
                 action: 'view',
@@ -110,12 +113,61 @@ self.addEventListener('push', (event) => {
         ]
     };
     
-    console.log('[SW] Showing notification:', notificationData.title, notificationOptions);
+    console.log('[SW] Showing background notification:', notificationData.title, notificationOptions);
     
+    // CRITICAL: Always show notification for background push
     event.waitUntil(
-        self.registration.showNotification(notificationData.title, notificationOptions)
+        Promise.all([
+            // Show the notification
+            self.registration.showNotification(notificationData.title, notificationOptions),
+            // Log that background notification was sent
+            logBackgroundNotification(notificationData)
+        ])
     );
 });
+
+// Helper function to log background notifications
+async function logBackgroundNotification(data) {
+    try {
+        console.log('[SW] Background notification sent at:', new Date().toISOString());
+        console.log('[SW] Notification data:', data);
+        
+        // Store notification in IndexedDB for tracking
+        const db = await openNotificationDB();
+        const transaction = db.transaction(['notifications'], 'readwrite');
+        const store = transaction.objectStore('notifications');
+        
+        await store.add({
+            id: Date.now(),
+            title: data.title,
+            body: data.body,
+            timestamp: Date.now(),
+            type: 'background'
+        });
+        
+        console.log('[SW] Background notification logged to IndexedDB');
+    } catch (error) {
+        console.error('[SW] Error logging background notification:', error);
+    }
+}
+
+// Helper function to open IndexedDB for notifications
+function openNotificationDB() {
+    return new Promise((resolve, reject) => {
+        const request = indexedDB.open('TaskRockNotifications', 1);
+        
+        request.onerror = () => reject(request.error);
+        request.onsuccess = () => resolve(request.result);
+        
+        request.onupgradeneeded = (event) => {
+            const db = event.target.result;
+            if (!db.objectStoreNames.contains('notifications')) {
+                const store = db.createObjectStore('notifications', { keyPath: 'id' });
+                store.createIndex('timestamp', 'timestamp', { unique: false });
+            }
+        };
+    });
+}
 
 // Notification click event - handle notification clicks
 self.addEventListener('notificationclick', (event) => {
