@@ -11,35 +11,10 @@
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#9AE34A">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Task Rock">
     <meta name="application-name" content="Task Rock">
     <meta name="msapplication-TileColor" content="#9AE34A">
-    <meta name="mobile-web-app-capable" content="yes">
-    
-    <!-- iOS Safari Specific -->
-    <meta name="apple-touch-fullscreen" content="yes">
-    <meta name="format-detection" content="telephone=no">
-    <meta name="apple-mobile-web-app-orientations" content="portrait">
-    
-    <!-- iOS Push Notification Support -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    
-    <!-- iOS Splash Screen Support -->
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-startup-image" href="assets/images/logo.png">
-    
-    <!-- Enhanced iOS Icons -->
-    <link rel="apple-touch-icon" sizes="57x57" href="assets/images/browser-window-tab-thumbnail.png">
-    <link rel="apple-touch-icon" sizes="60x60" href="assets/images/browser-window-tab-thumbnail.png">
-    <link rel="apple-touch-icon" sizes="72x72" href="assets/images/browser-window-tab-thumbnail.png">
-    <link rel="apple-touch-icon" sizes="76x76" href="assets/images/browser-window-tab-thumbnail.png">
-    <link rel="apple-touch-icon" sizes="114x114" href="assets/images/browser-window-tab-thumbnail.png">
-    <link rel="apple-touch-icon" sizes="120x120" href="assets/images/browser-window-tab-thumbnail.png">
-    <link rel="apple-touch-icon" sizes="144x144" href="assets/images/browser-window-tab-thumbnail.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="assets/images/browser-window-tab-thumbnail.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="assets/images/browser-window-tab-thumbnail.png">
     
     <!-- Icons for Browser Tabs and Mobile -->
     <link rel="icon" type="image/png" sizes="32x32" href="assets/images/browser-window-tab-thumbnail.png">
@@ -67,149 +42,6 @@
     <meta name="twitter:title" content="Task Rock - Pet Rock Task Manager">
     <meta name="twitter:description" content="A fun task management app with Jerry the Rock, your virtual pet companion">
     <meta name="twitter:image" content="assets/images/icon-512x512.png">
-    
-    <!-- Firebase Scripts -->
-    <script type="module">
-        // Import Firebase modules
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getMessaging, getToken, onMessage } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging.js';
-        
-        // Make Firebase available globally
-        window.firebaseApp = null;
-        window.firebaseMessaging = null;
-        window.initializeFirebaseMessaging = null;
-        
-        // Firebase configuration will be set in the main script
-        window.firebaseConfig = {
-          apiKey: "AIzaSyCVgC9WK1aurAOwWSsdT0cgg4PMJlhC_ms",
-          authDomain: "taskrock-8a79f.firebaseapp.com",
-          projectId: "taskrock-8a79f",
-          storageBucket: "taskrock-8a79f.firebasestorage.app",
-          messagingSenderId: "658045532672",
-          appId: "1:658045532672:web:eccfd961a83669179eb6e5",
-          measurementId: "G-1KPM30D893"
-        };
-        
-        window.vapidKey = "BNG-BEKcNnw28UVOCxs22MZas2_R0iw5PVxBYAi57329eYJYzSG3iHO4rJRwIE-OOZmpE8YtbcmrRAiO5S0fUzk";
-        
-        // Initialize Firebase when DOM is ready
-        document.addEventListener('DOMContentLoaded', async () => {
-            try {
-                // Initialize Firebase
-                window.firebaseApp = initializeApp(window.firebaseConfig);
-                window.firebaseMessaging = getMessaging(window.firebaseApp);
-                
-                // Set up Firebase messaging functions with iOS compatibility
-                window.initializeFirebaseMessaging = async function() {
-                    try {
-                        console.log('Task Rock: Initializing Firebase messaging...');
-                        
-                        // Check if running on iOS
-                        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-                        const isStandalone = window.navigator.standalone;
-                        
-                        if (isIOS && !isStandalone) {
-                            console.log('Task Rock: iOS detected - Firebase notifications require adding to home screen');
-                            return 'ios_add_to_home';
-                        }
-                        
-                        // Request notification permission
-                        const permission = await Notification.requestPermission();
-                        
-                        if (permission === 'granted') {
-                            console.log('Task Rock: Notification permission granted');
-                            
-                            // Get FCM token with iOS-specific handling
-                            const token = await getToken(window.firebaseMessaging, { 
-                                vapidKey: window.vapidKey,
-                                serviceWorkerRegistration: await navigator.serviceWorker.ready
-                            });
-                            
-                            if (token) {
-                                console.log('Task Rock: FCM token received:', token);
-                                localStorage.setItem('fcm_token', token);
-                                return token;
-                            } else {
-                                console.log('Task Rock: No registration token available');
-                                return null;
-                            }
-                        } else {
-                            console.log('Task Rock: Notification permission denied');
-                            return null;
-                        }
-                    } catch (error) {
-                        console.error('Task Rock: Error initializing Firebase messaging:', error);
-                        return null;
-                    }
-                };
-                
-                // Set up foreground message handler
-                onMessage(window.firebaseMessaging, (payload) => {
-                    console.log('Task Rock: Foreground message received:', payload);
-                    
-                    const { title, body, icon } = payload.notification || {};
-                    const data = payload.data || {};
-                    
-                    if (title && body) {
-                        showFirebaseNotification(title, body, icon, data);
-                    }
-                    
-                    if (window.triggerJerryResponse) {
-                        setTimeout(() => {
-                            window.triggerJerryResponse('notification', { title, body, data });
-                        }, 1000);
-                    }
-                });
-                
-                console.log('Task Rock: Firebase initialized successfully');
-            } catch (error) {
-                console.error('Task Rock: Firebase initialization failed:', error);
-            }
-        });
-        
-        // Function to show Firebase notification in the app
-        function showFirebaseNotification(title, body, icon, data) {
-            const notification = document.createElement('div');
-            notification.className = 'firebase-notification';
-            notification.innerHTML = `
-                <div class="notification-content">
-                    <div class="notification-icon">
-                        <img src="${icon || './assets/images/jerry.png'}" alt="Notification" />
-                    </div>
-                    <div class="notification-text">
-                        <div class="notification-title">${title}</div>
-                        <div class="notification-body">${body}</div>
-                    </div>
-                    <button class="notification-close" onclick="this.parentElement.parentElement.remove()">×</button>
-                </div>
-            `;
-            
-            notification.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: white;
-                border-radius: 12px;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-                padding: 16px;
-                max-width: 300px;
-                z-index: 10000;
-                animation: slideIn 0.3s ease-out;
-            `;
-            
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                if (notification.parentElement) {
-                    notification.remove();
-                }
-            }, 5000);
-        }
-    </script>
-    
-    <!--    <!-- Simple System Notification System -->
-    <script src="./simple-notification-system.js"></script>
-    
     <style>
         * {
             margin: 0;
@@ -273,106 +105,6 @@
         @keyframes float {
             0%, 100% { transform: translateY(0px); }
             50% { transform: translateY(-8px); }
-        }
-
-        /* Firebase Notification Styles */
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-
-        .firebase-notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            padding: 16px;
-            max-width: 300px;
-            z-index: 10000;
-            animation: slideIn 0.3s ease-out;
-            border-left: 4px solid #8FEB60;
-        }
-
-        .firebase-notification .notification-content {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .firebase-notification .notification-icon img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-        }
-
-        .firebase-notification .notification-text {
-            flex: 1;
-        }
-
-        .firebase-notification .notification-title {
-            font-weight: 600;
-            margin-bottom: 4px;
-            color: #333;
-        }
-
-        .firebase-notification .notification-body {
-            font-size: 14px;
-            color: #666;
-        }
-
-        .firebase-notification .notification-close {
-            background: none;
-            border: none;
-            font-size: 18px;
-            cursor: pointer;
-            color: #999;
-            padding: 4px;
-            border-radius: 4px;
-            transition: background 0.2s ease;
-        }
-
-        .firebase-notification .notification-close:hover {
-            background: #f0f0f0;
-        }
-
-        /* Enhanced notification toggle styles */
-        .notification-status {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            margin-top: 12px;
-            padding: 10px 16px;
-            background: #f8f9fa;
-            border-radius: 12px;
-            border: 1px solid #e9ecef;
-        }
-
-        .notification-status .status-item {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .notification-status-indicator {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: #ccc;
-            transition: background 0.3s ease;
-        }
-
-        .notification-status-indicator.active {
-            background: #8FEB60;
-            box-shadow: 0 0 6px rgba(143, 235, 96, 0.6);
-        }
-
-        .notification-status-text {
-            font-size: 12px;
-            color: #666;
-            font-weight: 500;
         }
 
         .creature:hover {
@@ -1031,8 +763,8 @@
         .settings-item {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
-            padding: 20px 0;
+            align-items: center;
+            padding: 16px 0;
             border-bottom: 1px solid #e0e0e0;
         }
 
@@ -1042,20 +774,18 @@
 
         .settings-item-header {
             flex: 1;
-            margin-right: 16px;
         }
 
         .settings-item-title {
             font-size: 16px;
             font-weight: 600;
             color: #333;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
 
         .settings-item-desc {
             font-size: 14px;
             color: #666;
-            line-height: 1.4;
         }
 
         .share-btn {
@@ -1085,9 +815,7 @@
         /* Toggle Switch */
         .toggle-container {
             display: flex;
-            flex-direction: column;
             align-items: center;
-            gap: 4px;
         }
 
         .toggle-input {
@@ -1479,47 +1207,47 @@
         }
 
         #emailModal .modal-body {
-            padding: 20px 24px;
+            padding: 32px 28px;
         }
 
         #emailModal .modal-body p {
-            font-size: 15px;
+            font-size: 16px;
             color: #374151;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
             text-align: center;
             font-weight: 500;
         }
 
         #emailModal ul {
-            margin: 16px 0 20px 0;
+            margin: 20px 0 28px 0;
             padding: 0;
             list-style: none;
         }
 
         #emailModal li {
-            margin-bottom: 8px;
-            font-size: 14px;
+            margin-bottom: 12px;
+            font-size: 15px;
             color: #4b5563;
-            padding: 6px 0;
+            padding: 8px 0;
             border-left: 3px solid #8FEB60;
-            padding-left: 12px;
+            padding-left: 16px;
             background: rgba(143, 235, 96, 0.05);
-            border-radius: 0 6px 6px 0;
+            border-radius: 0 8px 8px 0;
         }
 
         .email-input-group {
             display: flex;
-            gap: 10px;
-            margin: 18px 0;
+            gap: 12px;
+            margin: 24px 0;
             flex-direction: column;
         }
 
         .email-input-group input[type="email"] {
             width: 100%;
-            padding: 12px 16px;
+            padding: 16px 20px;
             border: 2px solid #e5e7eb;
-            border-radius: 10px;
-            font-size: 15px;
+            border-radius: 12px;
+            font-size: 16px;
             transition: all 0.3s ease;
             background: #ffffff;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
@@ -1527,10 +1255,10 @@
 
         .email-input-group input[type="text"] {
             width: 100%;
-            padding: 12px 16px;
+            padding: 16px 20px;
             border: 2px solid #e5e7eb;
-            border-radius: 10px;
-            font-size: 15px;
+            border-radius: 12px;
+            font-size: 16px;
             transition: all 0.3s ease;
             background: #ffffff;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
@@ -1546,12 +1274,12 @@
 
         .submit-btn {
             width: 100%;
-            padding: 14px 20px;
+            padding: 16px 24px;
             background: linear-gradient(135deg, #8FEB60 0%, #7dd956 100%);
             color: #000000;
             border: none;
-            border-radius: 10px;
-            font-size: 15px;
+            border-radius: 12px;
+            font-size: 16px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -1571,10 +1299,10 @@
         }
 
         .privacy-note {
-            font-size: 12px;
+            font-size: 13px;
             color: #6b7280;
             text-align: center;
-            margin: 6px 0 12px 0;
+            margin: 8px 0 16px 0;
             font-style: italic;
         }
 
@@ -2017,25 +1745,12 @@
                 
                 <div class="settings-item">
                     <div class="settings-item-header">
-                        <div class="settings-item-title">🔔 Local Notifications</div>
-                        <div class="settings-item-desc">Browser-based notifications when tasks are due</div>
+                        <div class="settings-item-title">🔔 Task Notifications</div>
+                        <div class="settings-item-desc">Get notified when tasks are due soon</div>
                     </div>
                     <div class="toggle-container">
                         <input type="checkbox" id="notificationToggle" class="toggle-input" onchange="toggleNotifications()">
                         <label for="notificationToggle" class="toggle-label">
-                            <span class="toggle-slider"></span>
-                        </label>
-                    </div>
-                </div>
-                
-                <div class="settings-item">
-                    <div class="settings-item-header">
-                        <div class="settings-item-title">🔥 Firebase Push Notifications</div>
-                        <div class="settings-item-desc">Cloud-based notifications that work when app is closed</div>
-                    </div>
-                    <div class="toggle-container">
-                        <input type="checkbox" id="firebaseToggle" class="toggle-input" onchange="toggleFirebaseNotifications()">
-                        <label for="firebaseToggle" class="toggle-label">
                             <span class="toggle-slider"></span>
                         </label>
                     </div>
@@ -2224,8 +1939,6 @@
             hydrationReminderInterval: 60 * 60 * 1000, // 1 hour in milliseconds
             // Task Notifications
             taskNotificationsEnabled: true,
-            // Firebase Notifications
-            firebaseNotificationsEnabled: false,
             notifiedTasks: [], // Track which tasks have been notified about
             dueSoonTasks: [] // Track which tasks are marked as due soon (persistent until action taken)
         };
@@ -2336,10 +2049,6 @@
             }
 
             saveGameState();
-            
-            // Schedule system notifications for all tasks
-            scheduleTaskNotifications();
-            
             updateUI();
             closeModal();
         }
@@ -2347,11 +2056,6 @@
         // Complete task
         function completeTask(index) {
             const task = gameState.tasks[index];
-            
-            // Cancel system notifications for this task
-            if (window.taskRockNotifications) {
-                window.taskRockNotifications.cancelTaskNotification(task.id);
-            }
             
             // Remove from due soon tracking since task is being completed
             removeDueSoonTracking(task.id);
@@ -2789,12 +2493,11 @@
             saveGameState();
             
             if (gameState.taskNotificationsEnabled) {
-                showJerryDialog('🔔 Local notifications are now ON! I\'ll let you know when tasks are due soon!');
+                showJerryDialog('🔔 Task notifications are now ON! I\'ll let you know when tasks are due soon!');
                 // Request notification permission and start checking
                 requestNotificationPermission().then(permission => {
                     if (permission === 'granted') {
                         startDueTaskChecker();
-                        window.taskRockNotifications.setEnabled(true);
                     } else {
                         showJerryDialog('🔕 Notification permission denied. Please enable notifications in your browser settings.');
                         gameState.taskNotificationsEnabled = false;
@@ -2803,49 +2506,11 @@
                     }
                 });
             } else {
-                showJerryDialog('🔕 Local notifications are now OFF. You can turn them back on anytime!');
-                window.taskRockNotifications.setEnabled(false);
+                showJerryDialog('🔕 Task notifications are now OFF. You can turn them back on anytime!');
             }
         }
 
-        // Toggle Firebase notifications function
-        async function toggleFirebaseNotifications() {
-            const toggle = document.getElementById('firebaseToggle');
-            const isEnabled = toggle.checked;
-            
-            if (isEnabled) {
-                showJerryDialog('🔥 Connecting to Firebase...');
-                try {
-                    const result = await window.taskRockNotifications.initializeFirebase();
-                    
-                    if (result === 'ios_add_to_home') {
-                        toggle.checked = false;
-                        gameState.firebaseNotificationsEnabled = false;
-                        showJerryDialog('📱 On iOS, please add Task Rock to your home screen first, then enable Firebase notifications!');
-                    } else if (result) {
-                        gameState.firebaseNotificationsEnabled = true;
-                        showJerryDialog('🔥 Firebase push notifications are now ON! They work even when the app is closed!');
-                    } else {
-                        toggle.checked = false;
-                        gameState.firebaseNotificationsEnabled = false;
-                        showJerryDialog('❌ Failed to connect to Firebase. Please check your connection and try again.');
-                    }
-                } catch (error) {
-                    toggle.checked = false;
-                    gameState.firebaseNotificationsEnabled = false;
-                    showJerryDialog('❌ Firebase connection failed. Please try again later.');
-                    console.error('Firebase toggle error:', error);
-                }
-            } else {
-                gameState.firebaseNotificationsEnabled = false;
-                window.taskRockNotifications.setFirebaseEnabled(false);
-                showJerryDialog('🔥 Firebase notifications are now OFF.');
-            }
-            
-            saveGameState();
-        }
-
-        // Check if task is due within 10 minutes (for UI styling)
+        // Check if task is due within 10 minutes
         function isTaskDueSoon(task) {
             if (!task.dueDate) return false;
             
@@ -2855,63 +2520,6 @@
             
             // Return true if due within 10 minutes (600000 milliseconds)
             return timeDiff <= 600000 && timeDiff > 0;
-        }
-
-        // Check if task should trigger notification (exactly 20 minutes before)
-        function shouldNotifyForTask(task) {
-            if (!task.dueDate) return false;
-            
-            const now = new Date().getTime();
-            const dueTime = new Date(task.dueDate).getTime();
-            const timeDiff = dueTime - now;
-            
-            // Enhanced notification logic: notify at 20, 15, 10, 5, 2 minutes before
-            const twentyMinutes = 20 * 60 * 1000; // 20 minutes in milliseconds
-            const fifteenMinutes = 15 * 60 * 1000; // 15 minutes in milliseconds
-            const tenMinutes = 10 * 60 * 1000; // 10 minutes in milliseconds
-            const fiveMinutes = 5 * 60 * 1000; // 5 minutes in milliseconds
-            const twoMinutes = 2 * 60 * 1000; // 2 minutes in milliseconds
-            
-            // Check if task is within the 20-minute notification window
-            if (timeDiff > twentyMinutes || timeDiff <= 0) {
-                return false;
-            }
-            
-            // Determine which notification intervals we should send
-            const notificationIntervals = [
-                { time: twentyMinutes, id: '20min' },
-                { time: fifteenMinutes, id: '15min' },
-                { time: tenMinutes, id: '10min' },
-                { time: fiveMinutes, id: '5min' },
-                { time: twoMinutes, id: '2min' }
-            ];
-            
-            // Check if we should send a notification for any interval
-            for (const interval of notificationIntervals) {
-                const notificationId = `task_${task.id}_${interval.id}`;
-                
-                // Initialize notifiedTasks array if it doesn't exist
-                if (!gameState.notifiedTasks) {
-                    gameState.notifiedTasks = [];
-                }
-                
-                // Check if we're within the notification window for this interval
-                // Allow 1-minute window around each notification time for reliability
-                const windowStart = interval.time + (30 * 1000); // 30 seconds after the target time
-                const windowEnd = interval.time - (30 * 1000); // 30 seconds before the target time
-                
-                if (timeDiff <= windowStart && timeDiff > windowEnd) {
-                    // Check if we haven't already sent this specific notification
-                    if (!gameState.notifiedTasks.includes(notificationId)) {
-                        // Store which specific notification this is for
-                        task._currentNotificationId = notificationId;
-                        task._notificationInterval = interval.id;
-                        return true;
-                    }
-                }
-            }
-            
-            return false;
         }
 
         // Check if task should show red styling (persistent until action taken)
@@ -2948,137 +2556,64 @@
             }
         }
 
-        // Simple task notification system - schedules notifications when tasks are created/updated
-        function scheduleTaskNotifications() {
-            if (!gameState.taskNotificationsEnabled || !window.taskRockNotifications) return;
-            
-            // Cancel all existing notifications
-            gameState.tasks.forEach(task => {
-                window.taskRockNotifications.cancelTaskNotification(task.id);
-            });
-            
-            // Schedule notifications for all incomplete tasks with due dates
-            gameState.tasks.forEach(task => {
-                if (!task.completed && task.dueDate) {
-                    window.taskRockNotifications.scheduleTaskNotification(task);
-                }
-            });
-        }
-
-        // Check for due tasks and send notifications (simplified)
+        // Check for due tasks and send notifications (iOS/Android compatible)
         function checkDueTasksAndNotify() {
-            // This function is now mainly for Jerry's dialogue
             if (!gameState.taskNotificationsEnabled) return;
             
-            const now = new Date().getTime();
-            gameState.tasks.forEach(task => {
-                if (!task.completed && task.dueDate) {
-                    const dueTime = new Date(task.dueDate).getTime();
-                    const timeUntilDue = Math.round((dueTime - now) / (1000 * 60)); // minutes
-                    
-                    // Show Jerry dialogue for very close tasks (only once per task)
-                    if (timeUntilDue <= 2 && timeUntilDue > 0 && !task.jerryWarned) {
-                        showJerryDialog(`🚨 "${task.title}" is due in ${timeUntilDue} minutes! You've got this! 🚨`);
-                        task.jerryWarned = true;
-                        saveGameState();
-                    }
+            const dueTasks = gameState.tasks.filter(task => isTaskDueSoon(task));
+            
+            dueTasks.forEach(task => {
+                // Create unique notification ID to prevent duplicates
+                const notificationId = `task_${task.id}_due`;
+                
+                // Check if we've already notified about this task
+                if (!gameState.notifiedTasks) {
+                    gameState.notifiedTasks = [];
+                }
+                
+                if (!gameState.notifiedTasks.includes(notificationId)) {
+                    sendTaskDueNotification(task);
+                    gameState.notifiedTasks.push(notificationId);
+                    saveGameState();
                 }
             });
+            
+            // Clean up old notification IDs for completed tasks
+            if (gameState.notifiedTasks) {
+                const currentTaskIds = gameState.tasks.map(task => `task_${task.id}_due`);
+                gameState.notifiedTasks = gameState.notifiedTasks.filter(id => 
+                    currentTaskIds.includes(id)
+                );
+            }
         }
 
-        // Send notification for due task with Firebase integration
-        function sendTaskDueNotification(task, interval = '20min') {
+        // Send notification for due task (iOS/Android compatible)
+        function sendTaskDueNotification(task) {
             const now = new Date();
             const dueTime = new Date(task.dueDate);
+            const minutesUntilDue = Math.ceil((dueTime - now) / (1000 * 60));
             
-            // Customize notification message based on interval
-            let title, body, tag, urgency, requireInteraction;
-            
-            switch (interval) {
-                case '20min':
-                    title = 'Task Rock - 20 Minutes Left!';
-                    body = `"${task.title}" is due in 20 minutes! Time to get started! 🗿`;
-                    tag = `task_${task.id}_20min`;
-                    urgency = 'medium';
-                    requireInteraction = false;
-                    break;
-                case '15min':
-                    title = 'Task Rock - 15 Minutes Left!';
-                    body = `"${task.title}" is due in 15 minutes! Let's make progress! 💪`;
-                    tag = `task_${task.id}_15min`;
-                    urgency = 'medium';
-                    requireInteraction = false;
-                    break;
-                case '10min':
-                    title = 'Task Rock - 10 Minutes Left!';
-                    body = `"${task.title}" is due in 10 minutes! Crunch time! 🔥`;
-                    tag = `task_${task.id}_10min`;
-                    urgency = 'high';
-                    requireInteraction = true;
-                    break;
-                case '5min':
-                    title = 'Task Rock - 5 Minutes Left!';
-                    body = `"${task.title}" is due in 5 minutes! Final push! Jerry believes in you! 🚨`;
-                    tag = `task_${task.id}_5min`;
-                    urgency = 'urgent';
-                    requireInteraction = true;
-                    break;
-                case '2min':
-                    title = 'Task Rock - 2 Minutes Left!';
-                    body = `"${task.title}" is due in 2 minutes! You've got this! 🚨`;
-                    tag = `task_${task.id}_2min`;
-                    urgency = 'urgent';
-                    requireInteraction = true;
-                    break;
-                default:
-                    title = 'Task Rock - Task Due Soon!';
-                    body = `"${task.title}" needs your attention!`;
-                    tag = `task_${task.id}_default`;
-                    urgency = 'medium';
-                    requireInteraction = false;
-            }
-            
-            // Get vibration pattern based on urgency
-            const getVibrationPattern = (urgency) => {
-                switch (urgency) {
-                    case 'urgent':
-                        return [200, 100, 200, 100, 200, 100, 200]; // Very urgent
-                    case 'high':
-                        return [200, 100, 200, 100, 200]; // High priority
-                    case 'medium':
-                        return [200, 100, 200]; // Medium priority
-                    default:
-                        return [200]; // Default pattern
-                }
-            };
+            const title = 'Task Rock - Task Due Soon!';
+            const body = minutesUntilDue <= 0 
+                ? `"${task.title}" is due now!`
+                : `"${task.title}" is due in ${minutesUntilDue} minute${minutesUntilDue !== 1 ? 's' : ''}!`;
             
             const options = {
                 body: body,
                 icon: 'assets/images/jerry.png',
                 badge: 'assets/images/logo.png',
-                tag: tag, // Prevents duplicate notifications for each interval
-                requireInteraction: requireInteraction,
-                vibrate: getVibrationPattern(urgency),
-                silent: false, // Ensure notification makes sound
+                tag: `task_${task.id}`, // Prevents duplicate notifications
+                requireInteraction: true, // Keeps notification visible until user interacts
+                vibrate: [200, 100, 200], // Vibration pattern for mobile
                 data: {
                     taskId: task.id,
-                    type: `task_due_${interval}`,
-                    dueTime: task.dueDate,
-                    interval: interval,
-                    urgency: urgency,
-                    timestamp: Date.now(),
-                    source: 'local'
+                    type: 'task_due'
                 },
                 actions: [
                     {
                         action: 'complete',
                         title: 'Mark Complete',
                         icon: 'assets/images/jerry.png'
-                    },
-                    {
-                        action: 'snooze',
-                        title: 'Snooze 5min',
-                        icon: 'assets/images/logo.png'
                     },
                     {
                         action: 'view',
@@ -3088,13 +2623,7 @@
                 ]
             };
 
-            // Try Firebase first, then fallback to local notifications
-            if (window.firebaseMessaging && window.initializeFirebaseMessaging) {
-                // Send via Firebase if available
-                sendFirebaseNotification(title, body, options.data, urgency);
-            }
-            
-            // Also send local notification for immediate display
+            // Try different notification methods for maximum compatibility
             if ('serviceWorker' in navigator && 'PushManager' in window) {
                 // Use service worker for better mobile support
                 navigator.serviceWorker.ready.then(registration => {
@@ -3105,31 +2634,6 @@
                 });
             } else {
                 fallbackNotification(title, options);
-            }
-        }
-
-        // Send Firebase notification (for server-side scheduling)
-        function sendFirebaseNotification(title, body, data, urgency) {
-            try {
-                // This would typically send to your server to schedule Firebase notifications
-                // For now, we'll log the notification data
-                console.log('Task Rock: Firebase notification data:', {
-                    title,
-                    body,
-                    data,
-                    urgency,
-                    timestamp: Date.now()
-                });
-                
-                // If you have a server endpoint, you would send the data there:
-                // fetch('/api/schedule-notification', {
-                //     method: 'POST',
-                //     headers: { 'Content-Type': 'application/json' },
-                //     body: JSON.stringify({ title, body, data, urgency })
-                // });
-                
-            } catch (error) {
-                console.error('Task Rock: Error sending Firebase notification:', error);
             }
         }
 
@@ -3173,23 +2677,21 @@
             });
         }
 
-        // Initialize simple system notification system
-        async function initializeNotificationSystem() {
+        // Initialize notification system for mobile compatibility
+        function initializeNotificationSystem() {
+            // Request permission on first load if notifications are enabled
             if (gameState.taskNotificationsEnabled) {
-                const success = await window.taskRockNotifications.initialize();
-                if (success) {
-                    console.log('Task Rock: System notifications enabled');
-                    updateNotificationStatus('system', true);
-                    // Start checking for due tasks
-                    startDueTaskChecker();
-                } else {
-                    console.log('Task Rock: System notifications failed to initialize');
-                    updateNotificationStatus('system', false);
-                    gameState.taskNotificationsEnabled = false;
-                    saveGameState();
-                }
-            } else {
-                updateNotificationStatus('system', false);
+                requestNotificationPermission().then(permission => {
+                    if (permission === 'granted') {
+                        console.log('Notification permission granted');
+                        // Start checking for due tasks
+                        startDueTaskChecker();
+                    } else {
+                        console.log('Notification permission denied');
+                        gameState.taskNotificationsEnabled = false;
+                        saveGameState();
+                    }
+                });
             }
 
             // Listen for service worker messages (notification clicks)
@@ -3198,78 +2700,17 @@
                     if (event.data && event.data.type === 'notification_click') {
                         handleNotificationClick(event.data);
                     }
-                    
-                    // Handle Firebase messaging service worker messages
-                    if (event.data && event.data.type === 'COMPLETE_TASK_FROM_NOTIFICATION') {
-                        const taskId = event.data.taskId;
-                        const task = gameState.tasks.find(t => t.id === taskId);
-                        if (task) {
-                            completeTask(taskId);
-                            showJerryDialog(`Great job! You completed "${task.title}" from the notification! 🎉`);
-                        }
-                    }
-                    
-                    if (event.data && event.data.type === 'SNOOZE_TASK_FROM_NOTIFICATION') {
-                        const taskId = event.data.taskId;
-                        const minutes = event.data.minutes || 5;
-                        const task = gameState.tasks.find(t => t.id === taskId);
-                        if (task) {
-                            // Update task due date by adding snooze time
-                            const newDueDate = new Date(new Date(task.dueDate).getTime() + (minutes * 60 * 1000));
-                            task.dueDate = newDueDate.toISOString();
-                            saveGameState();
-                            renderTasks();
-                            showJerryDialog(`Task "${task.title}" snoozed for ${minutes} minutes! 😴`);
-                        }
-                    }
                 });
             }
         }
 
-        // Update notification status indicators in the UI
-        function updateNotificationStatus(type, isActive) {
-            // Add notification status to the settings or notification toggle area
-            const notificationToggle = document.getElementById('notificationToggle');
-            if (notificationToggle && notificationToggle.parentElement) {
-                let statusContainer = notificationToggle.parentElement.querySelector('.notification-status');
-                
-                if (!statusContainer) {
-                    statusContainer = document.createElement('div');
-                    statusContainer.className = 'notification-status';
-                    notificationToggle.parentElement.appendChild(statusContainer);
-                }
-                
-                // Update or create status indicator (only system notifications)
-                let systemIndicator = statusContainer.querySelector('.system-status');
-                
-                if (!systemIndicator) {
-                    systemIndicator = document.createElement('div');
-                    systemIndicator.className = 'status-item system-status';
-                    systemIndicator.innerHTML = `
-                        <div class="notification-status-indicator"></div>
-                        <span class="notification-status-text">System Notifications</span>
-                    `;
-                    statusContainer.appendChild(systemIndicator);
-                }
-                
-                // Update the system indicator
-                if (type === 'system') {
-                    const indicator = systemIndicator.querySelector('.notification-status-indicator');
-                    indicator.classList.toggle('active', isActive);
-                }
-            }
-        }
-
-        // Start periodic checking for due tasks (every 30 seconds for better accuracy)
+        // Start periodic checking for due tasks
         function startDueTaskChecker() {
-            // Check every 30 seconds for due tasks (for Jerry's dialogue)
-            setInterval(checkDueTasksAndNotify, 30000);
+            // Check every minute for due tasks
+            setInterval(checkDueTasksAndNotify, 60000);
             
             // Also check immediately
             checkDueTasksAndNotify();
-            
-            // Schedule all task notifications
-            scheduleTaskNotifications();
         }
 
         // Handle notification click actions
@@ -3437,11 +2878,6 @@
             const notificationToggle = document.getElementById('notificationToggle');
             if (notificationToggle) {
                 notificationToggle.checked = gameState.taskNotificationsEnabled;
-            }
-            
-            const firebaseToggle = document.getElementById('firebaseToggle');
-            if (firebaseToggle) {
-                firebaseToggle.checked = gameState.firebaseNotificationsEnabled;
             }
         }
 
@@ -3839,14 +3275,14 @@
             // Set up periodic health checks
             setInterval(checkHealthPenalties, 60000); // Check every minute
             
-            // Register service worker for PWA and background notifications
+            // Register service worker for PWA
             if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('./task-rock-background-notifications-sw.js')
+                navigator.serviceWorker.register('./sw.js')
                     .then(function(registration) {
-                        console.log('Task Rock: Background Notifications Service Worker registered successfully');
+                        console.log('Service Worker registered successfully');
                     })
                     .catch(function(error) {
-                        console.log('Task Rock: Service Worker registration failed:', error);
+                        console.log('Service Worker registration failed');
                     });
             }
         });
@@ -4168,12 +3604,12 @@
             }
         }
 
-        // Service Worker Registration for Background Notifications
+        // Service Worker Registration
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./task-rock-background-notifications-sw.js')
+                navigator.serviceWorker.register('./sw.js')
                     .then(registration => {
-                        console.log('Task Rock: Background Notifications Service Worker registered successfully', registration.scope);
+                        console.log('Task Rock: Service Worker registered successfully', registration.scope);
                         
                         // Check for updates
                         registration.addEventListener('updatefound', () => {
@@ -4198,85 +3634,7 @@
                 if (event.data && event.data.type === 'SYNC_COMPLETE') {
                     console.log('Task Rock: Background sync completed');
                 }
-                
-                // Handle storage data requests from service worker
-                if (event.data && event.data.type === 'GET_STORAGE_DATA') {
-                    const key = event.data.key;
-                    let data = null;
-                    
-                    try {
-                        if (key === 'taskRockGameState') {
-                            data = gameState;
-                        } else {
-                            data = JSON.parse(localStorage.getItem(key));
-                        }
-                    } catch (error) {
-                        console.error('Task Rock: Error getting storage data', error);
-                    }
-                    
-                    // Send data back to service worker
-                    event.ports[0].postMessage(data);
-                }
-                
-                // Handle storage data updates from service worker
-                if (event.data && event.data.type === 'SET_STORAGE_DATA') {
-                    const key = event.data.key;
-                    const data = event.data.data;
-                    
-                    try {
-                        if (key === 'taskRockGameState') {
-                            // Update the global gameState
-                            Object.assign(gameState, data);
-                            saveGameState();
-                        } else {
-                            localStorage.setItem(key, JSON.stringify(data));
-                        }
-                    } catch (error) {
-                        console.error('Task Rock: Error setting storage data', error);
-                    }
-                }
-                
-                // Handle notification click events from service worker
-                if (event.data && event.data.type === 'notification_click') {
-                    console.log('Task Rock: Notification clicked', event.data);
-                    
-                    if (event.data.action === 'complete' && event.data.taskId) {
-                        // Complete the task
-                        const task = gameState.tasks.find(t => t.id === event.data.taskId);
-                        if (task) {
-                            completeTask(task.id);
-                            showJerryDialog(`Great job! You completed "${task.title}" from the notification! 🎉`);
-                        }
-                    } else if (event.data.action === 'view' && event.data.taskId) {
-                        // Scroll to and highlight the task
-                        const task = gameState.tasks.find(t => t.id === event.data.taskId);
-                        if (task) {
-                            // Expand tasks section if collapsed
-                            const tasksSection = document.getElementById('tasks-section');
-                            if (tasksSection && !tasksSection.classList.contains('expanded')) {
-                                toggleSection('tasks');
-                            }
-                            
-                            // Show Jerry message about the task
-                            showJerryDialog(`Here's your task: "${task.title}". ${task.description || 'Time to get it done!'} 🗿`);
-                        }
-                    }
-                }
             });
-            
-            // Register background sync for task notifications
-            if ('serviceWorker' in navigator && 'sync' in window.ServiceWorkerRegistration.prototype) {
-                navigator.serviceWorker.ready.then(registration => {
-                    // Register periodic background sync for task checking
-                    setInterval(() => {
-                        registration.sync.register('check-due-tasks').catch(error => {
-                            console.log('Task Rock: Background sync registration failed', error);
-                        });
-                    }, 60000); // Check every minute for background sync
-                    
-                    console.log('Task Rock: Background sync for notifications registered');
-                });
-            }
         }
 
         // PWA Install Prompt
@@ -4307,7 +3665,7 @@
 
         // === Jerry Dialogue System ===
 
-        // Jerry's full dialogue object (expandable) with personalized variations
+        // Jerry's full dialogue object (expandable)
         const jerryDialogues = {
             greetings: [
                 "Hey there, Rock Star! Let's roll.",
@@ -4319,17 +3677,6 @@
                 "Rise and grind — or at least poke a checkbox or two."
             ],
 
-            // Personalized greetings when user name is available
-            personalizedGreetings: [
-                "Hey {name}! Ready to rock some tasks together?",
-                "Welcome back, {name}! Let's make today productive!",
-                "{name}, my favorite human! Time to get things done!",
-                "Oh hey {name}! I've been waiting for you to come back!",
-                "Look who's here! It's {name}! Let's crush this day!",
-                "{name}! Ready to show these tasks who's boss?",
-                "Hey {name}, let's turn today into a masterpiece!"
-            ],
-
             health: {
                 high: [
                     "Feeling solid as slate today!",
@@ -4337,38 +3684,17 @@
                     "No cracks, no worries.",
                     "I could smash a mountain right now!"
                 ],
-                // Personalized high health messages
-                personalizedHigh: [
-                    "Feeling great, {name}! Ready for anything!",
-                    "{name}, I'm in peak condition! Let's tackle those tasks!",
-                    "Solid as a rock, {name}! What's our next move?",
-                    "Hey {name}, I'm feeling unstoppable today!"
-                ],
                 mid: [
                     "I'm doing okay, but a few tasks would help.",
                     "Could go for a good stretch… or a small win.",
                     "Half full, half cracked. Your call.",
                     "You and I? We're getting through it."
                 ],
-                // Personalized mid health messages
-                personalizedMid: [
-                    "{name}, I could use a little boost. Help me out?",
-                    "Hey {name}, feeling a bit worn. A task or two would help!",
-                    "{name}, I'm hanging in there, but could use your help.",
-                    "Not my best day, {name}, but together we can fix this!"
-                ],
                 low: [
                     "I'm chipping, friend… just a few tasks, please.",
                     "Even a rock needs TLC. Can you help me?",
                     "Feeling fragile today… but I believe in you.",
                     "Don't let me crumble. You've got this."
-                ],
-                // Personalized low health messages
-                personalizedLow: [
-                    "{name}, I'm really struggling here. Please help me!",
-                    "Hey {name}, I need you more than ever right now.",
-                    "{name}, I'm counting on you to help me recover.",
-                    "Please {name}, don't let me crumble. I believe in you!"
                 ]
             },
 
@@ -4379,70 +3705,35 @@
                     "Feeling strong and ready for anything!",
                     "Rock solid and ready to roll!"
                 ],
-                personalizedConfident: [
-                    "{name}, I'm feeling unstoppable! Let's do this!",
-                    "Hey {name}, I'm rock solid and ready for action!",
-                    "{name}, nothing can stop us when we work together!"
-                ],
                 slightlyWary: [
                     "Hmm... might be a few cracks showing.",
                     "Starting to feel a little worn, but I'm hanging in there.",
                     "Could use a little boost, but I'm still here!"
-                ],
-                personalizedSlightlyWary: [
-                    "{name}, I'm starting to feel a bit rough around the edges.",
-                    "Hey {name}, could use some of your magic touch!",
-                    "{name}, I'm still strong, but could use your help soon."
                 ],
                 cautious: [
                     "Okay, starting to feel that…",
                     "Things are getting a bit rough around the edges.",
                     "I'm holding together, but barely."
                 ],
-                personalizedCautious: [
-                    "{name}, I'm getting worried. Can you help me?",
-                    "Hey {name}, things are getting tough for me.",
-                    "{name}, I really need your support right now."
-                ],
                 anxious: [
                     "Chipping away at me, huh?",
                     "This is getting concerning... I need some help.",
                     "The cracks are starting to show more."
-                ],
-                personalizedAnxious: [
-                    "{name}, I'm really scared. Please don't abandon me!",
-                    "Hey {name}, I'm falling apart. I need you!",
-                    "{name}, please help me before it's too late!"
                 ],
                 low: [
                     "I don't feel so rock-solid anymore…",
                     "My foundation is shaking... literally.",
                     "This isn't looking good for me."
                 ],
-                personalizedLow: [
-                    "{name}, I'm barely holding on. Save me!",
-                    "Hey {name}, I'm in serious trouble here!",
-                    "{name}, I'm counting on you to rescue me!"
-                ],
                 weak: [
                     "Oof... this might be it for me…",
                     "I'm barely holding together here.",
                     "Everything hurts, even for a rock."
                 ],
-                personalizedWeak: [
-                    "{name}, I don't know how much longer I can last...",
-                    "Hey {name}, I'm at my breaking point!",
-                    "{name}, please... I need you now more than ever!"
-                ],
                 desperate: [
                     "I'm crumbling here… help?",
                     "Please... I can't take much more of this.",
                     "Save me before I turn to dust!"
-                ],
-                personalizedDesperate: [
-                    "{name}, I'm begging you... save me!",
-                    "Hey {name}, this is my last cry for help!",
-                    "{name}, please don't let me become dust!"
                 ]
             },
 
@@ -4452,38 +3743,18 @@
                     "You drank, I thrived. Symbiosis!",
                     "Jerry approves of the liquid courage!"
                 ],
-                personalizedDrinkWater: [
-                    "Great job staying hydrated, {name}! 💧",
-                    "{name}, you're taking care of yourself! I'm proud!",
-                    "Way to go, {name}! Hydration is key!"
-                ],
                 "Stretch": [
                     "Ahh, even rocks like to loosen up a bit 🧘",
                     "Flex those muscles! I'll pretend I have those too."
-                ],
-                personalizedStretch: [
-                    "Nice stretch, {name}! Wish I could join you! 🧘",
-                    "{name}, taking care of your body! Smart move!",
-                    "Love seeing you stretch, {name}! Keep it up!"
                 ],
                 "Read": [
                     "Words! You used words! I'm proud.",
                     "Reading is the weightlifting of the mind. Rock on!"
                 ],
-                personalizedRead: [
-                    "Reading again, {name}? You're so smart!",
-                    "{name}, expanding that brilliant mind of yours!",
-                    "Love that you're reading, {name}! Knowledge rocks!"
-                ],
                 default: [
                     "Another one down! You're unstoppable.",
                     "You keep doing you — I'll be here vibin'.",
                     "Pebble by pebble, you're making a path."
-                ],
-                personalizedDefault: [
-                    "Another win for {name}! You're amazing!",
-                    "{name}, you're absolutely crushing it!",
-                    "Way to go, {name}! I'm so proud of you!"
                 ]
             },
 
@@ -4492,19 +3763,9 @@
                     "🔥 That's a solid habit streak you've got!",
                     "Every day you get better. I'm impressed!"
                 ],
-                personalizedHabits: [
-                    "🔥 {name}, your streak is incredible!",
-                    "{name}, you're building amazing habits! So proud!",
-                    "Look at that streak, {name}! You're unstoppable! 🔥"
-                ],
                 tasks: [
                     "Task streaks are heating up! 🔥",
                     "You're unstoppable lately!"
-                ],
-                personalizedTasks: [
-                    "{name}, your task streak is on fire! 🔥",
-                    "Wow {name}, you're absolutely unstoppable!",
-                    "{name}, this streak is legendary! Keep it up! 🔥"
                 ]
             },
 
@@ -4513,13 +3774,6 @@
                 "You ever wonder if sand misses being a rock?",
                 "If I had legs, I'd be out walking. Just sayin'.",
                 "Silence is cool, but progress is cooler."
-            ],
-
-            personalizedIdle: [
-                "Hey {name}, still here thinking about you!",
-                "{name}, just wondering what you're up to...",
-                "Missing you, {name}! Come back soon!",
-                "{name}, I'm here whenever you're ready to rock!"
             ],
 
             motivation: [
@@ -4634,41 +3888,10 @@
                 "Success is the reward for consistent effort."
             ],
 
-            // Personalized motivational messages
-            personalizedMotivation: [
-                "{name}, you've got this! I believe in you completely!",
-                "Hey {name}, you're stronger than you know!",
-                "{name}, every step you take makes me proud!",
-                "You're amazing, {name}! Keep pushing forward!",
-                "{name}, I've seen what you can do - you're unstoppable!",
-                "Hey {name}, your determination inspires even a rock like me!",
-                "{name}, you're building something incredible!",
-                "Keep going, {name}! Your future self will thank you!",
-                "{name}, you're more capable than you realize!",
-                "Hey {name}, every challenge makes you stronger!",
-                "{name}, your persistence is your superpower!",
-                "You're writing an amazing story, {name}!",
-                "{name}, I'm so proud of how far you've come!",
-                "Hey {name}, you're exactly where you need to be!",
-                "{name}, your potential is limitless!",
-                "Keep shining, {name}! You're doing great!",
-                "{name}, every effort you make counts!",
-                "Hey {name}, you're building momentum every day!",
-                "{name}, your dedication is truly inspiring!",
-                "You're creating positive change, {name}!"
-            ],
-
             sleep: [
                 "Time to rest, friend. Even rocks need downtime.",
                 "Let's call it a night. You've done enough.",
                 "Close the app. Recharge. I'll be here tomorrow."
-            ],
-
-            personalizedSleep: [
-                "Good night, {name}! Rest well, you've earned it!",
-                "Sweet dreams, {name}! I'll be here when you wake up!",
-                "Time to recharge, {name}! See you tomorrow!",
-                "Sleep tight, {name}! Tomorrow's another day to rock!"
             ],
 
             taskCompletion: [
@@ -4681,28 +3904,11 @@
                 "You rock! Literally, I'm a rock."
             ],
 
-            personalizedTaskCompletion: [
-                "Fantastic work, {name}! 🪨",
-                "{name}, you absolutely crushed that task!",
-                "Way to go, {name}! That's how it's done!",
-                "Amazing job, {name}! You're on fire! 🔥",
-                "{name}, you make it look so easy!",
-                "Brilliant work, {name}! I'm so proud!",
-                "{name}, you rock harder than me! And I'm literally a rock!"
-            ],
-
             taskCreation: [
                 "New task? I'm ready to help you tackle it!",
                 "Let's add some structure to this day!",
                 "Another goal to crush? Count me in!",
                 "Building momentum, one task at a time!"
-            ],
-
-            personalizedTaskCreation: [
-                "New task, {name}? Let's crush it together!",
-                "{name}, I love seeing you plan ahead!",
-                "Another goal for {name}? I'm excited to help!",
-                "{name}, you're so organized! Let's do this!"
             ],
 
             // Item-specific dialogue when Jerry gets equipped with items
@@ -4714,11 +3920,6 @@
                     "Looking sharp in blue! Ready for business!",
                     "Blue is my color! Let's get things done!"
                 ],
-                personalizedBlueHat: [
-                    "{name}, how do I look in blue? Pretty sharp, right?",
-                    "Thanks for the blue hat, {name}! I feel distinguished!",
-                    "{name}, this blue really brings out my rocky charm!"
-                ],
                 topHat: [
                     "Feeling dapper in this top hat!",
                     "Class never goes out of style.",
@@ -4727,32 +3928,17 @@
                     "I feel so sophisticated! Time to tackle some classy tasks!",
                     "Top hat, top performance! Let's roll!"
                 ],
-                personalizedTopHat: [
-                    "{name}, I feel like a distinguished gentleman in this top hat!",
-                    "Thanks for the classy upgrade, {name}! I'm ready for anything!",
-                    "{name}, with this top hat, I'm ready to tackle sophisticated tasks!"
-                ],
                 armyHelmet: [
                     "Reporting for duty! Ready to battle those tasks!",
                     "Military precision mode activated!",
                     "Let's march through that to-do list, soldier!",
                     "Tactical Jerry is ready for mission success!"
                 ],
-                personalizedArmyHelmet: [
-                    "Reporting for duty, {name}! Ready for battle!",
-                    "{name}, tactical Jerry is ready for mission success!",
-                    "Thanks for the gear, {name}! Let's march through those tasks!"
-                ],
                 wizardHat: [
                     "Abracadabra! Let's make those tasks disappear!",
                     "Magical productivity powers activated!",
                     "With this wizard hat, I can help you conjure some serious progress!",
                     "Time to cast some productivity spells!"
-                ],
-                personalizedWizardHat: [
-                    "Abracadabra, {name}! Let's make your tasks disappear!",
-                    "{name}, with this wizard hat, I can help you conjure amazing progress!",
-                    "Thanks for the magical upgrade, {name}! Time to cast productivity spells!"
                 ],
                 
                 // Accessory responses
@@ -4762,32 +3948,17 @@
                     "Smart Jerry is ready to help you focus!",
                     "With better vision comes better productivity!"
                 ],
-                personalizedReadingGlasses: [
-                    "Now I can see {name}'s tasks crystal clear!",
-                    "{name}, these glasses make your goals look so achievable!",
-                    "Thanks for the specs, {name}! Smart Jerry is ready to help!"
-                ],
                 sunglasses: [
                     "Looking cool while staying productive!",
                     "Too cool for procrastination!",
                     "Shades on, tasks done! Let's go!",
                     "Cool Jerry is ready to rock your day!"
                 ],
-                personalizedSunglasses: [
-                    "{name}, I'm looking cool and ready to rock your day!",
-                    "Thanks for the shades, {name}! Too cool for procrastination!",
-                    "{name}, cool Jerry is ready to help you shine!"
-                ],
                 mustache: [
                     "Distinguished Jerry at your service!",
                     "This mustache gives me wisdom... and style!",
                     "Fancy facial hair for fancy task completion!",
                     "Mustache Jerry is ready to handle business!"
-                ],
-                personalizedMustache: [
-                    "Distinguished Jerry at your service, {name}!",
-                    "{name}, this mustache gives me wisdom to help you better!",
-                    "Thanks for the distinguished look, {name}! Ready for business!"
                 ],
                 
                 // Paint job responses
@@ -4797,32 +3968,17 @@
                     "Ready to tackle tasks with style!",
                     "This paint job gives me extra motivation!"
                 ],
-                personalizedBuddyPaint: [
-                    "{name}, I'm feeling fresh and ready to be your best buddy!",
-                    "Thanks for the makeover, {name}! Buddy Paint makes everything better!",
-                    "{name}, with this new look, I'm ready to tackle anything with you!"
-                ],
                 rockStarPaint: [
                     "Rock and roll, baby! Let's get productive!",
                     "Feeling like a productivity rock star!",
                     "This paint job rocks my world!",
                     "Ready to rock these tasks!"
                 ],
-                personalizedRockStarPaint: [
-                    "Rock and roll, {name}! Let's get productive together!",
-                    "{name}, I'm feeling like a productivity rock star!",
-                    "Thanks for the rock star makeover, {name}! Ready to rock!"
-                ],
                 makeupPaint: [
                     "Glamorous Jerry is ready for action!",
                     "Looking fabulous and feeling productive!",
                     "This makeup makes me feel unstoppable!",
                     "Beauty and productivity go hand in hand!"
-                ],
-                personalizedMakeupPaint: [
-                    "Glamorous Jerry is ready for action, {name}!",
-                    "{name}, I'm looking fabulous and feeling productive!",
-                    "Thanks for the glam makeover, {name}! I feel unstoppable!"
                 ],
                 
                 // Combination responses for multiple items
@@ -4831,12 +3987,6 @@
                     "Looking good, feeling good, ready to be productive!",
                     "With all this gear, I'm unstoppable!",
                     "Fully equipped Jerry is ready for maximum productivity!"
-                ],
-                personalizedMultipleItems: [
-                    "Wow {name}, I'm all dressed up thanks to you! Let's make this day count!",
-                    "{name}, you've got me looking good and feeling great!",
-                    "Thanks for all the gear, {name}! I'm unstoppable now!",
-                    "{name}, fully equipped Jerry is ready for maximum productivity!"
                 ]
             },
 
@@ -4852,17 +4002,6 @@
                 "🌊 Your hourly hydration check-in! Don't let Jerry down!"
             ],
 
-            personalizedHydrationReminders: [
-                "💧 Hey {name}! Time for a water break! Your body will thank you!",
-                "🚰 {name}, hydration station time! Even rocks appreciate good water flow!",
-                "💦 Don't forget to drink some water, {name}! Stay hydrated!",
-                "🌊 Water break reminder for {name}! Keep those energy levels flowing!",
-                "💧 Time to refuel with some H2O, {name}! Your brain needs it!",
-                "🚰 Jerry's hydration reminder for {name}: Drink up!",
-                "💦 {name}, staying hydrated = staying focused! Time for some water!",
-                "🌊 Your hourly hydration check-in, {name}! Don't let Jerry down!"
-            ],
-
             levelUp: [
                 "Level up! I'm getting stronger! 💪",
                 "New level unlocked! We're unstoppable!",
@@ -4870,100 +4009,31 @@
                 "This rock is evolving!"
             ],
 
-            personalizedLevelUp: [
-                "Level up, {name}! We're getting stronger together! 💪",
-                "{name}, new level unlocked! We're unstoppable!",
-                "Growing stronger with {name}! 🌟",
-                "{name}, this rock is evolving thanks to you!"
-            ],
-
             shopping: [
                 "Ooh, shopping time! Make me look fabulous! ✨",
                 "New gear? I'm ready for a makeover!",
                 "Style points incoming! 🎩",
                 "Fashion rock is the best rock!"
-            ],
-
-            personalizedShopping: [
-                "Ooh {name}, shopping time! Make me look fabulous! ✨",
-                "{name}, new gear? I'm ready for a makeover!",
-                "Style points incoming thanks to {name}! 🎩",
-                "{name}, you always know how to make me look good!"
             ]
         };
 
-        // Get random message from category with personalization support
+        // Get random message from category
         function getRandomMessage(category, subkey = null) {
             const source = jerryDialogues[category];
             if (!source) return "💬";
-            
-            let messages;
-            const userName = gameState.userName;
-            
-            if (subkey) {
-                // Handle subcategories (like health.high, health.mid, etc.)
-                if (userName && source[`personalized${subkey.charAt(0).toUpperCase() + subkey.slice(1)}`]) {
-                    // Use personalized version if user name exists
-                    messages = source[`personalized${subkey.charAt(0).toUpperCase() + subkey.slice(1)}`];
-                } else {
-                    messages = source[subkey];
-                }
-            } else {
-                // Handle main categories
-                if (userName && jerryDialogues[`personalized${category.charAt(0).toUpperCase() + category.slice(1)}`]) {
-                    // Use personalized version if user name exists
-                    messages = jerryDialogues[`personalized${category.charAt(0).toUpperCase() + category.slice(1)}`];
-                } else {
-                    messages = Array.isArray(source) ? source : source.default || [];
-                }
-            }
-            
-            if (!messages || !Array.isArray(messages) || messages.length === 0) {
-                return "💬";
-            }
-            
-            const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-            
-            // Replace {name} placeholder with actual user name
-            if (userName && randomMessage.includes('{name}')) {
-                return randomMessage.replace(/{name}/g, userName);
-            }
-            
-            return randomMessage;
+
+            const messages = Array.isArray(source)
+                ? source
+                : subkey && source[subkey]
+                ? source[subkey]
+                : source.default || [];
+
+            return messages[Math.floor(Math.random() * messages.length)];
         }
 
-        // Get personalized habit response
-        function getPersonalizedHabitResponse(habitTitle) {
-            const userName = gameState.userName;
-            
-            // Check for specific habit responses
-            if (userName) {
-                switch(habitTitle) {
-                    case "Drink Water":
-                        return getRandomMessage('habitResponses', 'personalizedDrinkWater');
-                    case "Stretch":
-                        return getRandomMessage('habitResponses', 'personalizedStretch');
-                    case "Read":
-                        return getRandomMessage('habitResponses', 'personalizedRead');
-                    default:
-                        return getRandomMessage('habitResponses', 'personalizedDefault');
-                }
-            } else {
-                // Fall back to regular responses
-                if (jerryDialogues.habitResponses[habitTitle]) {
-                    const responses = jerryDialogues.habitResponses[habitTitle];
-                    return responses[Math.floor(Math.random() * responses.length)];
-                } else {
-                    return getRandomMessage('habitResponses', 'default');
-                }
-            }
-        }
-
-        // Get random motivational phrase with anti-repetition logic and personalization
+        // Get random motivational phrase with anti-repetition logic
         function getRandomMotivationalPhrase() {
-            const userName = gameState.userName;
-            const motivationalPhrases = userName ? jerryDialogues.personalizedMotivation : jerryDialogues.motivation;
-            
+            const motivationalPhrases = jerryDialogues.motivation;
             if (!motivationalPhrases || motivationalPhrases.length === 0) return "Keep going!";
             
             // Initialize last motivational phrase index if not exists
@@ -4980,14 +4050,7 @@
             gameState.lastMotivationalPhraseIndex = newIndex;
             saveGameState();
             
-            const selectedPhrase = motivationalPhrases[newIndex];
-            
-            // Replace {name} placeholder with actual user name
-            if (userName && selectedPhrase.includes('{name}')) {
-                return selectedPhrase.replace(/{name}/g, userName);
-            }
-            
-            return selectedPhrase;
+            return motivationalPhrases[newIndex];
         }
 
         // Get health mood message based on specific thresholds
@@ -5243,246 +4306,10 @@
                    window.navigator.standalone === true;
         }
 
-        // iOS-specific enhancements and detection
-        function initializeIOSSupport() {
-            // Detect iOS device and version
-            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-            const iOSVersion = navigator.userAgent.match(/OS (\d+)_/);
-            const iOSVersionNumber = iOSVersion ? parseInt(iOSVersion[1]) : 0;
-            
-            // Check if iOS supports web push notifications (iOS 16.4+)
-            const supportsWebPush = isIOS && iOSVersionNumber >= 16;
-            
-            if (isIOS) {
-                console.log(`Task Rock: iOS device detected (iOS ${iOSVersionNumber})`);
-                document.body.classList.add('ios-device');
-                
-                if (supportsWebPush) {
-                    console.log('Task Rock: iOS supports web push notifications');
-                    document.body.classList.add('ios-push-supported');
-                } else {
-                    console.log('Task Rock: iOS does not support web push notifications');
-                    document.body.classList.add('ios-push-not-supported');
-                    
-                    // Show iOS upgrade message if needed
-                    if (iOSVersionNumber > 0 && iOSVersionNumber < 16) {
-                        showIOSUpgradeMessage();
-                    }
-                }
-                
-                // Add iOS-specific PWA installation guidance
-                if (!isPWA() && supportsWebPush) {
-                    setTimeout(() => {
-                        showIOSInstallationGuidance();
-                    }, 5000); // Show after 5 seconds
-                }
-                
-                // Enhanced iOS notification permission handling
-                enhanceIOSNotificationPermissions();
-            }
-            
-            return { isIOS, supportsWebPush, iOSVersionNumber };
-        }
-        
-        // Show iOS upgrade message for older versions
-        function showIOSUpgradeMessage() {
-            const upgradeMessage = document.createElement('div');
-            upgradeMessage.className = 'ios-upgrade-message';
-            upgradeMessage.innerHTML = `
-                <div class="upgrade-content">
-                    <h3>📱 Enhanced Notifications Available!</h3>
-                    <p>Update to iOS 16.4 or later to receive push notifications even when Task Rock is closed.</p>
-                    <p>For now, keep the app open to receive visual and audio notifications!</p>
-                    <button onclick="this.parentElement.parentElement.remove()">Got it!</button>
-                </div>
-            `;
-            document.body.appendChild(upgradeMessage);
-        }
-        
-        // Show iOS PWA installation guidance
-        function showIOSInstallationGuidance() {
-            if (localStorage.getItem('ios-install-guidance-shown')) return;
-            
-            const guidanceMessage = document.createElement('div');
-            guidanceMessage.className = 'ios-install-guidance';
-            guidanceMessage.innerHTML = `
-                <div class="guidance-content">
-                    <h3>🗿 Get the Full Task Rock Experience!</h3>
-                    <p>For the best experience with push notifications:</p>
-                    <ol>
-                        <li>Tap the Share button (📤) in Safari</li>
-                        <li>Select "Add to Home Screen"</li>
-                        <li>Launch Task Rock from your home screen</li>
-                    </ol>
-                    <button onclick="dismissIOSGuidance()">Got it!</button>
-                    <button onclick="dismissIOSGuidance(true)">Don't show again</button>
-                </div>
-            `;
-            document.body.appendChild(guidanceMessage);
-        }
-        
-        // Dismiss iOS installation guidance
-        function dismissIOSGuidance(permanent = false) {
-            const guidance = document.querySelector('.ios-install-guidance');
-            if (guidance) guidance.remove();
-            
-            if (permanent) {
-                localStorage.setItem('ios-install-guidance-shown', 'true');
-            }
-        }
-        
-        // Enhanced iOS notification permission handling
-        function enhanceIOSNotificationPermissions() {
-            const originalInitializeNotificationSystem = window.initializeNotificationSystem;
-            
-            window.initializeNotificationSystem = async function() {
-                const iosInfo = initializeIOSSupport();
-                
-                if (iosInfo.isIOS && !iosInfo.supportsWebPush) {
-                    // For older iOS, show alternative notification setup
-                    console.log('Task Rock: Setting up iOS-compatible notifications');
-                    setupIOSCompatibleNotifications();
-                    return;
-                }
-                
-                // For iOS 16.4+ or non-iOS devices, use standard implementation
-                if (originalInitializeNotificationSystem) {
-                    return await originalInitializeNotificationSystem();
-                }
-            };
-        }
-        
-        // Setup iOS-compatible notifications for older versions
-        function setupIOSCompatibleNotifications() {
-            // Enhanced visual and audio notifications for iOS devices without web push
-            console.log('Task Rock: iOS-compatible notification system active');
-            
-            // Update notification status to show iOS-specific status
-            updateNotificationStatus('ios-local', true);
-            
-            // Show Jerry message about iOS notifications
-            setTimeout(() => {
-                showJerryDialog("Hey! I'll keep you updated with visual and audio alerts while the app is open. For push notifications when closed, update to iOS 16.4 or later! 📱");
-            }, 2000);
-        }
-        
-        // Add iOS-specific CSS styles
-        function addIOSStyles() {
-            const style = document.createElement('style');
-            style.textContent = `
-                /* iOS-specific styles */
-                .ios-device {
-                    -webkit-touch-callout: none;
-                    -webkit-user-select: none;
-                    -webkit-tap-highlight-color: transparent;
-                }
-                
-                .ios-upgrade-message, .ios-install-guidance {
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    right: 0;
-                    bottom: 0;
-                    background: rgba(0, 0, 0, 0.8);
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    z-index: 10000;
-                    padding: 20px;
-                }
-                
-                .upgrade-content, .guidance-content {
-                    background: white;
-                    padding: 30px;
-                    border-radius: 15px;
-                    max-width: 400px;
-                    text-align: center;
-                    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-                }
-                
-                .upgrade-content h3, .guidance-content h3 {
-                    margin: 0 0 15px 0;
-                    color: #333;
-                }
-                
-                .upgrade-content p, .guidance-content p {
-                    margin: 10px 0;
-                    color: #666;
-                    line-height: 1.4;
-                }
-                
-                .guidance-content ol {
-                    text-align: left;
-                    margin: 15px 0;
-                    padding-left: 20px;
-                }
-                
-                .guidance-content li {
-                    margin: 8px 0;
-                    color: #666;
-                }
-                
-                .upgrade-content button, .guidance-content button {
-                    background: #4CAF50;
-                    color: white;
-                    border: none;
-                    padding: 12px 20px;
-                    border-radius: 8px;
-                    margin: 10px 5px 0 5px;
-                    cursor: pointer;
-                    font-size: 14px;
-                }
-                
-                .upgrade-content button:hover, .guidance-content button:hover {
-                    background: #45a049;
-                }
-                
-                /* iOS PWA mode adjustments */
-                .ios-device.pwa-mode {
-                    padding-top: env(safe-area-inset-top);
-                    padding-bottom: env(safe-area-inset-bottom);
-                }
-                
-                /* iOS notification status indicators */
-                .ios-device .notification-status .status-item {
-                    opacity: 0.9;
-                }
-                
-                .ios-push-not-supported .firebase-status {
-                    opacity: 0.5;
-                }
-                
-                .ios-push-not-supported .firebase-status::after {
-                    content: " (iOS 16.4+ required)";
-                    font-size: 10px;
-                    color: #999;
-                }
-            `;
-            document.head.appendChild(style);
-        }
-
-        // Initialize iOS support
-        addIOSStyles();
-        const iosInfo = initializeIOSSupport();
         // Initialize PWA features
         if (isPWA()) {
             console.log('Task Rock: Running as PWA');
             document.body.classList.add('pwa-mode');
-            
-            if (iosInfo.isIOS) {
-                console.log('Task Rock: Running as iOS PWA - optimal for notifications');
-            }
-        }
-        
-        // Initialize Background Notification System
-        if (window.taskRockBackgroundNotifications) {
-            window.taskRockBackgroundNotifications.initialize().then(success => {
-                if (success) {
-                    console.log('Task Rock: Background notification system initialized successfully');
-                } else {
-                    console.error('Task Rock: Background notification system initialization failed');
-                }
-            });
         }
     </script>
 </body>

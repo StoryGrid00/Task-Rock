@@ -1,56 +1,19 @@
 {
   "name": "Task Rock - Pet Rock Task Manager",
   "short_name": "Task Rock",
-  "description": "A fun task management app with Jerry the Rock, your virtual pet companion. Get push notifications for your tasks!",
+  "description": "A fun task management app with Jerry the Rock, your virtual pet companion",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#f8f9fa",
   "theme_color": "#8FEB60",
   "orientation": "portrait-primary",
   "scope": "./",
-  "lang": "en-US",
-  "dir": "ltr",
-  "categories": ["productivity", "games", "lifestyle", "utilities"],
+  "lang": "en",
+  "categories": ["productivity", "games", "lifestyle"],
   "icons": [
     {
       "src": "./assets/images/logo.png",
-      "sizes": "72x72",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "./assets/images/logo.png",
-      "sizes": "96x96",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "./assets/images/logo.png",
-      "sizes": "128x128",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "./assets/images/logo.png",
-      "sizes": "144x144",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "./assets/images/logo.png",
-      "sizes": "152x152",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "./assets/images/logo.png",
       "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "./assets/images/logo.png",
-      "sizes": "384x384",
       "type": "image/png",
       "purpose": "any"
     },
@@ -58,7 +21,7 @@
       "src": "./assets/images/logo.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "./assets/images/jerry.png",
@@ -71,7 +34,7 @@
     {
       "name": "Create Task",
       "short_name": "New Task",
-      "description": "Quickly create a new task with notifications",
+      "description": "Quickly create a new task",
       "url": "./?action=create-task",
       "icons": [
         {
@@ -91,25 +54,9 @@
           "sizes": "96x96"
         }
       ]
-    },
-    {
-      "name": "Settings",
-      "short_name": "Settings",
-      "description": "Configure notifications and app settings",
-      "url": "./?action=settings",
-      "icons": [
-        {
-          "src": "./assets/images/logo.png",
-          "sizes": "96x96"
-        }
-      ]
     }
   ],
   "related_applications": [],
-  "prefer_related_applications": false,
-  "display_override": ["window-controls-overlay", "standalone"],
-  "edge_side_panel": {
-    "preferred_width": 400
-  }
+  "prefer_related_applications": false
 }
 
