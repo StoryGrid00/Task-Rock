@@ -643,6 +643,16 @@
             overflow: hidden;
             position: relative;
             transition: background-color 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        /* Ensure modal content doesn't overflow on small screens */
+        @media (max-width: 480px) {
+            .modal-content {
+                width: 95%;
+                margin: 2% auto;
+                max-height: 95vh;
+            }
         }
 
         .modal-body {
@@ -757,6 +767,121 @@
             border-color: #8FEB60;
             background: #8FEB60;
             color: #000;
+        }
+
+        /* Sub-tasks Styles */
+        .subtasks-container {
+            margin-bottom: 12px;
+        }
+
+        .subtask-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            padding: 8px;
+            background: var(--bg-tertiary);
+            border-radius: 6px;
+            transition: background-color 0.3s ease;
+        }
+
+        .subtask-input {
+            flex: 1;
+            padding: 6px 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 14px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+        }
+
+        .remove-subtask-btn {
+            background: #ff4757;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 8px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background-color 0.2s ease;
+        }
+
+        .remove-subtask-btn:hover {
+            background: #ff3838;
+        }
+
+        .add-subtask-btn {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px dashed var(--border-color);
+            border-radius: 6px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 14px;
+            width: 100%;
+            transition: all 0.2s ease;
+        }
+
+        .add-subtask-btn:hover {
+            background: var(--button-hover-bg);
+            border-color: #8FEB60;
+        }
+
+        /* Sub-tasks in task display */
+        .task-subtasks {
+            margin-top: 8px;
+            padding-left: 12px;
+        }
+
+        .task-subtask-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .task-subtask-checkbox {
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 3px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-secondary);
+            transition: all 0.2s ease;
+        }
+
+        .task-subtask-checkbox.completed {
+            background: #8FEB60;
+            border-color: #8FEB60;
+            color: #000;
+        }
+
+        .task-subtask-checkbox.completed::after {
+            content: '✓';
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .task-subtask-text {
+            flex: 1;
+            transition: color 0.2s ease;
+        }
+
+        .task-subtask-text.completed {
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+
+        .task-subtasks-progress {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            margin-top: 4px;
         }
 
         .modal-footer {
@@ -1069,7 +1194,7 @@
             font-size: 16px;
             font-weight: 600;
             margin-bottom: 12px;
-            color: #333;
+            color: var(--text-primary);
         }
 
         .shop-grid {
@@ -1469,7 +1594,7 @@
         }
 
         .shop-item-price {
-            color: #666;
+            color: var(--text-secondary);
             font-size: 14px;
         }
 
@@ -1481,7 +1606,12 @@
 
         .shop-item.equipped {
             border-color: #8FEB60;
-            background: #f0fdf4;
+            background: var(--bg-tertiary);
+        }
+
+        [data-theme="dark"] .shop-item.equipped {
+            background: #2a4a2a;
+            border-color: #8FEB60;
         }
 
         .shop-item.equipped .shop-item-status {
@@ -1495,7 +1625,7 @@
         /* Jerry Dialogue Bubble Styles */
         .jerry-dialogue-bubble {
             position: absolute;
-            top: -60px;
+            top: -40px;
             left: 50%;
             transform: translateX(-50%);
             background: var(--bg-secondary);
@@ -1581,10 +1711,71 @@
                 padding: 8px 12px;
             }
         }
+
+        /* Loading Screen Styles */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-primary);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            transition: opacity 0.5s ease-out;
+        }
+
+        .loading-content {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .loading-logo {
+            width: 200px;
+            height: auto;
+            animation: loadingPulse 2s ease-in-out infinite;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--border-color);
+            border-top: 4px solid #9AE34A;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes loadingPulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-screen.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loading-content">
+            <img src="assets/images/Frame 42.png" alt="Task Rock" class="loading-logo">
+            <div class="loading-spinner"></div>
+        </div>
+    </div>
+
+    <div class="container" id="mainApp" style="display: none;">
         <!-- Logo Section -->
         <div class="logo-section">
             <img src="assets/images/logo.png" alt="Task Rock" class="app-logo">
@@ -1868,6 +2059,14 @@
                     </div>
                     
                     <div class="form-group">
+                        <label class="form-label">Sub-tasks</label>
+                        <div class="subtasks-container" id="subtasksContainer">
+                            <!-- Sub-tasks will be added here dynamically -->
+                        </div>
+                        <button type="button" class="add-subtask-btn" onclick="addSubtask()">+ Add Sub-task</button>
+                    </div>
+                    
+                    <div class="form-group">
                         <label class="form-label">Due Date</label>
                         <input type="date" class="form-input" id="taskDate">
                     </div>
@@ -2058,6 +2257,9 @@
             editingTaskIndex = null;
             document.querySelector('.modal-title').textContent = 'Create Task';
             document.querySelector('.btn-primary').textContent = 'Create Task';
+            
+            // Clear sub-tasks
+            document.getElementById('subtasksContainer').innerHTML = '';
         }
 
         // Select difficulty
@@ -2082,6 +2284,71 @@
             selectedPriority = priority;
         }
 
+        // Sub-task management functions
+        function addSubtask() {
+            const container = document.getElementById('subtasksContainer');
+            const subtaskId = Date.now() + Math.random();
+            
+            const subtaskHTML = `
+                <div class="subtask-item" data-subtask-id="${subtaskId}">
+                    <input type="text" class="subtask-input" placeholder="Enter sub-task..." maxlength="100">
+                    <button type="button" class="remove-subtask-btn" onclick="removeSubtask('${subtaskId}')">×</button>
+                </div>
+            `;
+            
+            container.insertAdjacentHTML('beforeend', subtaskHTML);
+        }
+
+        function removeSubtask(subtaskId) {
+            const subtaskElement = document.querySelector(`[data-subtask-id="${subtaskId}"]`);
+            if (subtaskElement) {
+                subtaskElement.remove();
+            }
+        }
+
+        function toggleSubtask(taskIndex, subtaskId) {
+            const task = gameState.tasks[taskIndex];
+            const subtask = task.subtasks.find(st => st.id === subtaskId);
+            
+            if (subtask) {
+                subtask.completed = !subtask.completed;
+                
+                // Check if all subtasks are completed
+                const allCompleted = task.subtasks.length > 0 && task.subtasks.every(st => st.completed);
+                
+                // Auto-complete parent task if all subtasks are done
+                if (allCompleted && task.subtasks.length > 0) {
+                    setTimeout(() => {
+                        if (confirm('All sub-tasks completed! Mark the main task as complete?')) {
+                            completeTask(taskIndex);
+                            return;
+                        }
+                    }, 100);
+                }
+                
+                saveGameState();
+                updateUI();
+            }
+        }
+
+        function populateSubtasksForEdit(task) {
+            const container = document.getElementById('subtasksContainer');
+            container.innerHTML = '';
+            
+            if (task.subtasks && task.subtasks.length > 0) {
+                task.subtasks.forEach(subtask => {
+                    const subtaskId = subtask.id;
+                    const subtaskHTML = `
+                        <div class="subtask-item" data-subtask-id="${subtaskId}">
+                            <input type="text" class="subtask-input" value="${subtask.text}" maxlength="100">
+                            <button type="button" class="remove-subtask-btn" onclick="removeSubtask('${subtaskId}')">×</button>
+                        </div>
+                    `;
+                    container.insertAdjacentHTML('beforeend', subtaskHTML);
+                });
+            }
+        }
+
         // Create task
         function createTask() {
             const title = document.getElementById('taskTitle').value.trim();
@@ -2092,6 +2359,19 @@
                 alert('Please fill in all required fields');
                 return;
             }
+
+            // Collect sub-tasks
+            const subtasks = [];
+            const subtaskInputs = document.querySelectorAll('.subtask-input');
+            subtaskInputs.forEach(input => {
+                if (input.value.trim()) {
+                    subtasks.push({
+                        id: Date.now() + Math.random(),
+                        text: input.value.trim(),
+                        completed: false
+                    });
+                }
+            });
 
             const points = { easy: 2, medium: 5, hard: 7 }[selectedDifficulty];
             const dueDate = date && time ? `${date}T${time}:00` : null;
@@ -2104,7 +2384,8 @@
                 points,
                 dueDate,
                 createdAt: Date.now(),
-                penaltyApplied: false
+                penaltyApplied: false,
+                subtasks: subtasks
             };
 
             if (editingTaskIndex !== null) {
@@ -2316,6 +2597,9 @@
                     selectedPriority = task.priority;
                 }
             });
+
+            // Populate sub-tasks for editing
+            populateSubtasksForEdit(task);
 
             document.querySelector('.modal-title').textContent = 'Edit Task';
             document.querySelector('.btn-primary').textContent = 'Update Task';
@@ -2939,6 +3223,27 @@
                 stickyCreateButton.style.display = 'block';
                 tasksList.innerHTML = gameState.tasks.map((task, index) => {
                     const dueSoonClass = shouldShowDueSoon(task) ? ' due-soon' : '';
+                    
+                    // Generate sub-tasks HTML
+                    let subtasksHTML = '';
+                    if (task.subtasks && task.subtasks.length > 0) {
+                        const completedCount = task.subtasks.filter(st => st.completed).length;
+                        const totalCount = task.subtasks.length;
+                        
+                        subtasksHTML = `
+                            <div class="task-subtasks">
+                                ${task.subtasks.map(subtask => `
+                                    <div class="task-subtask-item">
+                                        <div class="task-subtask-checkbox ${subtask.completed ? 'completed' : ''}" 
+                                             onclick="toggleSubtask(${index}, '${subtask.id}')"></div>
+                                        <span class="task-subtask-text ${subtask.completed ? 'completed' : ''}">${subtask.text}</span>
+                                    </div>
+                                `).join('')}
+                                <div class="task-subtasks-progress">${completedCount}/${totalCount} sub-tasks completed</div>
+                            </div>
+                        `;
+                    }
+                    
                     return `
                     <div class="task-item">
                         <div class="task-header">
@@ -2948,6 +3253,7 @@
                                 <button class="action-btn" onclick="deleteTask(${index})" title="Delete">🗑️</button>
                             </div>
                         </div>
+                        ${subtasksHTML}
                         <div class="task-footer">
                             <div class="task-info">
                                 <div class="task-dot-item">
@@ -4877,6 +5183,19 @@
         // Initialize dark mode when DOM is loaded
         document.addEventListener('DOMContentLoaded', function() {
             initializeDarkMode();
+            
+            // Handle loading screen
+            setTimeout(() => {
+                const loadingScreen = document.getElementById('loadingScreen');
+                const mainApp = document.getElementById('mainApp');
+                
+                loadingScreen.classList.add('fade-out');
+                mainApp.style.display = 'block';
+                
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                }, 500);
+            }, 2000); // Show loading screen for 2 seconds
         });
     </script>
 </body>
