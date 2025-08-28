@@ -405,6 +405,7 @@
         .empty-state {
             text-align: center;
             padding: 40px 20px;
+            background: transparent; /* Remove white background */
         }
 
         .empty-state-icon {
@@ -449,6 +450,15 @@
             overflow: hidden;
             box-shadow: 0 2px 8px var(--shadow-color);
             transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* Reduce white background visibility for empty state sections */
+        .section:has(.empty-state) {
+            background: rgba(255, 255, 255, 0.7); /* Semi-transparent white */
+        }
+
+        [data-theme="dark"] .section:has(.empty-state) {
+            background: rgba(45, 45, 45, 0.7); /* Semi-transparent dark */
         }
 
 
@@ -644,6 +654,8 @@
             position: relative;
             transition: background-color 0.3s ease;
             box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
         }
 
         /* Ensure modal content doesn't overflow on small screens */
@@ -658,6 +670,8 @@
         .modal-body {
             display: flex;
             flex-direction: column;
+            flex: 1;
+            min-height: 0; /* Important for flex child to shrink */
         }
 
         .modal-header {
@@ -704,6 +718,7 @@
             overflow-y: auto;
             scrollbar-width: thin;
             scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+            min-height: 0; /* Ensure flex child can shrink */
         }
 
         .modal-body::-webkit-scrollbar {
@@ -841,11 +856,24 @@
             margin-bottom: 4px;
             font-size: 14px;
             color: var(--text-secondary);
+            padding: 8px 4px; /* Add padding for larger touch area */
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
+        }
+
+        .task-subtask-item:hover {
+            background-color: var(--bg-tertiary);
+        }
+
+        .task-subtask-item:active {
+            background-color: var(--button-hover-bg);
         }
 
         .task-subtask-checkbox {
-            width: 16px;
-            height: 16px;
+            width: 20px; /* Increased from 16px */
+            height: 20px; /* Increased from 16px */
             border: 2px solid var(--border-color);
             border-radius: 3px;
             cursor: pointer;
@@ -854,6 +882,9 @@
             justify-content: center;
             background: var(--bg-secondary);
             transition: all 0.2s ease;
+            flex-shrink: 0; /* Prevent shrinking */
+            min-width: 20px; /* Ensure minimum size */
+            min-height: 20px;
         }
 
         .task-subtask-checkbox.completed {
@@ -1732,22 +1763,43 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 30px;
+            gap: 40px;
+            padding: 20px;
         }
 
         .loading-logo {
-            width: 200px;
+            width: 320px; /* Increased from 200px */
             height: auto;
+            max-width: 80vw; /* Responsive for smaller screens */
             animation: loadingPulse 2s ease-in-out infinite;
         }
 
         .loading-spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid var(--border-color);
-            border-top: 4px solid #9AE34A;
+            width: 50px; /* Increased from 40px */
+            height: 50px; /* Increased from 40px */
+            border: 5px solid var(--border-color); /* Increased from 4px */
+            border-top: 5px solid #9AE34A; /* Increased from 4px */
             border-radius: 50%;
             animation: spin 1s linear infinite;
+        }
+
+        /* Responsive loading screen for mobile */
+        @media (max-width: 480px) {
+            .loading-logo {
+                width: 280px;
+                max-width: 75vw;
+            }
+            
+            .loading-spinner {
+                width: 45px;
+                height: 45px;
+                border-width: 4px;
+            }
+            
+            .loading-content {
+                gap: 30px;
+                padding: 15px;
+            }
         }
 
         @keyframes loadingPulse {
@@ -3233,9 +3285,12 @@
                         subtasksHTML = `
                             <div class="task-subtasks">
                                 ${task.subtasks.map(subtask => `
-                                    <div class="task-subtask-item">
-                                        <div class="task-subtask-checkbox ${subtask.completed ? 'completed' : ''}" 
-                                             onclick="toggleSubtask(${index}, '${subtask.id}')"></div>
+                                    <div class="task-subtask-item" 
+                                         onclick="toggleSubtask(${index}, '${subtask.id}')"
+                                         ontouchstart="this.style.backgroundColor='var(--button-hover-bg)'"
+                                         ontouchend="this.style.backgroundColor=''"
+                                         ontouchcancel="this.style.backgroundColor=''">
+                                        <div class="task-subtask-checkbox ${subtask.completed ? 'completed' : ''}"></div>
                                         <span class="task-subtask-text ${subtask.completed ? 'completed' : ''}">${subtask.text}</span>
                                     </div>
                                 `).join('')}
