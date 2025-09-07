@@ -223,32 +223,6 @@
             box-shadow: 0 8px 32px var(--shadow-color);
             transform: scale(0.8);
             transition: transform 0.3s ease, background-color 0.3s ease;
-            position: relative;
-            cursor: pointer;
-        }
-
-        .congrats-close-btn {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            background: none;
-            border: none;
-            font-size: 20px;
-            cursor: pointer;
-            color: var(--text-secondary);
-            padding: 0;
-            width: 25px;
-            height: 25px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            transition: all 0.2s ease;
-        }
-
-        .congrats-close-btn:hover {
-            background: var(--button-hover-bg);
-            color: var(--text-primary);
         }
 
         .congrats-overlay.show .congrats-box {
@@ -1739,109 +1713,10 @@
             }
         }
 
-        /* iOS-style Stats Grid */
-        .ios-stats-section {
-            margin-bottom: 20px;
-            padding: 0 4px;
-        }
-
-        .ios-stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 16px;
-        }
-
-        .ios-stat-card {
-            background: var(--section-bg);
-            border-radius: 16px;
-            padding: 20px 16px;
-            text-align: center;
-            box-shadow: 0 2px 8px var(--shadow-color);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .ios-stat-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 16px var(--shadow-color);
-        }
-
-        .ios-stat-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 12px auto;
-            font-size: 16px;
-            font-weight: 600;
-            color: white;
-        }
-
-        .ios-stat-icon.total {
-            background: #007AFF;
-        }
-
-        .ios-stat-icon.pending {
-            background: #FF9500;
-        }
-
-        .ios-stat-icon.completed {
-            background: #34C759;
-        }
-
-        .ios-stat-icon.rate {
-            background: #AF52DE;
-        }
-
-        .ios-stat-number {
-            font-size: 28px;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 4px;
-            line-height: 1;
-        }
-
-        .ios-stat-label {
-            font-size: 14px;
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
-
         /* Responsive */
         @media (max-width: 480px) {
             .container {
                 padding: 16px;
-            }
-            
-            .ios-stats-section {
-                padding: 0 2px;
-            }
-            
-            .ios-stats-grid {
-                gap: 8px;
-            }
-            
-            .ios-stat-card {
-                padding: 16px 12px;
-            }
-            
-            .ios-stat-icon {
-                width: 28px;
-                height: 28px;
-                font-size: 14px;
-                margin-bottom: 8px;
-            }
-            
-            .ios-stat-number {
-                font-size: 24px;
-            }
-            
-            .ios-stat-label {
-                font-size: 12px;
             }
             
             .creature-image {
@@ -1879,151 +1754,73 @@
             position: fixed;
             top: 0;
             left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: #f5f5f5;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-primary);
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 10000;
-            overflow: hidden;
+            transition: opacity 0.5s ease-out;
         }
 
         .loading-content {
-            display: flex;
-            justify-content: center;
-            align-items: center;
             text-align: center;
-        }
-
-        .loading-logo-text {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            font-size: 4rem;
-            font-weight: 700;
-            color: #000;
-            line-height: 1;
-            letter-spacing: -0.02em;
+            gap: 40px;
+            padding: 20px;
         }
 
-        .text-part {
-            display: inline-block;
+        .loading-logo {
+            width: 320px; /* Increased from 200px */
+            height: auto;
+            max-width: 80vw; /* Responsive for smaller screens */
+            animation: loadingPulse 2s ease-in-out infinite;
         }
 
-        .rock-icon {
-            position: relative;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 0.05em;
-        }
-
-        .rock-base {
-            width: 3.2rem;
-            height: 3.2rem;
-            background: linear-gradient(135deg, #8B7355 0%, #A0926B 25%, #B5A67F 50%, #A0926B 75%, #8B7355 100%);
+        .loading-spinner {
+            width: 50px; /* Increased from 40px */
+            height: 50px; /* Increased from 40px */
+            border: 5px solid var(--border-color); /* Increased from 4px */
+            border-top: 5px solid #9AE34A; /* Increased from 4px */
             border-radius: 50%;
-            position: relative;
-            box-shadow: 
-                inset -8px -8px 16px rgba(0,0,0,0.3),
-                inset 8px 8px 16px rgba(255,255,255,0.2),
-                0 4px 8px rgba(0,0,0,0.2);
+            animation: spin 1s linear infinite;
         }
 
-        .rock-base::before {
-            content: '';
-            position: absolute;
-            top: 15%;
-            left: 20%;
-            width: 30%;
-            height: 30%;
-            background: radial-gradient(ellipse at center, rgba(255,255,255,0.4) 0%, transparent 70%);
-            border-radius: 50%;
-        }
-
-        .checkmark {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 1.6rem;
-            color: #4CAF50;
-            font-weight: bold;
-            text-shadow: 0 0 3px rgba(255,255,255,0.8);
-            z-index: 1;
-        }
-
-        /* Responsive loading screen for tablets */
-        @media (max-width: 768px) {
-            .loading-logo-text {
-                font-size: 3.5rem;
-            }
-            
-            .rock-base {
-                width: 2.8rem;
-                height: 2.8rem;
-            }
-            
-            .checkmark {
-                font-size: 1.4rem;
-            }
-        }
-
-        /* Responsive loading screen for mobile phones */
+        /* Responsive loading screen for mobile */
         @media (max-width: 480px) {
-            .loading-logo-text {
-                font-size: 3rem;
+            .loading-logo {
+                width: 280px;
+                max-width: 75vw;
             }
             
-            .rock-base {
-                width: 2.4rem;
-                height: 2.4rem;
+            .loading-spinner {
+                width: 45px;
+                height: 45px;
+                border-width: 4px;
             }
             
-            .checkmark {
-                font-size: 1.2rem;
+            .loading-content {
+                gap: 30px;
+                padding: 15px;
             }
         }
 
-        /* Responsive loading screen for small mobile phones */
-        @media (max-width: 360px) {
-            .loading-logo-text {
-                font-size: 2.5rem;
-            }
-            
-            .rock-base {
-                width: 2rem;
-                height: 2rem;
-            }
-            
-            .checkmark {
-                font-size: 1rem;
-            }
+        @keyframes loadingPulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
         }
 
-        /* Responsive loading screen for very small screens */
-        @media (max-width: 320px) {
-            .loading-logo-text {
-                font-size: 2.2rem;
-            }
-            
-            .rock-base {
-                width: 1.8rem;
-                height: 1.8rem;
-            }
-            
-            .checkmark {
-                font-size: 0.9rem;
-            }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
-        /* Fade out animation */
         .loading-screen.fade-out {
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.5s ease-out;
         }
     </style>
 </head>
@@ -2031,14 +1828,8 @@
     <!-- Loading Screen -->
     <div id="loadingScreen" class="loading-screen">
         <div class="loading-content">
-            <div class="loading-logo-text">
-                <span class="text-part">Task R</span>
-                <div class="rock-icon">
-                    <div class="rock-base"></div>
-                    <div class="checkmark">✓</div>
-                </div>
-                <span class="text-part">ck</span>
-            </div>
+            <img src="assets/images/Frame 42.png" alt="Task Rock" class="loading-logo">
+            <div class="loading-spinner"></div>
         </div>
     </div>
 
@@ -2066,39 +1857,13 @@
             <div class="task-points" id="taskPoints">0 Task Points</div>
         </div>
 
-        <!-- iOS-style Stats Grid -->
-        <div class="ios-stats-section">
-            <div class="ios-stats-grid">
-                <div class="ios-stat-card">
-                    <div class="ios-stat-icon total">📊</div>
-                    <div class="ios-stat-number" id="iosTotalTasks">0</div>
-                    <div class="ios-stat-label">Total Tasks</div>
-                </div>
-                <div class="ios-stat-card">
-                    <div class="ios-stat-icon pending">⏳</div>
-                    <div class="ios-stat-number" id="iosPendingTasks">0</div>
-                    <div class="ios-stat-label">Pending Tasks</div>
-                </div>
-                <div class="ios-stat-card">
-                    <div class="ios-stat-icon completed">✅</div>
-                    <div class="ios-stat-number" id="iosCompletedTasks">0</div>
-                    <div class="ios-stat-label">Completed Tasks</div>
-                </div>
-                <div class="ios-stat-card">
-                    <div class="ios-stat-icon rate">📈</div>
-                    <div class="ios-stat-number" id="iosCompletionRate">0%</div>
-                    <div class="ios-stat-label">Completion Rate</div>
-                </div>
-            </div>
-        </div>
-
         <!-- Tasks Section -->
         <div class="section">
             <div class="section-header" onclick="toggleSection('tasks')">
                 <div class="section-title">📝 Your Tasks</div>
-                <div class="section-arrow expanded" id="tasksArrow"></div>
+                <div class="section-arrow" id="tasksArrow"></div>
             </div>
-            <div class="section-content" id="tasksContent">
+            <div class="section-content collapsed" id="tasksContent">
                 <div class="tasks-container">
                     <div class="empty-state" id="emptyState">
                         <div class="empty-state-icon">📝</div>
@@ -2601,9 +2366,7 @@
 
         function toggleSubtask(taskIndex, subtaskId) {
             const task = gameState.tasks[taskIndex];
-            // Convert subtaskId to number if it's a string (to handle onclick string parameters)
-            const numericSubtaskId = typeof subtaskId === 'string' ? parseFloat(subtaskId) : subtaskId;
-            const subtask = task.subtasks.find(st => st.id === numericSubtaskId);
+            const subtask = task.subtasks.find(st => st.id === subtaskId);
             
             if (subtask) {
                 subtask.completed = !subtask.completed;
@@ -2623,8 +2386,6 @@
                 
                 saveGameState();
                 updateUI();
-            } else {
-                console.error('Subtask not found:', numericSubtaskId, 'in task:', taskIndex);
             }
         }
 
@@ -2851,15 +2612,6 @@
             const congratsBox = document.createElement('div');
             congratsBox.className = 'congrats-box';
             
-            // Add close button
-            const closeBtn = document.createElement('button');
-            closeBtn.className = 'congrats-close-btn';
-            closeBtn.innerHTML = '&times;';
-            closeBtn.onclick = (e) => {
-                e.stopPropagation();
-                dismissCongrats();
-            };
-            
             const messageText = document.createElement('div');
             messageText.className = 'congrats-message';
             messageText.textContent = message;
@@ -2868,36 +2620,22 @@
             pointsText.className = 'congrats-points';
             pointsText.textContent = `+${points} points earned!`;
             
-            congratsBox.appendChild(closeBtn);
             congratsBox.appendChild(messageText);
             congratsBox.appendChild(pointsText);
             overlay.appendChild(congratsBox);
             document.body.appendChild(overlay);
-            
-            // Function to dismiss congrats message
-            function dismissCongrats() {
-                overlay.classList.remove('show');
-                setTimeout(() => {
-                    if (document.body.contains(overlay)) {
-                        document.body.removeChild(overlay);
-                    }
-                }, 300);
-            }
-            
-            // Make overlay clickable to dismiss
-            overlay.onclick = dismissCongrats;
-            
-            // Prevent clicks on the congrats box from dismissing
-            congratsBox.onclick = (e) => e.stopPropagation();
             
             // Show animation
             setTimeout(() => {
                 overlay.classList.add('show');
             }, 10);
             
-            // Auto-remove after 3 seconds
+            // Remove after 3 seconds
             setTimeout(() => {
-                dismissCongrats();
+                overlay.classList.remove('show');
+                setTimeout(() => {
+                    document.body.removeChild(overlay);
+                }, 300);
             }, 3000);
         }
 
@@ -3616,16 +3354,6 @@
                 ? Math.round((gameState.completedTasks / (gameState.tasks.length + gameState.completedTasks)) * 100)
                 : 100;
             document.getElementById('completionRate').textContent = `${completionRate}%`;
-            
-            // Update iOS-style stats grid
-            const totalTasksCount = gameState.tasks.length + gameState.completedTasks;
-            const pendingTasksCount = gameState.tasks.length;
-            const completedTasksCount = gameState.completedTasks;
-            
-            document.getElementById('iosTotalTasks').textContent = totalTasksCount;
-            document.getElementById('iosPendingTasks').textContent = pendingTasksCount;
-            document.getElementById('iosCompletedTasks').textContent = completedTasksCount;
-            document.getElementById('iosCompletionRate').textContent = `${completionRate}%`;
             
             // Update gamification stats
             document.getElementById('currentStreak').textContent = `${gameState.currentStreak} day${gameState.currentStreak !== 1 ? 's' : ''}`;
