@@ -1,21 +1,77 @@
+/* Task Rock Service Worker */
+const SW_VERSION = "tr-2025-09-09-01";
+const STATIC_CACHE = `tr-static-${SW_VERSION}`;
+const RUNTIME_CACHE = `tr-runtime-${SW_VERSION}`;
 
-self.addEventListener('install', (e) => { self.skipWaiting(); });
-self.addEventListener('activate', (e) => { self.clients.claim(); });
-self.addEventListener('push', (event) => {
-  let data = {};
-  try { data = event.data ? event.data.json() : {}; } catch(_) { data = { body: event.data && event.data.text() }; }
-  const title = data.title || 'Task Rock';
-  const body = data.body || 'Task reminder';
-  const tag = data.tag || 'task-rock';
-  const icon = data.icon || '/assets/images/browser-window-tab-thumbnail.png';
-  const badge = data.badge || icon;
-  event.waitUntil(self.registration.showNotification(title, { body, tag, icon, badge, data }));
+const PRECACHE_URLS = [
+  "./",
+  "index.html",
+  "assets/images/Jerry-Default.png",
+  "assets/images/jerry-default.png",
+  "assets/images/jerry.png",
+  "assets/logo-light.png",
+  "assets/logo-dark.png",
+  "manifest.webmanifest"
+].filter(Boolean);
+
+self.addEventListener("install", (event) => {
+  self.skipWaiting();
+  event.waitUntil(
+    caches.open(STATIC_CACHE).then((cache) => cache.addAll(PRECACHE_URLS))
+  );
 });
-self.addEventListener('notificationclick', (event) => {
-  event.notification.close();
-  const url = (event.notification.data && event.notification.data.url) || '/';
-  event.waitUntil(clients.matchAll({type:'window', includeUncontrolled:true}).then(list => {
-    for (const c of list) { if ('focus' in c) { c.focus(); return; } }
-    if (clients.openWindow) return clients.openWindow(url);
-  }));
+
+self.addEventListener("activate", (event) => {
+  event.waitUntil(
+    (async () => {
+      const keys = await caches.keys();
+      await Promise.all(keys.map((key) => {
+        if (![STATIC_CACHE, RUNTIME_CACHE].includes(key)) {
+          return caches.delete(key);
+        }
+      }));
+      await self.clients.claim();
+    })()
+  );
+});
+
+self.addEventListener("fetch", (event) => {
+  const req = event.request;
+  if (req.method !== "GET") return;
+
+  const isHTML = req.headers.get("accept")?.includes("text/html");
+
+  if (isHTML) {
+    event.respondWith(
+      (async () => {
+        try {
+          const fresh = await fetch(req, { cache: "no-store" });
+          const cache = await caches.open(RUNTIME_CACHE);
+          cache.put(req, fresh.clone());
+          return fresh;
+        } catch (err) {
+          const cache = await caches.open(RUNTIME_CACHE);
+          const cached = await cache.match(req);
+          return cached || caches.match("index.html");
+        }
+      })()
+    );
+    return;
+  }
+
+  event.respondWith(
+    caches.match(req).then((cached) => {
+      const fetchPromise = fetch(req).then((networkResp) => {
+        caches.open(RUNTIME_CACHE).then((cache) => cache.put(req, networkResp.clone()));
+        return networkResp;
+      }).catch(() => cached);
+      return cached || fetchPromise;
+    })
+  );
+});
+
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "SKIP_WAITING") {
+    self.skipWaiting();
+  }
 });
