@@ -45,6 +45,16 @@
     
     <style>
         :root {
+    /* Daily Challenge complete color */
+    --challenge-complete: #ccff00; /* neon green-yellow */
+
+            /* Quick Task action button background token */
+            --quick-action-bg: #ffffff;
+            /* Daily Challenge (scoped) */
+            --daily-card-purple: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            --daily-card-green:  linear-gradient(135deg, #16a34a 0%, #22c55e 100%);
+            --daily-card-orange-gradient: linear-gradient(135deg, #ea580c 0%, #f59e0b 100%);
+        
             /* Light theme colors */
             --bg-primary: #f8f9fa;
             --bg-secondary: white;
@@ -92,6 +102,7 @@
         }
 
         [data-theme="dark"] {
+            --quick-action-bg: var(--bg-tertiary);
             /* Dark theme colors */
             --bg-primary: #1a1a1a;
             --bg-secondary: #2d2d2d;
@@ -155,7 +166,16 @@
             border-bottom: 1px solid var(--border-light);
         }
 
-        .app-title {
+        
+/* Scoped brand logo swap (no layout change) */
+.app-title{ display:flex; align-items:center; justify-content:center; }
+.brand-logo{ height:16px; width:auto; display:block; }
+.brand-logo.dark{ display:none; }
+@media (min-width: 640px){ .brand-logo{ height:18px; } }
+[data-theme="dark"] .brand-logo.light{ display:none; }
+[data-theme="dark"] .brand-logo.dark{ display:block; }
+
+.app-title {
             font-size: 28px;
             font-weight: 800;
             color: var(--text-primary);
@@ -180,14 +200,18 @@
             transform: scale(1.05);
         }
 
-        .creature-name {
+        .name-edit-wrap{width:100%; display:flex; align-items:center; justify-content:center; gap:8px;}
+.creature-name {
             font-size: 24px;
             font-weight: bold;
             margin-bottom: 15px;
             cursor: pointer;
             transition: color 0.2s ease;
             color: var(--text-primary);
-        }
+         text-align:center; }
+.edit-name-btn{background:transparent;border:none;padding:0;margin:0;cursor:pointer;font-size:16px;line-height:1;opacity:.8;transition:opacity var(--transition-fast);}
+.edit-name-btn:hover{opacity:1;}
+
 
         .creature-name:hover {
             color: #007AFF;
@@ -341,7 +365,7 @@
         }
 
         .section-header:hover {
-            background: var(--bg-tertiary);
+            background: var(--section-bg);
         }
 
         .section-title {
@@ -548,15 +572,16 @@
             justify-content: flex-end;
         }
 
-        .action-btn {
-            background: none;
-            border: none;
-            font-size: 16px;
-            cursor: pointer;
-            padding: 4px;
-            border-radius: var(--radius-sm);
-            transition: background-color var(--transition-fast);
-        }
+        .action-btn{
+    width:36px; height:36px;
+    display:flex; align-items:center; justify-content:center;
+    background:#fff;
+    border:2px solid var(--border-light);
+    border-radius:10px;
+    box-shadow: var(--shadow-sm);
+    padding:0; line-height:1; cursor:pointer;
+    }
+    .action-btn:focus{ outline:2px solid var(--border-light); outline-offset:2px; }
 
         .action-btn:hover {
             background: var(--bg-tertiary);
@@ -724,16 +749,59 @@
         .quick-task-item {
             background: var(--bg-secondary);
             border-radius: var(--radius-lg);
-            padding: 12px;
+            padding: 8px 10px;
             margin-bottom: 8px;
             box-shadow: var(--shadow-sm);
             border: 1px solid var(--border-light);
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 8px;
             cursor: pointer;
             transition: all var(--transition-fast);
         }
+
+/* Quick Tasks actions: scoped, icon-only, no containers */
+.quick-task-item .quick-task-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+.quick-task-item .action-btn{
+    width:36px; height:36px;
+    display:flex; align-items:center; justify-content:center;
+    background: var(--quick-action-bg);
+    border:2px solid var(--border-light);
+    border-radius:10px;
+    box-shadow: var(--shadow-sm);
+    padding:0; line-height:1; cursor:pointer;
+    }
+
+/* Quick Task icons and states */
+.action-complete{ border-color: var(--success); color: var(--success); }
+.action-remove{ border-color: var(--error); color: var(--error); }
+.icon-check, .icon-x{ font-size:18px; font-weight:800; line-height:1; }
+.action-btn:hover{ filter: brightness(0.98); }
+
+/* Dark mode: Quick Task action buttons use dark containers */
+[data-theme="dark"] .quick-task-item .quick-task-actions .action-btn{
+  background: var(--quick-action-bg) !important;
+  background-color: var(--quick-action-bg) !important;
+  border-color: var(--border-color) !important;
+  box-shadow: var(--shadow-sm);
+}
+
+
+    .action-btn:focus{ outline:2px solid var(--border-light); outline-offset:2px; }
+.quick-task-item .action-btn:hover,
+.quick-task-item .action-btn:focus {
+    background: var(--quick-action-bg); /* preserve existing hover pattern */
+    outline: none;
+}
+.quick-task-item .action-btn.action-complete { color: var(--success); }
+.quick-task-item .action-btn.action-remove   { color: var(--error); }
+
 
         .quick-task-item:hover {
             transform: translateY(-1px);
@@ -1149,7 +1217,8 @@
             pointer-events: none;
         }
 
-        .loading-spinner {
+        .loading-brand{ width:240px; max-width:60%; margin-bottom:16px; display:block; }
+.loading-spinner {
             width: 60px;
             height: 60px;
             border: 4px solid var(--border-light);
@@ -1263,7 +1332,21 @@
         [data-theme="dark"] .task-badge.priority-low { background: #0c4a6e; color: #f0f9ff; }
         [data-theme="dark"] .task-badge.priority-medium { background: #92400e; color: #fef3c7; }
         [data-theme="dark"] .task-badge.priority-high { background: #991b1b; color: #fee2e2; }
-    </style>
+    
+
+/* Daily Challenge rotating themes (scoped) */
+.daily-challenge-card.theme-green { background: var(--daily-card-green) !important; }
+.daily-challenge-card.theme-purple { background: var(--daily-card-purple) !important; }
+.daily-challenge-card.theme-orange { background: var(--daily-card-orange-gradient) !important; }
+
+
+
+
+
+.daily-challenge-card .progress-fill.completed{ 
+    background: var(--challenge-complete) !important;
+}
+</style>
 </head>
 <body>
     <!-- Confetti Canvas -->
@@ -1271,25 +1354,29 @@
     
     <!-- Loading Screen -->
     <div id="loadingScreen" class="loading-screen">
-        <div class="loading-spinner"></div>
+          <img class="loading-brand" src="assets/logo-light.png" alt="Task Rock" />
+<div class="loading-spinner"></div>
         <div class="loading-text">Loading Task Rock...</div>
     </div>
 
     <div class="app-container">
         <!-- Pet Rock Header -->
         <div class="pet-rock-header">
-            <h1 class="app-title">🪨 Task Rock</h1>
+            <h1 class="app-title">
+  <img class="brand-logo light" src="assets/logo-light.png" alt="Task Rock logo (light)">
+  <img class="brand-logo dark" src="assets/logo-dark.png" alt="Task Rock logo (dark)">
+</h1>
             
             <div class="creature-container">
                 <img id="creatureImage" src="assets/images/jerry-base.png" alt="Jerry the Rock" class="creature-image">
-                <div id="creatureName" class="creature-name" onclick="editCreatureName()">Jerry</div>
+                <div class="name-edit-wrap" style="display:flex; align-items:center; gap:8px; justify-content:center; width:100%;"><div id="creatureName" class="creature-name" onclick="editCreatureName()">Jerry</div><button class="edit-name-btn" onclick="editCreatureName()" aria-label="Edit name" title="Edit name">✏️</button></div>
                 <input type="text" id="creatureNameInput" class="creature-name-input" style="display: none;" onblur="saveCreatureName()" onkeypress="handleNameKeyPress(event)">
                 
                 <div class="health-bar-container">
                     <div class="health-bar">
                         <div id="healthFill" class="health-fill" style="width: 100%"></div>
                     </div>
-                    <div id="healthText" class="health-text">Health: 100/100</div>
+                    <div id="healthText" class="health-text">Health: 100 - Level 1</div>
                 </div>
                 
                 <div id="taskPoints" class="task-points">0 Points</div>
@@ -1299,9 +1386,9 @@
         <!-- Stats Grid -->
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-icon">📊</div>
-                <div id="totalTasksCount" class="stat-number">0</div>
-                <div class="stat-label">Total Tasks</div>
+                <div class="stat-icon">🚀</div>
+                <div id="todaysTasksCount" class="stat-number">0</div>
+                <div class="stat-label">Today's Tasks</div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon">⏳</div>
@@ -1322,6 +1409,12 @@
 
         <!-- Expanded Stats (Hidden by default) -->
         <div id="expandedStats" class="expanded-stats">
+            <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <div id="totalTasksCount" class="stat-number">0</div>
+                <div class="stat-label">Total Tasks</div>
+            </div>
+    
             <div class="stat-card">
                 <div class="stat-icon">🔥</div>
                 <div id="currentStreakCount" class="stat-number">0</div>
@@ -1379,7 +1472,7 @@
         <div id="dailyChallengeSection" class="section expanded">
             <div class="section-header" onclick="toggleSection('dailyChallenge')">
                 <div class="section-title">
-                    ⚡ Daily Challenge
+                    📅 Daily Challenge
                 </div>
                 <div id="dailyChallengeArrow" class="section-arrow"></div>
             </div>
@@ -1433,7 +1526,7 @@
         <div id="shopSection" class="section">
             <div class="section-header" onclick="toggleSection('shop')">
                 <div class="section-title">
-                    🛍️ Rock Shop
+                    🗿 Rock Shop
                 </div>
                 <div id="shopArrow" class="section-arrow"></div>
             </div>
@@ -1661,6 +1754,7 @@
             dailyChallenge: null,
             dailyChallengeCompleted: false,
             lastDailyChallengeDate: null,
+            lastQuickTasksDate: null,
             selectedQuickTasks: [],
             darkMode: false,
             notifications: false,
@@ -1771,6 +1865,52 @@
                 ]
             }
         };
+        // ---- Daily Quick Tasks repopulation (7 tasks) ----
+        function flattenQuickTasksDB() {
+            const all = [];
+            try {
+                for (const catKey in quickTasksDatabase) {
+                    const cat = quickTasksDatabase[catKey];
+                    if (!cat || !Array.isArray(cat.tasks)) continue;
+                    cat.tasks.forEach(t => {
+                        all.push({ ...t, categoryName: cat.name, categoryEmoji: cat.emoji });
+                    });
+                }
+            } catch (_) {}
+            return all;
+        }
+        function pickRandomUnique(arr, n) {
+            const out = [];
+            const used = new Set();
+            if (!Array.isArray(arr) || arr.length === 0) return out;
+            while (out.length < n && used.size < arr.length) {
+                const idx = Math.floor(Math.random() * arr.length);
+                if (used.has(idx)) continue;
+                used.add(idx);
+                out.push(arr[idx]);
+            }
+            return out;
+        }
+        function repopulateQuickTasksIfNeeded(force=false) {
+            try {
+                const today = new Date().toDateString();
+                const need = force || gameState.lastQuickTasksDate !== today || !Array.isArray(gameState.selectedQuickTasks) || gameState.selectedQuickTasks.length < 7;
+                if (!need) return;
+                const pool = flattenQuickTasksDB();
+                const picked = pickRandomUnique(pool, 7);
+                gameState.selectedQuickTasks = picked;
+                gameState.lastQuickTasksDate = today;
+                if (typeof saveGameState === 'function') saveGameState();
+                if (typeof updateQuickTasksDisplay === 'function') updateQuickTasksDisplay();
+            } catch (e) { /* no-op */ }
+        }
+        function scheduleQuickTasksMidnightRefresh() {
+            const now = new Date();
+            const nextMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0, 0).getTime();
+            setTimeout(() => { repopulateQuickTasksIfNeeded(true); scheduleQuickTasksMidnightRefresh(); }, Math.max(0, nextMidnight - now.getTime()));
+        }
+        document.addEventListener('visibilitychange', () => { if (!document.hidden) repopulateQuickTasksIfNeeded(false); });
+    
 
         // Shop Items
         const shopItems = {
@@ -1843,7 +1983,7 @@
             // Update header info
             document.getElementById('creatureName').textContent = gameState.rockName;
             document.getElementById('healthFill').style.width = `${gameState.health}%`;
-            document.getElementById('healthText').textContent = `Health: ${gameState.health}/100`;
+            document.getElementById('healthText').textContent = `Health: ${gameState.health} - Level ${gameState.level || 1}`;
             document.getElementById('taskPoints').textContent = `${gameState.taskPoints} Points`;
             
             // Update stats
@@ -1855,6 +1995,19 @@
             document.getElementById('pendingTasksCount').textContent = pendingTasks;
             document.getElementById('completedTasksCount').textContent = gameState.completedTasks;
             document.getElementById('completionRateCount').textContent = `${completionRate}%`;
+            // Today's tasks: tasks created today (local)
+            const today = new Date(); today.setHours(0,0,0,0);
+            const todaysTasks = gameState.tasks.filter(t => {
+                const d = t && (t.createdAt || t.dueDate);
+                if (!d) return false;
+                const dt = new Date(d);
+                if (isNaN(dt)) return false;
+                const local = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate());
+                return local.getTime() === today.getTime();
+            }).length;
+            const todaysEl = document.getElementById('todaysTasksCount');
+            if (todaysEl) todaysEl.textContent = todaysTasks;
+
             document.getElementById('currentStreakCount').textContent = gameState.currentStreak;
             document.getElementById('jerryLevelCount').textContent = gameState.jerryLevel;
             document.getElementById('bestStreakCount').textContent = gameState.bestStreak;
@@ -2026,118 +2179,151 @@
         });
 
         // Daily Challenges System
-        function generateDailyChallenge() {
-            const challenges = [
-                { id: 'complete_3', name: 'Triple Threat', desc: 'Complete 3 tasks today', target: 3, progress: 0, reward: 50 },
-                { id: 'complete_hard', name: 'Challenge Accepted', desc: 'Complete 1 hard task today', target: 1, progress: 0, reward: 75 },
-                { id: 'early_bird', name: 'Early Bird', desc: 'Complete a task before 10 AM', target: 1, progress: 0, reward: 40 },
-                { id: 'health_80', name: 'Healthy Rock', desc: `Keep ${gameState.rockName}'s health above 80%`, target: 1, progress: 0, reward: 30 }
-            ];
-            
-            const today = new Date().toDateString();
-            if (gameState.lastDailyChallengeDate !== today) {
-                // Generate new daily challenge
-                const randomChallenge = challenges[Math.floor(Math.random() * challenges.length)];
-                gameState.dailyChallenge = randomChallenge;
-                gameState.dailyChallengeCompleted = false;
-                gameState.lastDailyChallengeDate = today;
-            }
+        
+// Daily Challenges System (Quick Tasks only)
+function generateDailyChallenge() {
+    const quicks = Array.isArray(gameState.selectedQuickTasks) ? gameState.selectedQuickTasks : [];
+
+    const freqByCat = {};
+    quicks.forEach(q => {
+        const cat = q.categoryName || 'General';
+        freqByCat[cat] = (freqByCat[cat] || 0) + 1;
+    });
+    const topCat = Object.entries(freqByCat).sort((a,b) => b[1]-a[1])[0]?.[0];
+
+    const candidates = [
+        { id: 'qt_complete_3', name: 'Quick Blitz', desc: 'Complete 3 quick tasks today', target: 3, progress: 0, reward: 50 },
+        { id: 'qt_morning', name: 'Early Spark', desc: 'Complete a quick task before 10 AM', target: 1, progress: 0, reward: 40 },
+        { id: 'qt_evening', name: 'Night Owl', desc: 'Complete a quick task after 6 PM', target: 1, progress: 0, reward: 40 }
+    ];
+
+    if (topCat) {
+        candidates.push({
+            id: 'qt_cat_' + topCat.replace(/\s+/g, '_').toLowerCase(),
+            name: 'Focus: ' + topCat,
+            desc: 'Complete 2 ' + topCat + ' quick tasks',
+            target: 2,
+            progress: 0,
+            reward: 45,
+            meta: { categoryName: topCat }
+        });
+    }
+
+    const today = new Date().toDateString();
+    if (gameState.lastDailyChallengeDate !== today) {
+        let chosen = candidates[Math.floor(Math.random() * candidates.length)];
+        if (topCat && (freqByCat[topCat] || 0) >= 2) {
+            const catOnly = candidates.filter(c => c.id.startsWith('qt_cat_'));
+            if (catOnly.length) chosen = catOnly[0];
         }
+        gameState.dailyChallenge = chosen;
+        gameState.dailyChallengeCompleted = false;
+        gameState.lastDailyChallengeDate = today;
+    }
+}
+
+
 
         function updateDailyChallengeDisplay() {
-            const challengeDisplay = document.getElementById('dailyChallengeDisplay');
-            if (!challengeDisplay) return;
-            
-            if (!gameState.dailyChallenge) {
-                challengeDisplay.innerHTML = `
-                    <div class="daily-challenge-card">
-                        <div class="challenge-title">No Challenge Today</div>
-                        <div class="challenge-desc">Check back tomorrow for a new challenge!</div>
-                        <div class="challenge-progress-container">
-                            <div class="challenge-progress-label">Progress: 0/0</div>
-                            <div class="challenge-progress-bar">
-                                <div class="challenge-progress-fill" style="width: 0%"></div>
-                            </div>
-                        </div>
-                        <div class="challenge-reward">🎁 Reward: 0 points</div>
-                    </div>
-                `;
-                return;
-            }
-            
-            const challenge = gameState.dailyChallenge;
-            const progressPercent = Math.min(100, (challenge.progress / challenge.target) * 100);
-            const isCompleted = gameState.dailyChallengeCompleted;
-            
-            challengeDisplay.innerHTML = `
-                <div class="daily-challenge-card ${isCompleted ? 'challenge-completed' : ''}">
-                    <div class="challenge-title">${challenge.name}</div>
-                    <div class="challenge-desc">${challenge.desc}</div>
-                    <div class="challenge-progress-container">
-                        <div class="challenge-progress-label">Progress: ${challenge.progress}/${challenge.target}</div>
-                        <div class="challenge-progress-bar">
-                            <div class="challenge-progress-fill" style="width: ${progressPercent}%"></div>
-                        </div>
-                    </div>
-                    <div class="challenge-reward">🎁 Reward: ${challenge.reward} points</div>
+    const challengeDisplay = document.getElementById('dailyChallengeDisplay');
+    if (!challengeDisplay) return;
+
+    
+if (!gameState.dailyChallenge) {
+    const themeClass = 'theme-purple';
+challengeDisplay.innerHTML = `
+        <div class="daily-challenge-card ${themeClass}">
+            <div class="challenge-title">📅 No Challenge Today</div>
+            <div class="challenge-desc">Check back tomorrow for a new challenge!</div>
+            <div class="challenge-progress-container">
+                <div class="challenge-progress-label">Progress: 0/0</div>
+                <div class="challenge-progress-bar">
+                    <div class="challenge-progress-fill" style="width: 0%"></div>
                 </div>
-            `;
-        }
+            </div>
+            <div class="challenge-reward">🎁 Reward: 0 points</div>
+        </div>
+    `;
+    return;
+}
+
+
+    
+const themeClass = 'theme-purple';
+const challenge = gameState.dailyChallenge;
+const progressPercent = Math.min(100, (challenge.progress / challenge.target) * 100);
+const isCompleted = gameState.dailyChallengeCompleted;
+
+challengeDisplay.innerHTML = `
+    <div class="daily-challenge-card ${themeClass} ${isCompleted ? 'challenge-completed' : ''}">
+        <div class="challenge-title">📅 ${challenge.name}</div>
+        <div class="challenge-desc">${challenge.desc}</div>
+        <div class="challenge-progress-container">
+            <div class="challenge-progress-label">Progress: ${challenge.progress}/${challenge.target}</div>
+            <div class="challenge-progress-bar">
+                <div class="challenge-progress-fill" style="width: ${gameState.dailyChallengeCompleted ? 100 : progressPercent}%" ></div>
+            </div>
+        </div>
+        <div class="challenge-reward">🎁 Reward: ${challenge.reward} points</div>
+    </div>
+`;
+
+
+    try { if (typeof applyDailyChallengeTheme === 'function') applyDailyChallengeTheme(); } catch(e) {}
+}
+
+// Only progress challenges when the source is Quick Tasks
+let _dcSource = null; // 'quick' when a quick task triggers progress
+let _lastQuickTaskCat = null;
+
+
 
         function updateDailyChallengeProgress() {
-            if (!gameState.dailyChallenge || gameState.dailyChallengeCompleted) return false;
-            
-            const challenge = gameState.dailyChallenge;
-            let progressMade = false;
-            
-            // Check different challenge types
-            switch (challenge.id) {
-                case 'complete_3':
-                    // Count tasks completed today
-                    const today = new Date().toDateString();
-                    if (gameState.lastCompletionDate === today) {
-                        challenge.progress = Math.min(challenge.target, challenge.progress + 1);
-                        progressMade = true;
-                    }
-                    break;
-                case 'complete_hard':
-                    // Check if a hard task was completed
+    if (!gameState.dailyChallenge || gameState.dailyChallengeCompleted) return false;
+    if (_dcSource !== 'quick') return false;
+
+    const challenge = gameState.dailyChallenge;
+    let progressMade = false;
+    const now = new Date();
+
+    switch (challenge.id) {
+        case 'qt_complete_3':
+            challenge.progress = Math.min(challenge.target, challenge.progress + 1);
+            progressMade = true;
+            break;
+        case 'qt_morning':
+            if (now.getHours() < 10) {
+                challenge.progress = Math.min(challenge.target, challenge.progress + 1);
+                progressMade = true;
+            }
+            break;
+        case 'qt_evening':
+            if (now.getHours() >= 18) {
+                challenge.progress = Math.min(challenge.target, challenge.progress + 1);
+                progressMade = true;
+            }
+            break;
+        default:
+            if (challenge.id && challenge.id.indexOf('qt_cat_') === 0) {
+                const targetCat = (challenge.meta && challenge.meta.categoryName) ? challenge.meta.categoryName : null;
+                if (targetCat && _lastQuickTaskCat === targetCat) {
                     challenge.progress = Math.min(challenge.target, challenge.progress + 1);
                     progressMade = true;
-                    break;
-                case 'early_bird':
-                    // Check if task completed before 10 AM
-                    const now = new Date();
-                    if (now.getHours() < 10) {
-                        challenge.progress = Math.min(challenge.target, challenge.progress + 1);
-                        progressMade = true;
-                    }
-                    break;
-                case 'health_80':
-                    // Check if health is above 80%
-                    if (gameState.health >= 80) {
-                        challenge.progress = Math.min(challenge.target, challenge.progress + 1);
-                        progressMade = true;
-                    }
-                    break;
-            }
-            
-            // Check if challenge is completed
-            if (challenge.progress >= challenge.target && !gameState.dailyChallengeCompleted) {
-                gameState.dailyChallengeCompleted = true;
-                gameState.taskPoints += challenge.reward;
-                
-                // Fire confetti animation
-                if (window.fireConfetti) {
-                    window.fireConfetti();
                 }
-                
-                showSuccessMessage(`⚡ Daily Challenge Complete!\n${challenge.name}\n+${challenge.reward} bonus points!`);
-                return true; // Return true to indicate daily challenge was completed
             }
-            
-            return false; // Return false if no daily challenge was completed
-        }
+            break;
+    }
+
+    if (challenge.progress >= challenge.target && !gameState.dailyChallengeCompleted) {
+        gameState.dailyChallengeCompleted = true;
+        gameState.taskPoints += challenge.reward;
+        if (window.fireConfetti) { window.fireConfetti(); }
+        showSuccessMessage(`📅 Daily Challenge Complete!\n${challenge.name}\n+${challenge.reward} bonus points!`);
+        return true;
+    }
+    return progressMade;
+}
+
 
         // Quick Tasks System
         function updateQuickTasksDisplay() {
@@ -2163,7 +2349,10 @@
                             <div class="quick-task-category">${task.categoryName || 'General'}</div>
                         </div>
                         <div class="quick-task-points">+${task.points || 3} pts</div>
-                        <button class="action-btn" onclick="event.stopPropagation(); removeQuickTask('${task.id}')" title="Remove">✅</button>
+                        <div class="quick-task-actions">
+        <button class="action-btn action-complete" onclick="event.stopPropagation(); completeQuickTask('${task.id}')" title="Complete" aria-label="Complete"><span class="icon-check">✓</span></button>
+        <button class="action-btn action-remove" onclick="event.stopPropagation(); removeQuickTask('${task.id}')" title="Remove" aria-label="Remove"><span class="icon-x">×</span></button>
+    </div>
                     </div>
                 `).join('');
             }
@@ -2499,11 +2688,13 @@
             if (editingTaskIndex !== null) {
                 // Update existing task
                 gameState.tasks[editingTaskIndex] = task;
+                try { scheduleTaskNotifications(task); } catch(_) {}
                 showSuccessMessage('Task updated successfully!');
             } else {
                 // Add new task
                 gameState.tasks.push(task);
                 gameState.totalTasks = gameState.tasks.length;
+                try { scheduleTaskNotifications(task); } catch(_) {}
                 showSuccessMessage('Task created successfully!');
             }
             
@@ -2594,7 +2785,8 @@
             
             // Update daily challenge progress
             if (task.difficulty === 'hard') {
-                updateDailyChallengeProgress();
+                _lastQuickTaskCat = (task && task.categoryName) ? task.categoryName : 'General';
+        updateDailyChallengeProgress();
             }
             
             // Remove task
@@ -2640,6 +2832,9 @@
         }
 
         function completeQuickTask(taskId) {
+    // Mark DC progress as from Quick Tasks
+    _dcSource = 'quick';
+
             const taskIndex = gameState.selectedQuickTasks.findIndex(t => t.id === taskId);
             if (taskIndex === -1) return;
             
@@ -2667,7 +2862,8 @@
             }
             
             // Update daily challenge progress
-            updateDailyChallengeProgress();
+            _lastQuickTaskCat = (task && task.categoryName) ? task.categoryName : 'General';
+        updateDailyChallengeProgress();
             
             // Remove task
             gameState.selectedQuickTasks.splice(taskIndex, 1);
@@ -2681,7 +2877,9 @@
             }
             
             showSuccessMessage(`Quick task completed! +${task.points || 3} points!`);
-        }
+        
+    _dcSource = null; _lastQuickTaskCat = null;
+}
 
         function removeQuickTask(taskId) {
             const taskIndex = gameState.selectedQuickTasks.findIndex(t => t.id === taskId);
@@ -2763,6 +2961,8 @@
         document.addEventListener('DOMContentLoaded', function() {
             loadGameState();
             generateDailyChallenge();
+            repopulateQuickTasksIfNeeded(false);
+            try { scheduleQuickTasksMidnightRefresh(); } catch (_) {}
             // Initialize selectedQuickTasks if it doesn't exist
             if (!gameState.selectedQuickTasks) {
                 gameState.selectedQuickTasks = [];
@@ -2842,7 +3042,169 @@
                 if (!animationFrame) render();
             };
         }
-    </script>
+    
+
+document.addEventListener('DOMContentLoaded', () => {
+    try {
+        const container = document.querySelector('#content') || document.body;
+        const quick = document.getElementById('quickTasksSection');
+        const tasks = document.getElementById('tasksSection');
+        const daily = document.getElementById('dailyChallengeSection');
+        if (container && quick && tasks && daily) {
+            container.appendChild(quick);
+            container.appendChild(tasks);
+            container.appendChild(daily);
+        }
+    } catch (e) { /* no-op */ }
+});
+
+
+document.addEventListener('DOMContentLoaded', () => {
+        try {
+            const quick = document.getElementById('quickTasksSection');
+            const tasks = document.getElementById('tasksSection');
+            const daily = document.getElementById('dailyChallengeSection');
+            if (!(quick && tasks && daily)) return;
+            // Anchor = first .section in the document (keeps us in the correct container)
+            const firstSection = document.querySelector('.section');
+            if (!firstSection) return;
+            const parent = firstSection.parentElement;
+            // Insert in reverse order before the first section so final order is Quick, Tasks, Daily
+            parent.insertBefore(daily, firstSection);
+            parent.insertBefore(tasks, firstSection);
+            parent.insertBefore(quick, firstSection);
+        } catch (_) {}
+    });
+
+// ----- Daily Challenge background cycle (scoped) -----
+// 0: purple, 1: green, 2: orange
+function getLocalMidnight(ts = Date.now()) {
+  const d = new Date(ts); d.setHours(0,0,0,0); return d.getTime();
+}
+function getCycleStart() {
+  let start = localStorage.getItem('dailyChallengeCycleStart');
+  if (!start) { start = String(getLocalMidnight()); localStorage.setItem('dailyChallengeCycleStart', start); }
+  return Number(start);
+}
+function getDailyThemeIndex() {
+  const start = getCycleStart();
+  const todayMidnight = getLocalMidnight();
+  const daysSince = Math.floor((todayMidnight - start) / 86400000);
+  return ((daysSince % 3) + 3) % 3;
+}
+function themeClassForIndex(i) { return ['theme-purple','theme-green','theme-orange'][i] || 'theme-purple'; }
+function applyDailyChallengeTheme() {
+  const card = document.querySelector('#dailyChallengeDisplay .daily-challenge-card');
+  if (!card) return;
+  card.classList.remove('theme-purple','theme-green','theme-orange');
+  card.classList.add(themeClassForIndex(getDailyThemeIndex()));
+}
+function scheduleDailyThemeMidnightRefresh() {
+  const now = new Date();
+  const nextMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0, 0).getTime();
+  setTimeout(() => { applyDailyChallengeTheme(); scheduleDailyThemeMidnightRefresh(); }, Math.max(0, nextMidnight - now.getTime()));
+}
+document.addEventListener('visibilitychange', () => { if (!document.hidden) applyDailyChallengeTheme(); });
+window.addEventListener('load', () => scheduleDailyThemeMidnightRefresh());
+
+
+/* ---------- Web Push Setup (iOS & Android PWAs) ---------- */
+const PUSH_SERVER_BASE = '/api';
+async function registerServiceWorker() {
+  if (!('serviceWorker' in navigator)) return null;
+  try {
+    const reg = await navigator.serviceWorker.register('/sw.js');
+    return reg;
+  } catch (e) {
+    console.warn('SW register failed', e);
+    return null;
+  }
+}
+function urlBase64ToUint8Array(base64String) {
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+  const rawData = atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+  for (let i = 0; i < rawData.length; ++i) outputArray[i] = rawData.charCodeAt(i);
+  return outputArray;
+}
+async function getVapidKey() {
+  const r = await fetch(PUSH_SERVER_BASE + '/vapidPublicKey');
+  if (!r.ok) throw new Error('Failed to fetch VAPID key');
+  const { key } = await r.json();
+  return key;
+}
+async function ensurePushSubscription() {
+  if (!('Notification' in window) || Notification.permission === 'denied') return null;
+  const reg = await registerServiceWorker();
+  if (!reg) return null;
+  let sub = await reg.pushManager.getSubscription();
+  if (!sub) {
+    const vapidKey = await getVapidKey();
+    sub = await reg.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlBase64ToUint8Array(vapidKey)
+    });
+  }
+  try {
+    await fetch(PUSH_SERVER_BASE + '/subscribe', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ subscription: sub, client: 'task-rock' })
+    });
+  } catch (_) {}
+  return sub;
+}
+async function disablePushSubscription() {
+  try {
+    const reg = await navigator.serviceWorker.getRegistration();
+    if (reg) {
+      const sub = await reg.pushManager.getSubscription();
+      if (sub) {
+        await fetch(PUSH_SERVER_BASE + '/unsubscribe', {
+          method: 'POST', headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({ endpoint: sub.endpoint })
+        });
+        await sub.unsubscribe();
+      }
+    }
+  } catch (_) {}
+}
+async function scheduleTaskNotifications(task) {
+  if (!task || !task.dueDate) return;
+  try {
+    const reg = await navigator.serviceWorker.getRegistration();
+    const sub = reg ? await reg.pushManager.getSubscription() : null;
+    if (!sub && gameState.notifications) await ensurePushSubscription();
+    await fetch(PUSH_SERVER_BASE + '/schedule', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        title: task.title || 'Task due',
+        taskId: task.id || task.title,
+        dueDate: task.dueDate,
+        offsets: [20,15,10,5,2],
+        subscription: (await (await navigator.serviceWorker.getRegistration())?.pushManager.getSubscription()) || null
+      })
+    });
+  } catch (e) { console.warn('scheduleTaskNotifications failed', e); }
+}
+const _origToggleNotifications = typeof toggleNotifications === 'function' ? toggleNotifications : null;
+window.toggleNotifications = async function() {
+  if (_origToggleNotifications) _origToggleNotifications();
+  if (gameState && gameState.notifications) {
+    await ensurePushSubscription();
+  } else {
+    await disablePushSubscription();
+  }
+};
+window.addEventListener('load', async () => {
+  try { if (gameState && gameState.notifications) await ensurePushSubscription(); } catch(_) {}
+});
+
+</script>
 </body>
 </html>
+
+
 
