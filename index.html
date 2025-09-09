@@ -169,9 +169,9 @@
         
 /* Scoped brand logo swap (no layout change) */
 .app-title{ display:flex; align-items:center; justify-content:center; }
-.brand-logo{ height:16px; width:auto; display:block; }
+.brand-logo{ height:20px; width:auto; display:block; }
 .brand-logo.dark{ display:none; }
-@media (min-width: 640px){ .brand-logo{ height:18px; } }
+@media (min-width: 640px){ .brand-logo{ height:24px; } }
 [data-theme="dark"] .brand-logo.light{ display:none; }
 [data-theme="dark"] .brand-logo.dark{ display:block; }
 
@@ -1346,6 +1346,68 @@
 .daily-challenge-card .progress-fill.completed{ 
     background: var(--challenge-complete) !important;
 }
+.jerry-dialogue-bubble {
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-secondary);
+            padding: 10px 15px;
+            border-radius: 20px;
+            box-shadow: 0 2px 8px var(--shadow-color);
+            max-width: 250px;
+            text-align: center;
+            font-weight: 500;
+            color: var(--text-primary);
+            animation: fadeInUp 0.3s ease;
+            z-index: 100;
+            margin-bottom: 5px;
+            border: 2px solid #8FEB60;
+            transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .jerry-dialogue-bubble::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 8px solid transparent;
+            border-top-color: #8FEB60;
+        }
+
+        .jerry-dialogue-bubble::before {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: var(--bg-secondary);
+            z-index: 1;
+            margin-top: -2px;
+        }
+
+        @keyframes fadeInUp {
+            from { 
+                opacity: 0; 
+                transform: translateX(-50%) translateY(10px); 
+            }
+
+/* Mobile: make success snackbar long and thin to match section width */
+@media (max-width: 480px){
+  .success-message{
+    width: calc(100% - 32px);   /* match section horizontal padding/margin */
+    max-width: 100%;
+    padding: 8px 12px;
+    top: 10px;
+    border-radius: 14px;
+    font-size: 14px;
+    line-height: 1.25;
+    text-align: center;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -3201,6 +3263,206 @@ window.toggleNotifications = async function() {
 window.addEventListener('load', async () => {
   try { if (gameState && gameState.notifications) await ensurePushSubscription(); } catch(_) {}
 });
+
+
+
+// --- Jerry Dialogue System (ported) ---
+
+
+function showJerryDialog(message) {
+            // Remove any existing dialogue bubbles
+            const existingBubbles = document.querySelectorAll('.jerry-dialogue-bubble');
+            existingBubbles.forEach(bubble => bubble.remove());
+
+            const dialogueBox = document.createElement("div");
+            dialogueBox.textContent = message;
+            dialogueBox.className = "jerry-dialogue-bubble";
+            
+            // Make sure the container has relative positioning
+            const container = document.querySelector('.creature-container');
+            if (container) {
+                container.style.position = 'relative';
+                container.appendChild(dialogueBox);
+                
+                // Remove after 10 seconds
+                setTimeout(() => {
+                    if (dialogueBox.parentNode) {
+                        dialogueBox.remove();
+                    }
+                }, 10000);
+            }
+        }
+
+function getRandomMessage(category, subkey = null) {
+            const source = jerryDialogues[category];
+            if (!source) return "💬";
+            
+            let messages;
+            const userName = gameState.userName;
+            
+            if (subkey) {
+                // Handle subcategories (like health.high, health.mid, etc.)
+                if (userName && source[`personalized${subkey.charAt(0).toUpperCase() + subkey.slice(1)}`]) {
+                    // Use personalized version if user name exists
+                    messages = source[`personalized${subkey.charAt(0).toUpperCase() + subkey.slice(1)}`];
+                } else {
+                    messages = source[subkey];
+                }
+            } else {
+                // Handle main categories
+                if (userName && jerryDialogues[`personalized${category.charAt(0).toUpperCase() + category.slice(1)}`]) {
+                    // Use personalized version if user name exists
+                    messages = jerryDialogues[`personalized${category.charAt(0).toUpperCase() + category.slice(1)}`];
+                } else {
+                    messages = Array.isArray(source) ? source : source.default || [];
+                }
+            }
+            
+            if (!messages || !Array.isArray(messages) || messages.length === 0) {
+                return "💬";
+            }
+            
+            const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+            
+            // Replace {name} placeholder with actual user name
+            if (userName && randomMessage.includes('{name}')) {
+                return randomMessage.replace(/{name}/g, userName);
+            }
+            
+            return randomMessage;
+        }
+
+function initializeMotivationalPhrases() {
+            // Show motivational phrase every 2 minutes (120000 ms)
+            setInterval(() => {
+                triggerJerryResponse('motivation');
+            }, 120000);
+        }
+
+function getRandomMotivationalPhrase() {
+            const userName = gameState.userName;
+            const motivationalPhrases = userName ? jerryDialogues.personalizedMotivation : jerryDialogues.motivation;
+            
+            if (!motivationalPhrases || motivationalPhrases.length === 0) return "Keep going!";
+            
+            // Initialize last motivational phrase index if not exists
+            if (!gameState.lastMotivationalPhraseIndex) {
+                gameState.lastMotivationalPhraseIndex = -1;
+            }
+            
+            let newIndex;
+            // Ensure we don't repeat the same phrase back-to-back
+            do {
+                newIndex = Math.floor(Math.random() * motivationalPhrases.length);
+            } while (newIndex === gameState.lastMotivationalPhraseIndex && motivationalPhrases.length > 1);
+            
+            gameState.lastMotivationalPhraseIndex = newIndex;
+            saveGameState();
+            
+            const selectedPhrase = motivationalPhrases[newIndex];
+            
+            // Replace {name} placeholder with actual user name
+            if (userName && selectedPhrase.includes('{name}')) {
+                return selectedPhrase.replace(/{name}/g, userName);
+            }
+            
+            return selectedPhrase;
+        }
+
+function initializeHealthMoodMonitoring() {
+            // Check health mood thresholds every 30 seconds
+            setInterval(() => {
+                checkHealthMoodThresholds();
+            }, 30000);
+        }
+
+function triggerJerryResponse(context, data = null) {
+            let message = "";
+            
+            switch (context) {
+                case 'greeting':
+                    message = getRandomMessage("greetings");
+                    break;
+                    
+                case 'health':
+                    if (gameState.health >= 80) {
+                        message = getRandomMessage("health", "high");
+                    } else if (gameState.health >= 40) {
+                        message = getRandomMessage("health", "mid");
+                    } else {
+                        message = getRandomMessage("health", "low");
+                    }
+                    break;
+                    
+                case 'healthMood':
+                    message = getHealthMoodMessage();
+                    break;
+                    
+                case 'taskComplete':
+                    message = getRandomMessage("taskCompletion");
+                    break;
+                    
+                case 'taskCreate':
+                    message = getRandomMessage("taskCreation");
+                    break;
+                    
+                case 'levelUp':
+                    message = getRandomMessage("levelUp");
+                    break;
+                    
+                case 'hydration':
+                    message = getRandomMessage("hydrationReminders");
+                    break;
+                    
+                case 'motivation':
+                    message = getRandomMotivationalPhrase();
+                    break;
+                    
+                default:
+                    return; // Don't show anything for unknown contexts
+            }
+            
+            if (message) {
+                showJerryDialog(message);
+            }
+        }
+
+function initializeJerryDialogue() {
+            // Show greeting when app loads
+            setTimeout(() => {
+                triggerJerryResponse('greeting');
+            }, 1000);
+
+            // Initialize motivational phrase system
+            initializeMotivationalPhrases();
+
+            // Initialize health mood monitoring system
+            initializeHealthMoodMonitoring();
+
+            // Set up idle messages (every 2-3 minutes of inactivity)
+            let idleTimer;
+            function resetIdleTimer() {
+                clearTimeout(idleTimer);
+                idleTimer = setTimeout(() => {
+                    triggerJerryResponse('idle');
+                    resetIdleTimer(); // Set up next idle message
+                }, Math.random() * 60000 + 120000); // 2-3 minutes
+            }
+
+            // Reset idle timer on user interaction
+            ['click', 'scroll', 'keypress', 'touchstart'].forEach(event => {
+                document.addEventListener(event, resetIdleTimer);
+            });
+
+            resetIdleTimer();
+
+            // Health-based messages
+            setInterval(() => {
+                if (gameState.health < 60 && Math.random() < 0.3) {
+                    triggerJerryResponse('health');
+                }
+            }, 300000); // Check every 5 minutes
+        }
 
 </script>
 </body>
