@@ -1,0 +1,4719 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Task Rock</title>
+<!-- PWA Manifest -->
+<link href="manifest.json?v=1757559779" rel="manifest"/>
+<!-- PWA Meta Tags -->
+<meta content="#9AE34A" name="theme-color"/>
+<meta content="yes" name="apple-mobile-web-app-capable"/>
+<meta content="default" name="apple-mobile-web-app-status-bar-style"/>
+<meta content="Task Rock" name="apple-mobile-web-app-title"/>
+<meta content="Task Rock" name="application-name"/>
+<meta content="#9AE34A" name="msapplication-TileColor"/>
+<!-- Icons for Browser Tabs and Mobile -->
+<link href="assets/images/browser-window-tab-thumbnail.png" rel="icon" sizes="32x32" type="image/png"/>
+<link href="assets/images/browser-window-tab-thumbnail.png" rel="icon" sizes="192x192" type="image/png"/>
+<link href="assets/images/browser-window-tab-thumbnail.png" rel="apple-touch-icon" sizes="180x180"/>
+<link color="#9AE34A" href="assets/images/browser-window-tab-thumbnail.png" rel="mask-icon"/>
+<!-- Favicon for older browsers -->
+<link href="assets/images/browser-window-tab-thumbnail.png" rel="shortcut icon"/>
+<!-- SEO Meta Tags -->
+<meta content="Task Rock - A fun task management app with Jerry the Rock, your virtual pet companion" name="description"/>
+<meta content="task manager, productivity, pet rock, jerry, tasks, todo" name="keywords"/>
+<meta content="Task Rock" name="author"/>
+<!-- Open Graph Meta Tags -->
+<meta content="Task Rock - Pet Rock Task Manager" property="og:title"/>
+<meta content="A fun task management app with Jerry the Rock, your virtual pet companion" property="og:description"/>
+<meta content="assets/images/icon-512x512.png" property="og:image"/>
+<meta content="https://storygrid00.github.io/Task_Rock" property="og:url"/>
+<meta content="website" property="og:type"/>
+<!-- Twitter Card Meta Tags -->
+<meta content="summary_large_image" name="twitter:card"/>
+<meta content="Task Rock - Pet Rock Task Manager" name="twitter:title"/>
+<meta content="A fun task management app with Jerry the Rock, your virtual pet companion" name="twitter:description"/>
+<meta content="assets/images/icon-512x512.png" name="twitter:image"/>
+
+<style>
+        :root {
+    /* Daily Challenge complete color */
+    --challenge-complete: #ccff00; /* neon green-yellow */
+
+            /* Quick Task action button background token */
+            --quick-action-bg: #ffffff;
+            /* Daily Challenge (scoped) */
+            --daily-card-purple: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            --daily-card-green:  linear-gradient(135deg, #16a34a 0%, #22c55e 100%);
+            --daily-card-orange-gradient: linear-gradient(135deg, #ea580c 0%, #f59e0b 100%);
+        
+            /* Light theme colors */
+            --bg-primary: #f8f9fa;
+            --bg-secondary: white;
+            --bg-tertiary: #e0e0e0;
+            --text-primary: #333;
+            --text-secondary: #666;
+            --text-tertiary: #999;
+            --border-color: #e0e0e0;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --modal-overlay: rgba(0, 0, 0, 0.5);
+            --scrollbar-track: #f9fafb;
+            --scrollbar-thumb: #d1d5db;
+            --scrollbar-thumb-hover: #9ca3af;
+            --health-bar-bg: #e0e0e0;
+            --section-bg: white;
+            --task-item-bg: white;
+            --button-hover-bg: #f0f0f0;
+            --congrats-bg: white;
+            --achievement-locked-bg: #f5f5f5;
+            --achievement-locked-text: #999;
+            
+            /* Modern additions */
+            --accent-primary: #8FEB60;
+            --accent-secondary: #7DD956;
+            --accent-tertiary: #6BC748;
+            --border-light: #e8eaed;
+            --border-medium: #dadce0;
+            --border-dark: #c4c7cc;
+            --success: #34d399;
+            --warning: #fbbf24;
+            --error: #f87171;
+            --info: #60a5fa;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            --radius-full: 9999px;
+            --transition-fast: 0.15s ease-out;
+            --transition-normal: 0.25s ease-out;
+            --transition-slow: 0.35s ease-out;
+        }
+
+        [data-theme="dark"] {
+            --quick-action-bg: var(--bg-tertiary);
+            /* Dark theme colors */
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --bg-tertiary: #404040;
+            --text-primary: #ffffff;
+            --text-secondary: #cccccc;
+            --text-tertiary: #999999;
+            --border-color: #404040;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+            --modal-overlay: rgba(0, 0, 0, 0.7);
+            --scrollbar-track: #2d2d2d;
+            --scrollbar-thumb: #555555;
+            --scrollbar-thumb-hover: #777777;
+            --health-bar-bg: #404040;
+            --section-bg: #2d2d2d;
+            --task-item-bg: #2d2d2d;
+            --button-hover-bg: #404040;
+            --congrats-bg: #2d2d2d;
+            --achievement-locked-bg: #333333;
+            --achievement-locked-text: #666666;
+            --border-light: #374151;
+            --border-medium: #4b5563;
+            --border-dark: #6b7280;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'SF Pro Rounded', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+        }
+
+        .app-container {
+            max-width: 420px;
+            margin: 0 auto;
+            background: var(--bg-secondary);
+            min-height: 100vh;
+            position: relative;
+            box-shadow: var(--shadow-xl);
+        }
+
+        /* Pet Rock Header with Theme Background */
+        .pet-rock-header {
+            background: var(--bg-secondary);
+            padding: 24px 20px;
+            text-align: center;
+            position: relative;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        
+/* Scoped brand logo swap (no layout change) */
+.app-title{ display:flex; align-items:center; justify-content:center; }
+.brand-logo{ height:20px; width:auto; display:block; }
+.brand-logo.dark{ display:none; }
+@media (min-width: 640px){ .brand-logo{ height:24px; } }
+[data-theme="dark"] .brand-logo.light{ display:none; }
+[data-theme="dark"] .brand-logo.dark{ display:block; }
+
+.app-title {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        .creature-container {
+            position: relative;
+            margin: 16px 0;
+        }
+
+        .creature-image {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 12px;
+            display: block;
+            border-radius: 50%;
+            transition: transform var(--transition-normal);
+        }
+
+        .creature-image:hover {
+            transform: scale(1.05);
+        }
+
+        .name-edit-wrap{width:100%; display:flex; align-items:center; justify-content:center; gap:8px;}
+.creature-name {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: color 0.2s ease;
+            color: var(--text-primary);
+         text-align:center; }
+.edit-name-btn{background:transparent;border:none;padding:0;margin:0;cursor:pointer;font-size:16px;line-height:1;opacity:.8;transition:opacity var(--transition-fast);}
+.edit-name-btn:hover{opacity:1;}
+
+
+        .creature-name:hover {
+            color: #007AFF;
+        }
+
+        .creature-name-input {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            border: none;
+            background: transparent;
+            text-align: center;
+            outline: none;
+            border-bottom: 2px solid #007AFF;
+            font-family: 'SF Pro Rounded', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            color: var(--text-primary);
+        }
+
+        .health-bar-container {
+            margin-bottom: 15px;
+            width: 100%;
+            max-width: 300px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .health-bar {
+            width: 100%;
+            height: 20px;
+            background: var(--health-bar-bg);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .health-fill {
+            height: 100%;
+            background: #8FEB60;
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+
+        .health-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .task-points {
+            background: #007AFF;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-weight: 400;
+            display: inline-block;
+        }
+
+        /* Modern Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            padding: 20px;
+            background: var(--bg-tertiary);
+        }
+
+        .expanded-stats {
+            display: none;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 16px;
+            padding: 0 20px;
+        }
+
+        .expanded-stats.show {
+            display: grid;
+        }
+
+        .show-more-btn {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-medium);
+            padding: 8px 16px;
+            border-radius: var(--radius-full);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            margin: 12px 20px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .show-more-btn:hover {
+            background: var(--bg-tertiary);
+            transform: translateY(-1px);
+        }
+
+        .stat-card {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-light);
+            transition: all var(--transition-fast);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .stat-icon {
+            font-size: 20px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* Sections */
+        .section {
+            margin: 0;
+            background: var(--section-bg);
+            border-bottom: 1px solid var(--border-light);
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .section-header {
+            padding: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background-color var(--transition-fast);
+            user-select: none;
+        }
+
+        .section-header:hover {
+            background: var(--section-bg);
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-arrow {
+            font-size: 16px;
+            color: var(--text-secondary);
+            transition: transform var(--transition-normal);
+        }
+
+        .section-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height var(--transition-normal);
+        }
+
+        .section.expanded .section-content {
+            max-height: 2000px;
+        }
+
+        .section-body {
+            padding: 0 20px 20px;
+        }
+
+        /* Modern Task Cards */
+        .task-card {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-light);
+            transition: all var(--transition-fast);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .task-card:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .task-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 12px;
+            position: relative;
+        }
+
+        .task-emoji {
+            font-size: 20px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-md);
+            flex-shrink: 0;
+        }
+
+        .task-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .task-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+            line-height: 1.4;
+        }
+
+        .task-category {
+            display: inline-block;
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            padding: 4px 8px;
+            border-radius: var(--radius-sm);
+            font-size: 11px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .task-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .task-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 6px;
+            border-radius: var(--radius-sm);
+            font-size: 10px;
+            font-weight: 500;
+        }
+
+        .task-badge.difficulty-easy { background: #dcfce7; color: #166534; }
+        .task-badge.difficulty-medium { background: #fef3c7; color: #92400e; }
+        .task-badge.difficulty-hard { background: #fee2e2; color: #991b1b; }
+
+        .task-badge.priority-low { background: #f0f9ff; color: #0c4a6e; }
+        .task-badge.priority-medium { background: #fef3c7; color: #92400e; }
+        .task-badge.priority-high { background: #fee2e2; color: #991b1b; }
+
+        /* Recurring task badge styling - slightly larger for better visibility */
+        .task-badge.recurring-badge {
+            font-size: 12px;
+            font-weight: 500;
+            /* Slightly larger than other badges for better readability */
+        }
+
+        /* 3-Dot Menu Styles */
+        .task-menu-container {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+        }
+
+        .task-menu-btn {
+            background: none;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: var(--radius-sm);
+            transition: background-color var(--transition-fast);
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .task-menu-btn:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .task-menu-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-medium);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg);
+            z-index: 100;
+            min-width: 120px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-8px);
+            transition: all var(--transition-fast);
+        }
+
+        .task-menu-dropdown.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .task-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: background-color var(--transition-fast);
+            color: var(--text-primary);
+            font-size: 14px;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        .task-menu-item:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .task-menu-item:first-child {
+            border-radius: var(--radius-md) var(--radius-md) 0 0;
+        }
+
+        .task-menu-item:last-child {
+            border-radius: 0 0 var(--radius-md) var(--radius-md);
+        }
+
+        .task-menu-item.delete:hover {
+            background: var(--error);
+            color: white;
+        }
+
+        .task-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 12px;
+            justify-content: flex-end;
+        }
+
+        .action-btn{
+    width:36px; height:36px;
+    display:flex; align-items:center; justify-content:center;
+    background:#fff;
+    border:2px solid var(--border-light);
+    border-radius:10px;
+    box-shadow: var(--shadow-sm);
+    padding:0; line-height:1; cursor:pointer;
+    }
+    .action-btn:focus{ outline:2px solid var(--border-light); outline-offset:2px; }
+
+        .action-btn:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .complete-btn {
+            background: var(--accent-primary);
+            color: #333;
+            border: none;
+            padding: 8px 16px;
+            border-radius: var(--radius-full);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .complete-btn:hover {
+            background: var(--accent-secondary);
+            transform: translateY(-1px);
+        }
+
+        /* Original Primary Button Style */
+        .btn-primary {
+            background: linear-gradient(135deg, #8FEB60 0%, #9AE34A 100%);
+            color: #333;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+            background: linear-gradient(135deg, #7DD956 0%, #8FEB60 100%);
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-medium);
+            padding: 12px 24px;
+            border-radius: var(--radius-full);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-quaternary);
+            transform: translateY(-1px);
+        }
+
+        .create-task-btn {
+            width: 100%;
+            margin-top: 16px;
+        }
+
+        /* Daily Challenge Card - Purple Gradient Style */
+        .daily-challenge-card {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            color: white;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .challenge-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .challenge-desc {
+            font-size: 14px;
+            margin-bottom: 16px;
+            opacity: 0.9;
+            text-align: center;
+        }
+
+        .challenge-progress-container {
+            margin-bottom: 12px;
+        }
+
+        .challenge-progress-label {
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            text-align: center;
+            opacity: 0.9;
+        }
+
+        .challenge-progress-bar {
+            width: 100%;
+            height: 24px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .challenge-progress-fill {
+            height: 100%;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 12px;
+            transition: width 0.3s ease;
+            position: relative;
+        }
+
+        .challenge-reward {
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 4px;
+        }
+
+        .challenge-completed {
+            background: linear-gradient(135deg, var(--success) 0%, #22c55e 100%);
+        }
+
+        .challenge-completed .challenge-progress-fill {
+            background: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Quick Tasks */
+        .quick-tasks-empty {
+            text-align: center;
+            padding: 32px 16px;
+            color: var(--text-secondary);
+        }
+
+        .quick-tasks-empty-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+
+        .quick-tasks-empty-text {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .quick-tasks-empty-subtext {
+            font-size: 14px;
+            opacity: 0.7;
+        }
+
+        .quick-task-item {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            padding: 8px 10px;
+            margin-bottom: 8px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+/* Quick Tasks actions: scoped, icon-only, no containers */
+.quick-task-item .quick-task-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+.quick-task-item .action-btn{
+    width:36px; height:36px;
+    display:flex; align-items:center; justify-content:center;
+    background: var(--quick-action-bg);
+    border:2px solid var(--border-light);
+    border-radius:10px;
+    box-shadow: var(--shadow-sm);
+    padding:0; line-height:1; cursor:pointer;
+    }
+
+/* Quick Task icons and states */
+.action-complete{ border-color: var(--success); color: var(--success); }
+.action-remove{ border-color: var(--error); color: var(--error); }
+.icon-check, .icon-x{ font-size:18px; font-weight:800; line-height:1; }
+.action-btn:hover{ filter: brightness(0.98); }
+
+/* Dark mode: Quick Task action buttons use dark containers */
+[data-theme="dark"] .quick-task-item .quick-task-actions .action-btn{
+  background: var(--quick-action-bg) !important;
+  background-color: var(--quick-action-bg) !important;
+  border-color: var(--border-color) !important;
+  box-shadow: var(--shadow-sm);
+}
+
+
+    .action-btn:focus{ outline:2px solid var(--border-light); outline-offset:2px; }
+.quick-task-item .action-btn:hover,
+.quick-task-item .action-btn:focus {
+    background: var(--quick-action-bg); /* preserve existing hover pattern */
+    outline: none;
+}
+.quick-task-item .action-btn.action-complete { color: var(--success); }
+.quick-task-item .action-btn.action-remove   { color: var(--error); }
+
+
+        .quick-task-item:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .quick-task-emoji {
+            font-size: 18px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-md);
+            flex-shrink: 0;
+        }
+
+        .quick-task-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .quick-task-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .quick-task-category {
+            font-size: 11px;
+            color: var(--text-secondary);
+            background: var(--bg-tertiary);
+            padding: 2px 6px;
+            border-radius: var(--radius-sm);
+            display: inline-block;
+        }
+
+        .quick-task-points {
+            background: var(--info);
+            color: white;
+            padding: 4px 8px;
+            border-radius: var(--radius-full);
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        /* Modal Modern Design */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--modal-overlay);
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            background: var(--bg-secondary);
+            margin: 5% auto;
+            padding: 0;
+            border-radius: var(--radius-xl);
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow: hidden;
+            box-shadow: var(--shadow-xl);
+            animation: modalSlideIn var(--transition-normal);
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            padding: 4px;
+            border-radius: var(--radius-sm);
+            transition: all var(--transition-fast);
+        }
+
+        .modal-close:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .modal-body {
+            padding: 20px;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .modal-footer {
+            padding: 20px;
+            border-top: 1px solid var(--border-light);
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-medium);
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            transition: all var(--transition-fast);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(143, 235, 96, 0.1);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        /* Selection Grid */
+        .selection-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .selection-item {
+            padding: 12px;
+            border: 1px solid var(--border-medium);
+            border-radius: var(--radius-md);
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            background: var(--bg-secondary);
+        }
+
+        .selection-item:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .selection-item.selected {
+            background: var(--accent-primary);
+            border-color: var(--accent-secondary);
+            color: #333;
+        }
+
+        .selection-item-emoji {
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .selection-item-text {
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        /* Category Selection for Quick Tasks */
+        .category-section {
+            margin-bottom: 24px;
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .category-emoji {
+            font-size: 18px;
+        }
+
+        .category-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .category-tasks {
+            display: grid;
+            gap: 8px;
+        }
+
+        .category-task-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            border: 1px solid var(--border-light);
+        }
+
+        .category-task-item:hover {
+            background: var(--bg-tertiary);
+            transform: translateY(-1px);
+        }
+
+        /* Rock Shop Styles */
+        .shop-grid {
+            display: flex;
+            gap: 16px;
+            margin-top: 16px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+        }
+
+        .shop-grid::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .shop-grid::-webkit-scrollbar-track {
+            background: var(--scrollbar-track);
+            border-radius: 3px;
+        }
+
+        .shop-grid::-webkit-scrollbar-thumb {
+            background: var(--scrollbar-thumb);
+            border-radius: 3px;
+        }
+
+        .shop-grid::-webkit-scrollbar-thumb:hover {
+            background: var(--scrollbar-thumb-hover);
+        }
+
+        .shop-item {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-light);
+            transition: all var(--transition-fast);
+            cursor: pointer;
+            min-width: 150px;
+            flex-shrink: 0;
+        }
+
+        .shop-item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .shop-item-image {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 12px;
+            display: block;
+            border-radius: var(--radius-md);
+        }
+
+        .shop-item-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .shop-item-price {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .shop-item.affordable {
+            border-color: var(--success);
+        }
+
+        .shop-item.expensive {
+            opacity: 0.6;
+        }
+
+        /* Settings Styles */
+        .settings-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .settings-label {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .settings-toggle {
+            width: 50px;
+            height: 28px;
+            background: var(--bg-tertiary);
+            border-radius: 14px;
+            position: relative;
+            cursor: pointer;
+            transition: background-color var(--transition-fast);
+        }
+
+        .settings-toggle.active {
+            background: var(--accent-primary);
+        }
+
+        .settings-toggle-slider {
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: transform var(--transition-fast);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .settings-toggle.active .settings-toggle-slider {
+            transform: translateX(22px);
+        }
+
+        /* Success Message - Bottom sticky positioning */
+        .success-message {
+            position: fixed;
+            bottom: 10px;
+            left: 0;
+            transform: none;
+            background: var(--success);
+            color: white;
+            padding: 8px 12px;
+            border-radius: var(--radius-full);
+            font-weight: 600;
+            z-index: 1001;
+            animation: successSlideUp var(--transition-normal);
+            max-width: 100vw;
+            width: 100vw;
+            min-width: 0;
+        
+            text-align: center;
+            line-height: 1.2;}
+
+        @keyframes successSlideUp {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        /* Loading Screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-secondary);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity var(--transition-normal);
+        }
+
+        .loading-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loading-brand{ width:240px; max-width:60%; margin-bottom:16px; display:block; }
+.loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--border-light);
+            border-top: 4px solid var(--accent-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Achievement Styles */
+        .achievement-card {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all var(--transition-fast);
+        }
+
+        .achievement-card.unlocked {
+            background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+            color: #333;
+        }
+
+        .achievement-card.locked {
+            background: var(--achievement-locked-bg);
+            color: var(--achievement-locked-text);
+        }
+
+        .achievement-icon {
+            font-size: 24px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-md);
+            flex-shrink: 0;
+        }
+
+        .achievement-content {
+            flex: 1;
+        }
+
+        .achievement-name {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .achievement-desc {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .achievement-status {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: var(--radius-sm);
+        }
+
+        .achievement-status.unlocked {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .achievement-status.locked {
+            background: var(--bg-tertiary);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            .app-container {
+                max-width: 100%;
+                box-shadow: none;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+            
+            .expanded-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .selection-grid {
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            }
+        }
+
+        /* Dark mode specific adjustments */
+        [data-theme="dark"] .task-badge.difficulty-easy { background: #166534; color: #dcfce7; }
+        [data-theme="dark"] .task-badge.difficulty-medium { background: #92400e; color: #fef3c7; }
+        [data-theme="dark"] .task-badge.difficulty-hard { background: #991b1b; color: #fee2e2; }
+        [data-theme="dark"] .task-badge.priority-low { background: #0c4a6e; color: #f0f9ff; }
+        [data-theme="dark"] .task-badge.priority-medium { background: #92400e; color: #fef3c7; }
+        [data-theme="dark"] .task-badge.priority-high { background: #991b1b; color: #fee2e2; }
+    
+
+/* Daily Challenge rotating themes (scoped) */
+.daily-challenge-card.theme-green { background: var(--daily-card-green) !important; }
+.daily-challenge-card.theme-purple { background: var(--daily-card-purple) !important; }
+.daily-challenge-card.theme-orange { background: var(--daily-card-orange-gradient) !important; }
+
+.daily-challenge-card .progress-fill.completed{ 
+    background: var(--challenge-complete) !important;
+}
+
+        @keyframes fadeInUp {
+            from { 
+                opacity: 0; 
+                transform: translateX(-50%) translateY(10px); 
+            }
+
+/* Mobile: make success snackbar full-width and responsive */
+@media (max-width: 480px){
+  .success-message{
+    width: calc(100vw - 20px);   /* Full width with small margins */
+    max-width: none;
+    padding: 14px 16px;
+    bottom: 10px;
+    border-radius: 12px;
+    font-size: 14px;
+    line-height: 1.3;
+    text-align: center;
+    min-width: unset;
+    left: 10px;
+    right: 10px;
+    transform: none;
+  }
+}
+
+/* Extra small screens - even more responsive */
+@media (max-width: 320px){
+  .success-message{
+    width: calc(100vw - 16px);
+    left: 8px;
+    right: 8px;
+    bottom: 8px;
+    padding: 12px 14px;
+    font-size: 13px;
+  }
+}
+
+/* Urgency alert styles for due dates */
+.urgent-low {
+    color: #f59e0b !important; /* Amber - 20 minutes */
+    font-weight: 600;
+}
+
+.urgent-medium {
+    color: #f97316 !important; /* Orange - 15 minutes */
+    font-weight: 600;
+    animation: pulse-subtle 2s infinite;
+}
+
+.urgent-high {
+    color: #dc2626 !important; /* Red - 10 minutes */
+    font-weight: 700;
+    animation: pulse-medium 1.5s infinite;
+}
+
+.urgent-very-high {
+    color: #dc2626 !important; /* Red - 5 minutes */
+    font-weight: 700;
+    animation: pulse-medium 1.2s infinite;
+    text-shadow: 0 0 2px rgba(220, 38, 38, 0.2);
+}
+
+.urgent-critical {
+    color: #dc2626 !important; /* Red - 2 minutes */
+    font-weight: 700;
+    animation: pulse-urgent 1s infinite;
+    text-shadow: 0 0 4px rgba(220, 38, 38, 0.3);
+}
+
+@keyframes pulse-subtle {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.8; }
+}
+
+@keyframes pulse-medium {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(1.02); }
+}
+
+@keyframes pulse-urgent {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.05); }
+}
+
+/* Jerry's Speech Bubble Styles - Modern & Responsive */
+.jerry-dialogue-container {
+    position: absolute;
+    top: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    pointer-events: none;
+    width: calc(100% - 40px);
+    max-width: 320px;
+    display: flex;
+    justify-content: center;
+    padding: 0 10px;
+}
+
+.jerry-dialogue-bubble {
+    background: #8FEB60;
+    border: 2px solid #7DD956;
+    border-radius: 18px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08);
+    max-width: 100%;
+    min-width: 140px;
+    width: fit-content;
+    position: relative;
+    margin-bottom: 18px;
+    opacity: 0;
+    transform: translateY(15px) scale(0.9);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.jerry-dialogue-text {
+    padding: 16px 20px;
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.5;
+    color: #1a1a1a;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+    text-align: center;
+    max-height: 150px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    letter-spacing: 0.01em;
+}
+
+.jerry-dialogue-arrow {
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid #8FEB60;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.jerry-dialogue-arrow::before {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    left: -11px;
+    width: 0;
+    height: 0;
+    border-left: 11px solid transparent;
+    border-right: 11px solid transparent;
+    border-top: 11px solid #7DD956;
+}
+
+/* Animation classes */
+.dialogue-show {
+    opacity: 1 !important;
+    transform: translateY(0) scale(1) !important;
+}
+
+.dialogue-hide {
+    opacity: 0 !important;
+    transform: translateY(15px) scale(0.9) !important;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 480px) {
+    .jerry-dialogue-container {
+        top: -20px;
+        width: calc(100% - 20px);
+        max-width: 280px;
+        padding: 0 5px;
+    }
+    
+    .jerry-dialogue-bubble {
+        max-width: 100%;
+        min-width: 120px;
+        margin-bottom: 15px;
+        border-radius: 16px;
+    }
+    
+    .jerry-dialogue-text {
+        padding: 14px 16px;
+        font-size: 14px;
+        line-height: 1.4;
+        max-height: 120px;
+    }
+    
+    .jerry-dialogue-arrow {
+        bottom: -9px;
+        border-left-width: 9px;
+        border-right-width: 9px;
+        border-top-width: 9px;
+    }
+    
+    .jerry-dialogue-arrow::before {
+        left: -10px;
+        border-left-width: 10px;
+        border-right-width: 10px;
+        border-top-width: 10px;
+    }
+}
+
+/* Extra small screens */
+@media (max-width: 360px) {
+    .jerry-dialogue-container {
+        width: calc(100% - 16px);
+        max-width: 240px;
+    }
+    
+    .jerry-dialogue-bubble {
+        border-radius: 14px;
+    }
+    
+    .jerry-dialogue-text {
+        padding: 12px 14px;
+        font-size: 13px;
+    }
+}
+
+/* Dark theme adjustments */
+[data-theme="dark"] .jerry-dialogue-bubble {
+    background: #2d2d2d;
+    border-color: #404040;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme="dark"] .jerry-dialogue-text {
+    color: #ffffff;
+}
+
+[data-theme="dark"] .jerry-dialogue-arrow {
+    border-top-color: #2d2d2d;
+}
+
+[data-theme="dark"] .jerry-dialogue-arrow::before {
+    border-top-color: #404040;
+}
+
+/* Enhanced scrollbar styling for long text */
+.jerry-dialogue-text::-webkit-scrollbar {
+    width: 6px;
+}
+
+.jerry-dialogue-text::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 3px;
+}
+
+.jerry-dialogue-text::-webkit-scrollbar-thumb {
+    background: var(--border-medium);
+    border-radius: 3px;
+    transition: background-color 0.2s ease;
+}
+
+.jerry-dialogue-text::-webkit-scrollbar-thumb:hover {
+    background: var(--border-dark);
+}
+
+/* Firefox scrollbar styling */
+.jerry-dialogue-text {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-medium) transparent;
+}
+
+
+/* Helper spacing for icon inside badges (inherits existing badge colors) */
+.task-badge .tr-pill__icon{ margin-right: 6px; line-height: 1; }
+</style>
+<style id="pet-rock-float-patch">
+/* Pet Rock floating animation patch (non-destructive) */
+.creature-image {
+  animation: floatRock 4s ease-in-out infinite;
+  will-change: transform;
+}
+.creature-image:hover {
+  /* Pause float so hover scale from existing styles is never overridden */
+  animation-play-state: paused;
+}
+@keyframes floatRock {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+</style>
+<style id="pet-rock-size-fix">
+/* Pet Rock size/aspect fix — match reference and prevent distortion */
+.creature-image {
+  width: clamp(220px, 36vw, 300px); /* larger, like the reference */
+  height: auto;                      /* preserve natural aspect */
+  border-radius: 0;                  /* no circular mask */
+}
+@media (min-width: 768px) {
+  .creature-image { width: 300px; }  /* desktop consistency */
+}
+</style>
+<style id="pet-rock-position-fix">
+/* Move Pet Rock lower (closer to the name) without affecting other UI */
+.creature-image {
+  margin-bottom: 6px; /* previously larger; now tighter spacing to name */
+}
+@media (min-width: 768px) {
+  .creature-image { margin-bottom: 8px; }
+}
+</style>
+<style id="pencil-align-fix">
+/* Align pencil icon with name baseline without changing button layout */
+.edit-name-btn {
+  vertical-align: middle;
+  transform: translateY(-2px); /* subtle nudge up */
+}
+@media (min-width: 768px) {
+  .edit-name-btn { transform: translateY(-1px); } /* slightly less on desktop */
+}
+</style>
+<style id="pencil-align-fix-2">
+/* Adopt exact pencil alignment relative to name (baseline + slightly higher position) */
+.name-edit-wrap {
+  align-items: baseline !important; /* align pencil with text baseline */
+}
+.creature-name {
+  line-height: 1.0; /* tighten to font metrics for consistent baseline */
+}
+.edit-name-btn {
+  vertical-align: middle;
+  transform: translateY(-6px) !important; /* raise a bit more to match reference */
+}
+@media (min-width: 768px) {
+  .edit-name-btn { transform: translateY(-5px) !important; }
+}
+</style>
+
+<link href="assets/css/tr-onboarding.css" rel="stylesheet"/>
+<link href="favicon.ico" rel="icon"/><link href="favicon.png" rel="icon" sizes="32x32" type="image/png"/><link href="icons/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png"/><link href="apple-touch-icon.png" rel="apple-touch-icon"/><link href="icons/apple-touch-icon.png" rel="apple-touch-icon"/><style id="tr-subcategory-sizing">/* Task Rock — Rock Shop subcategory sizing (16px, weight 600, forced) */
+h1.subcategory, h2.subcategory, h3.subcategory, h4.subcategory, .subcategory{
+  font-size: 16px !important;
+  line-height: 1.25 !important;
+  font-weight: 600 !important;
+  font-variation-settings: "wght" 600;
+}</style><style id="tr-center-show-more-style">/* Center only the "Show More" button (no parent layout changes) */
+.tr-center-show-more{
+  display: block;
+  width: max-content;
+  margin: 12px auto;
+}</style><style id="tr-name-editing-style">/* Keep pet name centered while editing; hide pencil during editing */
+.tr-name-editing{ text-align: center !important; }
+.tr-hide-pencil{ visibility: hidden !important; }</style><style id="tr-taskcard-patch-style">/* Task Card patch: helpers */
+.tr-date-under-difficulty{ display:block; margin-top:.35rem; opacity:.9; }
+.tr-recurring-pill{ margin-left:.35rem; }</style><style id="tr-taskcard-pill-fallback-style">/* Fallback style for recurring pill if no pill classes are found */
+.tr-pill-fallback{
+  display:inline-block;
+  padding:2px 8px;
+  border-radius:999px;
+  background:rgba(0,0,0,0.06);
+  font-size:12px;
+  line-height:1.4;
+  vertical-align:middle;
+  margin-left:.35rem;
+}
+.tr-date-under-difficulty{ display:block; margin-top:.35rem; opacity:.9; }</style>    <link href="assets/css/speech-bubble.css" rel="stylesheet"/>
+</head>
+<body>
+<!-- Confetti Canvas -->
+<canvas id="confetti-canvas" style="position: fixed; inset: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 9999;"></canvas>
+<!-- Loading Screen -->
+<div class="loading-screen" id="loadingScreen">
+<img alt="Task Rock" class="loading-brand" src="assets/logo-light.png"/>
+<div class="loading-spinner"></div>
+<div class="loading-text">Loading Task Rock...</div>
+</div>
+<div class="app-container">
+<!-- Pet Rock Header -->
+<div class="pet-rock-header">
+<h1 class="app-title">
+<img alt="Task Rock logo (light)" class="brand-logo light" src="assets/logo-light.png"/>
+<img alt="Task Rock logo (dark)" class="brand-logo dark" src="assets/logo-dark.png"/>
+</h1>
+<div class="creature-container">
+            <!-- Jerry's Speech Bubble -->
+            <div id="jerryDialogueContainer" style="display: none;">
+                <p id="jerryDialogueText"></p>
+            </div>
+            <img alt="Jerry the Rock" class="creature-image" id="creatureImage" src="assets/Jerry-Default.png"/>
+<div class="name-edit-wrap" style="display:flex; align-items:center; gap:8px; justify-content:center; width:100%;"><div class="creature-name" id="creatureName" onclick="editCreatureName()">Jerry</div><button aria-label="Edit name" class="edit-name-btn" onclick="editCreatureName()" title="Edit name">✏️</button></div>
+<input class="creature-name-input" id="creatureNameInput" onblur="saveCreatureName()" onkeypress="handleNameKeyPress(event)" style="display: none;" type="text"/>
+<div class="health-bar-container">
+<div class="health-bar">
+<div class="health-fill" id="healthFill" style="width: 100%"></div>
+</div>
+<div class="health-text" id="healthText">Health: 100 - Level 1</div>
+</div>
+<div class="task-points" id="taskPoints">0 Points</div>
+</div>
+</div>
+<!-- Stats Grid -->
+<div class="stats-grid">
+<div class="stat-card">
+<div class="stat-icon">🚀</div>
+<div class="stat-number" id="todaysTasksCount">0</div>
+<div class="stat-label">Today's Tasks</div>
+</div>
+<div class="stat-card">
+<div class="stat-icon">⏳</div>
+<div class="stat-number" id="pendingTasksCount">0</div>
+<div class="stat-label">Pending Tasks</div>
+</div>
+<div class="stat-card">
+<div class="stat-icon">✅</div>
+<div class="stat-number" id="completedTasksCount">0</div>
+<div class="stat-label">Completed Tasks</div>
+</div>
+<div class="stat-card">
+<div class="stat-icon">📈</div>
+<div class="stat-number" id="completionRateCount">0%</div>
+<div class="stat-label">Completion Rate</div>
+</div>
+</div>
+<!-- Expanded Stats (Hidden by default) -->
+<div class="expanded-stats" id="expandedStats">
+<div class="stat-card">
+<div class="stat-icon">📊</div>
+<div class="stat-number" id="totalTasksCount">0</div>
+<div class="stat-label">Total Tasks</div>
+</div>
+<div class="stat-card">
+<div class="stat-icon">🔥</div>
+<div class="stat-number" id="currentStreakCount">0</div>
+<div class="stat-label">Current Streak</div>
+</div>
+<div class="stat-card">
+<div class="stat-icon">🏆</div>
+<div class="stat-number" id="bestStreakCount">0</div>
+<div class="stat-label">Best Streak</div>
+</div>
+<div class="stat-card">
+<div class="stat-icon">⭐</div>
+<div class="stat-number" id="jerryLevelCount">1</div>
+<div class="stat-label">Rock Level</div>
+</div>
+<div class="stat-card">
+<div class="stat-icon">🎯</div>
+<div class="stat-number" id="experienceCount">0/100</div>
+<div class="stat-label">Experience</div>
+</div>
+<div class="stat-card">
+<div class="stat-icon">🏅</div>
+<div class="stat-number" id="achievementsCount">0/10</div>
+<div class="stat-label">Achievements</div>
+</div>
+</div>
+<!-- Show More Button -->
+<button class="show-more-btn" id="showMoreBtn" onclick="toggleExpandedStats()">
+<span id="showMoreText">Show More</span>
+<span id="showMoreArrow">▼</span>
+</button>
+<!-- Your Tasks Section -->
+<div class="section expanded" id="tasksSection">
+<div class="section-header" onclick="toggleSection('tasks')">
+<div class="section-title">
+                    📝 Your Tasks
+                </div>
+<div class="section-arrow" id="tasksArrow"></div>
+</div>
+<div class="section-content">
+<div class="section-body">
+<div id="tasksList">
+<!-- Tasks will be populated here -->
+</div>
+<button class="btn-primary create-task-btn" onclick="openCreateTaskModal()">
+                        ➕ Create New Task
+                    </button>
+</div>
+</div>
+</div>
+<!-- Daily Challenge Section -->
+<div class="section expanded" id="dailyChallengeSection">
+<div class="section-header" onclick="toggleSection('dailyChallenge')">
+<div class="section-title">
+                    📅 Daily Challenge
+                </div>
+<div class="section-arrow" id="dailyChallengeArrow"></div>
+</div>
+<div class="section-content">
+<div class="section-body">
+<div id="dailyChallengeDisplay">
+<!-- Daily challenge will be populated here -->
+</div>
+</div>
+</div>
+</div>
+<!-- Quick Tasks Section -->
+<div class="section expanded" id="quickTasksSection">
+<div class="section-header" onclick="toggleSection('quickTasks')">
+<div class="section-title">
+                    ⚡ Quick Tasks
+                </div>
+<div class="section-arrow" id="quickTasksArrow"></div>
+</div>
+<div class="section-content">
+<div class="section-body">
+<div id="quickTasksList">
+<!-- Quick tasks will be populated here -->
+</div>
+<button class="btn-primary create-task-btn" onclick="openQuickTaskModal()">
+                        ⚡ Add Quick Task
+                    </button>
+</div>
+</div>
+</div>
+<!-- Achievements Section -->
+<div class="section" id="achievementsSection">
+<div class="section-header" onclick="toggleSection('achievements')">
+<div class="section-title">
+                    🏆 Achievements
+                </div>
+<div class="section-arrow" id="achievementsArrow"></div>
+</div>
+<div class="section-content">
+<div class="section-body">
+<div id="achievementsList">
+<!-- Achievements will be populated here -->
+</div>
+</div>
+</div>
+</div>
+<!-- Stats Section -->
+<div class="section" id="statsSection">
+<div class="section-header" onclick="toggleSection('stats')">
+<div class="section-title">📈 Your Stats</div>
+<div class="section-arrow" id="statsArrow"></div>
+</div>
+<div class="section-content collapsed" id="statsContent">
+<div class="stats-grid">
+<div class="stat-item">
+<div class="stat-label">Total Tasks</div>
+<div class="stat-value" id="totalTasks">0</div>
+</div>
+<div class="stat-item">
+<div class="stat-label">Completed Tasks</div>
+<div class="stat-value" id="completedTasks">0</div>
+</div>
+<div class="stat-item">
+<div class="stat-label">Task Points</div>
+<div class="stat-value" id="totalPoints">0</div>
+</div>
+<div class="stat-item">
+<div class="stat-label">Completion Rate</div>
+<div class="stat-value" id="completionRate">0%</div>
+</div>
+<div class="stat-item">
+<div class="stat-label">🔥 Current Streak</div>
+<div class="stat-value" id="currentStreak">0 days</div>
+</div>
+<div class="stat-item">
+<div class="stat-label">🏆 Best Streak</div>
+<div class="stat-value" id="longestStreak">0 days</div>
+</div>
+<div class="stat-item">
+<div class="stat-label" id="rockLevelLabel">⭐ Rock's Level</div>
+<div class="stat-value" id="jerryLevel">Level 1</div>
+</div>
+<div class="stat-item">
+<div class="stat-label">✨ Experience</div>
+<div class="stat-value" id="jerryXP">0 / 100 XP</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Rock Shop Section -->
+<div class="section" id="shopSection">
+<div class="section-header" onclick="toggleSection('shop')">
+<div class="section-title">
+                    🗿 Rock Shop
+                </div>
+<div class="section-arrow" id="shopArrow"></div>
+</div>
+<div class="section-content">
+<div class="section-body">
+<h3>🎩 Hats</h3>
+<div class="shop-grid" id="hatsShop">
+<!-- Hat items will be populated here -->
+</div>
+<h3>👓 Accessories</h3>
+<div class="shop-grid" id="itemsShop">
+<!-- Accessory items will be populated here -->
+</div>
+<h3>🎨 Paint Jobs</h3>
+<div class="shop-grid" id="paintShop">
+<!-- Paint items will be populated here -->
+</div>
+</div>
+</div>
+</div>
+<!-- Settings Section -->
+<div class="section" id="settingsSection">
+<div class="section-header" onclick="toggleSection('settings')">
+<div class="section-title">
+                    ⚙️ Settings
+                </div>
+<div class="section-arrow" id="settingsArrow"></div>
+</div>
+<div class="section-content">
+<div class="section-body">
+<div class="settings-item">
+<div class="settings-label">Dark Mode</div>
+<div class="settings-toggle" id="darkModeToggle" onclick="toggleDarkMode()">
+<div class="settings-toggle-slider"></div>
+</div>
+</div>
+<div class="settings-item">
+<div class="settings-label">Notifications</div>
+<div class="settings-toggle" id="notificationsToggle" onclick="toggleNotifications()">
+<div class="settings-toggle-slider"></div>
+</div>
+</div>
+<div class="settings-item">
+<div class="settings-label">Share Etsy Store</div>
+<button class="btn-secondary" onclick="shareEtsyStore()">Share</button>
+</div>
+<div class="settings-item">
+<div class="settings-label">Reset Progress</div>
+<button class="btn-secondary" onclick="showResetOptions()" style="background: var(--error); color: white;">Reset</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Create Task Modal -->
+<div class="modal" id="createTaskModal">
+<div class="modal-content">
+<div class="modal-header">
+<h2 class="modal-title">Create Task</h2>
+<button class="modal-close" onclick="closeModal()">×</button>
+</div>
+<div class="modal-body">
+<form id="taskForm">
+<div class="form-group">
+<label class="form-label">Task Title</label>
+<input class="form-input" id="taskTitle" placeholder="Enter task title" required="" type="text"/>
+</div>
+<div class="form-group">
+<label class="form-label">Category</label>
+<div class="selection-grid">
+<div class="selection-item" data-category="work" onclick="selectCategory('work')">
+<div class="selection-item-emoji">💼</div>
+<div class="selection-item-text">Work</div>
+</div>
+<div class="selection-item" data-category="learning" onclick="selectCategory('learning')">
+<div class="selection-item-emoji">🎓</div>
+<div class="selection-item-text">Learning</div>
+</div>
+<div class="selection-item" data-category="home" onclick="selectCategory('home')">
+<div class="selection-item-emoji">🏠</div>
+<div class="selection-item-text">Home</div>
+</div>
+<div class="selection-item" data-category="finance" onclick="selectCategory('finance')">
+<div class="selection-item-emoji">💰</div>
+<div class="selection-item-text">Finance</div>
+</div>
+<div class="selection-item" data-category="goals" onclick="selectCategory('goals')">
+<div class="selection-item-emoji">🎯</div>
+<div class="selection-item-text">Goals</div>
+</div>
+<div class="selection-item" data-category="projects" onclick="selectCategory('projects')">
+<div class="selection-item-emoji">🛠️</div>
+<div class="selection-item-text">Projects</div>
+</div>
+<div class="selection-item" data-category="errands" onclick="selectCategory('errands')">
+<div class="selection-item-emoji">🚗</div>
+<div class="selection-item-text">Errands</div>
+</div>
+<div class="selection-item" data-category="digital" onclick="selectCategory('digital')">
+<div class="selection-item-emoji">📱</div>
+<div class="selection-item-text">Digital</div>
+</div>
+<div class="selection-item" data-category="creative" onclick="selectCategory('creative')">
+<div class="selection-item-emoji">🎨</div>
+<div class="selection-item-text">Creative</div>
+</div>
+<div class="selection-item" data-category="social" onclick="selectCategory('social')">
+<div class="selection-item-emoji">🤝</div>
+<div class="selection-item-text">Social</div>
+</div>
+</div>
+</div>
+<div class="form-group">
+<label class="form-label">Difficulty</label>
+<div class="selection-grid">
+<div class="selection-item" data-difficulty="easy" onclick="selectDifficulty('easy')">
+<div class="selection-item-emoji">😊</div>
+<div class="selection-item-text">Easy (2 pts)</div>
+</div>
+<div class="selection-item" data-difficulty="medium" onclick="selectDifficulty('medium')">
+<div class="selection-item-emoji">😐</div>
+<div class="selection-item-text">Medium (5 pts)</div>
+</div>
+<div class="selection-item" data-difficulty="hard" onclick="selectDifficulty('hard')">
+<div class="selection-item-emoji">😤</div>
+<div class="selection-item-text">Hard (10 pts)</div>
+</div>
+</div>
+</div>
+<div class="form-group">
+<label class="form-label">Priority</label>
+<div class="selection-grid">
+<div class="selection-item" data-priority="low" onclick="selectPriority('low')">
+<div class="selection-item-emoji">🟢</div>
+<div class="selection-item-text">Low Priority</div>
+</div>
+<div class="selection-item" data-priority="medium" onclick="selectPriority('medium')">
+<div class="selection-item-emoji">🟡</div>
+<div class="selection-item-text">Medium Priority</div>
+</div>
+<div class="selection-item" data-priority="high" onclick="selectPriority('high')">
+<div class="selection-item-emoji">🔴</div>
+<div class="selection-item-text">High Priority</div>
+</div>
+</div>
+</div>
+<div class="form-group">
+<label class="form-label">Due Date (Optional)</label>
+<input class="form-input" id="taskDueDate" type="datetime-local"/>
+</div>
+<div class="form-group" id="recurrenceGroup">
+<label class="form-label">🔁 Recurring Task</label>
+<div class="selection-grid" id="recurrenceGrid">
+<div class="selection-item" data-recurring="none" onclick="selectRecurring('none')">
+<div class="selection-item-emoji">📝</div>
+<div class="selection-item-text">One-time</div>
+</div>
+<div class="selection-item" data-recurring="daily" onclick="selectRecurring('daily')">
+<div class="selection-item-emoji">📅</div>
+<div class="selection-item-text">Daily</div>
+</div>
+<div class="selection-item" data-recurring="weekly" onclick="selectRecurring('weekly')">
+<div class="selection-item-emoji">📆</div>
+<div class="selection-item-text">Weekly</div>
+</div>
+<div class="selection-item" data-recurring="monthly" onclick="selectRecurring('monthly')">
+<div class="selection-item-emoji">🗓️</div>
+<div class="selection-item-text">Monthly</div>
+</div>
+</div>
+
+<!-- Conditional Interval Selector -->
+<div id="recurrenceCustom" style="display: none; margin-top: 15px;">
+<label class="form-label">Interval</label>
+<div class="selection-grid">
+<div class="selection-item" data-interval="1" onclick="selectInterval(1)">
+<div class="selection-item-emoji">1️⃣</div>
+<div class="selection-item-text">Every 1</div>
+</div>
+<div class="selection-item" data-interval="2" onclick="selectInterval(2)">
+<div class="selection-item-emoji">2️⃣</div>
+<div class="selection-item-text">Every 2</div>
+</div>
+<div class="selection-item" data-interval="3" onclick="selectInterval(3)">
+<div class="selection-item-emoji">3️⃣</div>
+<div class="selection-item-text">Every 3</div>
+</div>
+</div>
+</div>
+
+<!-- Conditional Weekday Picker -->
+<div id="weekdayGrid" style="display: none; margin-top: 15px;">
+<label class="form-label">Days of Week</label>
+<div class="selection-grid">
+<div class="selection-item" data-weekday="0" onclick="toggleWeekday(0)">
+<div class="selection-item-emoji">🌅</div>
+<div class="selection-item-text">Sun</div>
+</div>
+<div class="selection-item" data-weekday="1" onclick="toggleWeekday(1)">
+<div class="selection-item-emoji">🌅</div>
+<div class="selection-item-text">Mon</div>
+</div>
+<div class="selection-item" data-weekday="2" onclick="toggleWeekday(2)">
+<div class="selection-item-emoji">🌅</div>
+<div class="selection-item-text">Tue</div>
+</div>
+<div class="selection-item" data-weekday="3" onclick="toggleWeekday(3)">
+<div class="selection-item-emoji">🌅</div>
+<div class="selection-item-text">Wed</div>
+</div>
+<div class="selection-item" data-weekday="4" onclick="toggleWeekday(4)">
+<div class="selection-item-emoji">🌅</div>
+<div class="selection-item-text">Thu</div>
+</div>
+<div class="selection-item" data-weekday="5" onclick="toggleWeekday(5)">
+<div class="selection-item-emoji">🌅</div>
+<div class="selection-item-text">Fri</div>
+</div>
+<div class="selection-item" data-weekday="6" onclick="toggleWeekday(6)">
+<div class="selection-item-emoji">🌅</div>
+<div class="selection-item-text">Sat</div>
+</div>
+</div>
+</div>
+
+<!-- Next Occurrence Preview -->
+<div id="recurrencePreview" style="display: none; margin-top: 15px; padding: 10px; background: rgba(154, 227, 74, 0.1); border-radius: 8px; font-size: 14px;">
+<strong>Next occurrence:</strong> <span id="nextOccurrenceText">-</span>
+</div>
+</div>
+<div class="form-group">
+<label class="form-label">Description (Optional)</label>
+<textarea class="form-input form-textarea" id="taskDescription" placeholder="Enter task description"></textarea>
+</div>
+</form>
+</div>
+<div class="modal-footer">
+<button class="btn-secondary" onclick="closeModal()" type="button">Cancel</button>
+<button class="btn-primary" onclick="createTask()" type="button">Create Task</button>
+</div>
+</div>
+</div>
+<!-- Quick Task Selection Modal -->
+<div class="modal" id="quickTaskModal">
+<div class="modal-content">
+<div class="modal-header">
+<h2 class="modal-title">Add Quick Task</h2>
+<button class="modal-close" onclick="closeQuickTaskModal()">×</button>
+</div>
+<div class="modal-body">
+<div id="quickTaskCategories">
+<!-- Quick task categories will be populated here -->
+</div>
+</div>
+</div>
+</div>
+<script>
+        // Game State
+        let gameState = {
+            rockName: 'Jerry',
+            health: 100,
+            taskPoints: 0,
+            tasks: [],
+            completedTasks: 0,
+            totalTasks: 0,
+            totalTasksCreated: 0, // Track total tasks ever created for accurate completion rate
+            completedTasksToday: 0, // Track tasks completed today
+            lastDayTracked: new Date().toDateString(), // Track which day we're counting for
+            currentStreak: 0,
+            bestStreak: 0,
+            longestStreak: 0,
+            lastCompletionDate: null,
+            streakMultiplier: 1,
+            isDead: false,
+            revivalPoints: 0,
+            healthNotificationShown: false,
+            healthRecoveryNotificationShown: false,
+            lastHealthResetDate: new Date().toDateString(),
+            dailyHealthLoss: 0,
+            jerryLevel: 1,
+            jerryXP: 0,
+            jerryXPToNext: 100,
+            dailyChallenge: null,
+            dailyChallengeCompleted: false,
+            lastDailyChallengeDate: null,
+            lastQuickTasksDate: null,
+            selectedQuickTasks: [],
+            darkMode: false,
+            notifications: false,
+            ownedItems: [],
+            currentOutfit: {
+                hat: null,
+                glasses: null,
+                mustache: null,
+                paint: null
+            }
+        };
+
+        // Task creation variables
+        let selectedCategory = null;
+        let selectedDifficulty = null;
+        let selectedPriority = null;
+        let selectedRecurring = 'none';
+        let selectedInterval = 1;
+        let selectedWeekdays = [];
+        let editingTaskIndex = null;
+
+        // Category mapping
+        const categoryMap = {
+            'work': { name: 'Work & Career', emoji: '💼' },
+            'learning': { name: 'Learning & Education', emoji: '🎓' },
+            'home': { name: 'Home & Family', emoji: '🏠' },
+            'finance': { name: 'Finance & Planning', emoji: '💰' },
+            'goals': { name: 'Personal Goals', emoji: '🎯' },
+            'projects': { name: 'Projects & Hobbies', emoji: '🛠️' },
+            'errands': { name: 'Errands & Appointments', emoji: '🚗' },
+            'digital': { name: 'Digital & Technology', emoji: '📱' },
+            'creative': { name: 'Creative & Arts', emoji: '🎨' },
+            'social': { name: 'Social & Relationships', emoji: '🤝' }
+        };
+
+        // Quick Tasks Database based on FINCH research
+        const quickTasksDatabase = {
+            'self-care': {
+                name: 'Self-Care & Wellness',
+                emoji: '💆',
+                tasks: [
+                    { id: 'brush_teeth', title: 'Brush teeth', emoji: '🦷', points: 2 },
+                    { id: 'wash_face', title: 'Wash my face', emoji: '🧴', points: 2 },
+                    { id: 'drink_water', title: 'Drink a glass of water', emoji: '💧', points: 2 },
+                    { id: 'take_vitamins', title: 'Take vitamins', emoji: '💊', points: 3 },
+                    { id: 'skincare', title: 'Do skincare routine', emoji: '🧴', points: 4 },
+                    { id: 'shower', title: 'Take a shower', emoji: '🚿', points: 4 },
+                    { id: 'moisturize', title: 'Moisturize skin', emoji: '🧴', points: 3 },
+                    { id: 'floss', title: 'Floss teeth', emoji: '🦷', points: 3 }
+                ]
+            },
+            'physical': {
+                name: 'Physical Activity',
+                emoji: '🏃',
+                tasks: [
+                    { id: 'pushups', title: 'Do 10 push-ups', emoji: '💪', points: 4 },
+                    { id: 'squats', title: 'Do 15 squats', emoji: '🦵', points: 4 },
+                    { id: 'plank', title: 'Hold plank for 30 seconds', emoji: '🏋️', points: 4 },
+                    { id: 'walk', title: 'Take a 10-minute walk', emoji: '🚶', points: 5 },
+                    { id: 'stretch', title: 'Stretch for 5 minutes', emoji: '🤸', points: 3 },
+                    { id: 'yoga', title: 'Do yoga poses', emoji: '🧘', points: 5 },
+                    { id: 'stairs', title: 'Take the stairs', emoji: '🪜', points: 3 },
+                    { id: 'jumping_jacks', title: 'Do 20 jumping jacks', emoji: '🤸', points: 3 },
+                    { id: 'dance', title: 'Dance to favorite song', emoji: '💃', points: 4 },
+                    { id: 'bike_ride', title: 'Go for a bike ride', emoji: '🚴', points: 5 },
+                    { id: 'run', title: 'Go for a run', emoji: '🏃', points: 5 },
+                    { id: 'workout', title: 'Complete workout routine', emoji: '🏋️', points: 5 }
+                ]
+            },
+            'sleep': {
+                name: 'Sleep & Rest',
+                emoji: '😴',
+                tasks: [
+                    { id: 'screen_warmth', title: 'Turn on screen warmth', emoji: '📱', points: 2 },
+                    { id: 'no_caffeine', title: 'No caffeine after 2 PM', emoji: '☕', points: 3 },
+                    { id: 'bedtime_routine', title: 'Start bedtime routine', emoji: '🛏️', points: 4 },
+                    { id: 'read_book', title: 'Read before bed', emoji: '📚', points: 4 },
+                    { id: 'meditation', title: 'Do 5-min meditation', emoji: '🧘', points: 4 },
+                    { id: 'no_screens', title: 'No screens 1hr before bed', emoji: '📵', points: 4 },
+                    { id: 'herbal_tea', title: 'Drink herbal tea', emoji: '🍵', points: 3 },
+                    { id: 'dim_lights', title: 'Dim the lights', emoji: '💡', points: 2 },
+                    { id: 'comfortable_clothes', title: 'Change to comfy clothes', emoji: '👕', points: 2 },
+                    { id: 'breathing_exercise', title: 'Do breathing exercises', emoji: '🫁', points: 3 },
+                    { id: 'journal', title: 'Write in journal', emoji: '📓', points: 4 },
+                    { id: 'early_bedtime', title: 'Go to bed early', emoji: '🌙', points: 5 },
+                    { id: 'power_nap', title: 'Take a 20-min power nap', emoji: '😴', points: 3 }
+                ]
+            },
+            'tidy': {
+                name: 'Tidy Up',
+                emoji: '🧹',
+                tasks: [
+                    { id: 'laundry', title: 'Put laundry away', emoji: '👕', points: 4 },
+                    { id: 'trash', title: 'Take out trash', emoji: '🗑️', points: 3 },
+                    { id: 'dishes', title: 'Wash the dishes', emoji: '🍽️', points: 4 },
+                    { id: 'make_bed', title: 'Make the bed', emoji: '🛏️', points: 3 },
+                    { id: 'desk_clean', title: 'Clean desk/workspace', emoji: '🗂️', points: 4 },
+                    { id: 'organize', title: 'Organize one drawer', emoji: '📦', points: 4 }
+                ]
+            },
+            'mindfulness': {
+                name: 'Mindfulness & Mental Health',
+                emoji: '🧠',
+                tasks: [
+                    { id: 'deep_breaths', title: 'Take 5 deep breaths', emoji: '🫁', points: 2 },
+                    { id: 'gratitude', title: 'Think of 3 things grateful for', emoji: '🙏', points: 3 },
+                    { id: 'compliment_self', title: 'Give myself a compliment', emoji: '💝', points: 3 },
+                    { id: 'mindful_moment', title: 'Have a mindful moment', emoji: '🧘', points: 4 },
+                    { id: 'happiness', title: 'Do something that makes me happy', emoji: '😊', points: 5 }
+                ]
+            }
+        };
+        // ---- Daily Quick Tasks repopulation (7 tasks) ----
+        function flattenQuickTasksDB() {
+            const all = [];
+            try {
+                for (const catKey in quickTasksDatabase) {
+                    const cat = quickTasksDatabase[catKey];
+                    if (!cat || !Array.isArray(cat.tasks)) continue;
+                    cat.tasks.forEach(t => {
+                        all.push({ ...t, categoryName: cat.name, categoryEmoji: cat.emoji });
+                    });
+                }
+            } catch (_) {}
+            return all;
+        }
+        function pickRandomUnique(arr, n) {
+            const out = [];
+            const used = new Set();
+            if (!Array.isArray(arr) || arr.length === 0) return out;
+            while (out.length < n && used.size < arr.length) {
+                const idx = Math.floor(Math.random() * arr.length);
+                if (used.has(idx)) continue;
+                used.add(idx);
+                out.push(arr[idx]);
+            }
+            return out;
+        }
+        function repopulateQuickTasksIfNeeded(force=false) {
+            try {
+                const today = new Date().toDateString();
+                const need = force || gameState.lastQuickTasksDate !== today || !Array.isArray(gameState.selectedQuickTasks) || gameState.selectedQuickTasks.length < 7;
+                if (!need) return;
+                const pool = flattenQuickTasksDB();
+                const picked = pickRandomUnique(pool, 7);
+                gameState.selectedQuickTasks = picked;
+                gameState.lastQuickTasksDate = today;
+                if (typeof saveGameState === 'function') saveGameState();
+                if (typeof updateQuickTasksDisplay === 'function') updateQuickTasksDisplay();
+            } catch (e) { /* no-op */ }
+        }
+        function scheduleQuickTasksMidnightRefresh() {
+            const now = new Date();
+            const nextMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0, 0).getTime();
+            setTimeout(() => { repopulateQuickTasksIfNeeded(true); scheduleQuickTasksMidnightRefresh(); }, Math.max(0, nextMidnight - now.getTime()));
+        }
+        document.addEventListener('visibilitychange', () => { if (!document.hidden) repopulateQuickTasksIfNeeded(false); });
+    
+
+        // Shop Items
+        const shopItems = {
+            hats: [
+                { id: 'blue_cap', name: 'Blue Cap', price: 50, image: 'assets/images/Frame 42.png' },
+                { id: 'top_hat', name: 'Black Top Hat', price: 100, image: 'assets/images/Frame 43.png' },
+                { id: 'army_helmet', name: 'Army Helmet', price: 200, image: 'assets/images/Frame 44.png' },
+                { id: 'wizard_hat', name: 'Wizard Hat', price: 400, image: 'assets/images/Frame 45.png' }
+            ],
+            items: [
+                { id: 'mustache', name: 'Mustache', price: 350, image: 'assets/images/mustache-thumbnail.png' },
+                { id: 'glasses', name: 'Reading Glasses', price: 300, image: 'assets/images/Frame 46.png' }
+            ],
+            paints: [
+                { id: 'buddy_paint', name: 'Buddy Paint', price: 800, image: 'assets/images/Group 55.png' },
+                { id: 'rock_star', name: 'Rock Star', price: 1000, image: 'assets/images/Group 57.png' },
+                { id: 'makeup', name: 'Makeup', price: 1100, image: 'assets/images/Frame 47.png' }
+            ]
+        };
+
+        // Achievements
+        const achievements = [
+            { id: 'hot_streak', name: 'Hot Streak', desc: 'Complete tasks for 3 days in a row', icon: '🔥', requirement: 3, type: 'streak' },
+            { id: 'week_warrior', name: 'Week Warrior', desc: 'Complete tasks for 7 days in a row', icon: '🔥', requirement: 7, type: 'streak' },
+            { id: 'month_master', name: 'Month Master', desc: 'Complete tasks for 30 days in a row', icon: '🔥', requirement: 30, type: 'streak' },
+            { id: 'getting_started', name: 'Getting Started', desc: 'Complete 10 tasks', icon: '🎯', requirement: 10, type: 'tasks' },
+            { id: 'task_crusher', name: 'Task Crusher', desc: 'Complete 50 tasks', icon: '🎯', requirement: 50, type: 'tasks' },
+            { id: 'century_club', name: 'Century Club', desc: 'Complete 100 tasks', icon: '🎯', requirement: 100, type: 'tasks' },
+            { id: 'task_legend', name: 'Task Legend', desc: 'Complete 500 tasks', icon: '🎯', requirement: 500, type: 'tasks' },
+            { id: 'rising_star', name: 'Rising Star', desc: 'Reach Level 5 with Jerry', icon: '⭐', requirement: 5, type: 'level' },
+            { id: 'experienced_rock', name: 'Experienced Rock', desc: 'Reach Level 10 with Jerry', icon: '⭐', requirement: 10, type: 'level' },
+            { id: 'ancient_wisdom', name: 'Ancient Wisdom', desc: 'Reach Level 20 with Jerry', icon: '⭐', requirement: 20, type: 'level' }
+        ];
+
+        // Load game state from localStorage
+        function loadGameState() {
+            const saved = localStorage.getItem('taskRockGameState');
+            if (saved) {
+                const parsedState = JSON.parse(saved);
+                gameState = { ...gameState, ...parsedState };
+                
+                // Ensure selectedQuickTasks exists
+                if (!gameState.selectedQuickTasks) {
+                    gameState.selectedQuickTasks = [];
+                }
+                
+                // Migration: Initialize totalTasksCreated for existing users
+                if (typeof gameState.totalTasksCreated === 'undefined') {
+                    // Estimate based on current completed tasks + current pending tasks
+                    // This provides a reasonable starting point for existing users
+                    gameState.totalTasksCreated = gameState.completedTasks + gameState.tasks.length;
+                }
+                
+                // Ensure totalTasksCreated is never less than completedTasks
+                if (gameState.totalTasksCreated < gameState.completedTasks) {
+                    gameState.totalTasksCreated = gameState.completedTasks;
+                }
+            }
+        }
+
+        // Save game state to localStorage
+        function saveGameState() {
+            localStorage.setItem('taskRockGameState', JSON.stringify(gameState));
+        }
+
+        // Update UI elements
+        function updateUI() {
+            // Update header info
+            document.getElementById('creatureName').textContent = gameState.rockName;
+            document.getElementById('healthFill').style.width = `${gameState.health}%`;
+            document.getElementById('healthText').textContent = `Health: ${gameState.health} - Level ${gameState.jerryLevel || 1}`;
+            document.getElementById('taskPoints').textContent = `${gameState.taskPoints} Points`;
+            
+            // Update stats - Fix all calculations to be accurate and consistent
+            const activeTasks = gameState.tasks.filter(task => !task.completed);
+            const totalActiveTasks = activeTasks.length;
+            const pendingTasks = totalActiveTasks; // Same as active tasks
+            
+            // Today's tasks: tasks created or completed today
+            const today = new Date(); 
+            today.setHours(0,0,0,0);
+            const todayTimestamp = today.getTime();
+            
+            // Count tasks created today (from active tasks)
+            const tasksCreatedToday = gameState.tasks.filter(t => {
+                const createdAt = t && t.createdAt;
+                if (!createdAt) return false;
+                const dt = new Date(createdAt);
+                if (isNaN(dt)) return false;
+                const taskDate = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate());
+                return taskDate.getTime() === todayTimestamp;
+            }).length;
+            
+            // Reset today's completed count if it's a new day
+            const todayString = new Date().toDateString();
+            if (gameState.lastDayTracked !== todayString) {
+                gameState.completedTasksToday = 0;
+                gameState.lastDayTracked = todayString;
+            }
+            
+            // Today's tasks = tasks created today + tasks completed today
+            const todaysTasks = tasksCreatedToday + gameState.completedTasksToday;
+            
+            // Calculate completion rate based on total tasks ever created vs completed
+            const completionRate = gameState.totalTasksCreated > 0 ? 
+                Math.min(100, Math.round((gameState.completedTasks / gameState.totalTasksCreated) * 100)) : 0;
+            
+            // Update all stat displays with corrected values
+            document.getElementById('totalTasksCount').textContent = totalActiveTasks; // Active tasks, not total ever created
+            document.getElementById('pendingTasksCount').textContent = pendingTasks;
+            document.getElementById('completedTasksCount').textContent = gameState.completedTasks;
+            document.getElementById('completionRateCount').textContent = `${completionRate}%`;
+            
+            const todaysEl = document.getElementById('todaysTasksCount');
+            if (todaysEl) todaysEl.textContent = todaysTasks;
+
+            document.getElementById('currentStreakCount').textContent = gameState.currentStreak;
+            document.getElementById('jerryLevelCount').textContent = gameState.jerryLevel;
+            document.getElementById('bestStreakCount').textContent = gameState.bestStreak;
+            
+            // Update expanded stats
+            const experience = gameState.jerryXP || 0;
+            const nextLevelXP = gameState.jerryXPToNext || (gameState.jerryLevel * 100);
+            document.getElementById('experienceCount').textContent = `${experience}/${nextLevelXP} XP`;
+            
+            // Count unlocked achievements
+            const unlockedAchievements = achievements.filter(achievement => {
+                switch (achievement.type) {
+                    case 'tasks':
+                        return gameState.completedTasks >= achievement.requirement;
+                    case 'streak':
+                        return gameState.bestStreak >= achievement.requirement;
+                    case 'level':
+                        return gameState.jerryLevel >= achievement.requirement;
+                    default:
+                        return false;
+                }
+            }).length;
+            document.getElementById('achievementsCount').textContent = `${unlockedAchievements}/${achievements.length}`;
+            
+            // Update tasks display
+            updateTasksDisplay();
+            updateQuickTasksDisplay();
+            updateDailyChallengeDisplay();
+            updateAchievementsDisplay();
+            updateStatsDisplay();
+            updateShopDisplay();
+            updateSettingsDisplay();
+            updateCreatureImage();
+        }
+
+        // Update creature image based on outfit
+        function updateCreatureImage() {
+            const creatureImage = document.getElementById('creatureImage');
+            let imagePath = 'assets/images/jerry-base.png';
+            
+            // Apply paint first (base layer)
+            if (gameState.currentOutfit.paint) {
+                switch (gameState.currentOutfit.paint) {
+                    case 'buddy_paint':
+                        imagePath = 'assets/images/jerry-buddy.png';
+                        break;
+                    case 'rock_star':
+                        imagePath = 'assets/images/jerry-rockstar.png';
+                        break;
+                    case 'makeup':
+                        imagePath = 'assets/images/jerry-makeup.png';
+                        break;
+                }
+            }
+            
+            creatureImage.src = imagePath;
+        }
+
+        // Expanded stats toggle
+        let expandedStatsVisible = false;
+
+        function toggleExpandedStats() {
+            const expandedStats = document.getElementById('expandedStats');
+            const showMoreText = document.getElementById('showMoreText');
+            const showMoreArrow = document.getElementById('showMoreArrow');
+            
+            expandedStatsVisible = !expandedStatsVisible;
+            
+            if (expandedStatsVisible) {
+                expandedStats.classList.add('show');
+                showMoreText.textContent = 'Show Less';
+                showMoreArrow.textContent = '▲';
+            } else {
+                expandedStats.classList.remove('show');
+                showMoreText.textContent = 'Show More';
+                showMoreArrow.textContent = '▼';
+            }
+        }
+
+        // Tasks display
+        function updateTasksDisplay() {
+            const tasksList = document.getElementById('tasksList');
+            if (!tasksList) return;
+            
+            if (gameState.tasks.length === 0) {
+                tasksList.innerHTML = `
+                    <div class="quick-tasks-empty">
+                        <div class="quick-tasks-empty-icon">📝</div>
+                        <div class="quick-tasks-empty-text">No tasks yet</div>
+                        <div class="quick-tasks-empty-subtext">Create your first task to get started</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            tasksList.innerHTML = gameState.tasks.map((task, index) => {
+                const category = categoryMap[task.category] || { name: 'General', emoji: '📝' };
+                
+                // Enhanced date/time display with urgency alerts and recurring info
+                let dateTimeDisplay = '';
+                let urgencyClass = '';
+                if (task.dueDate) {
+                    const dueDateTime = new Date(task.dueDate);
+                    const dateStr = dueDateTime.toLocaleDateString();
+                    
+                    // Check if time was specified (not just default 00:00)
+                    const hasTime = dueDateTime.getHours() !== 0 || dueDateTime.getMinutes() !== 0;
+                    
+                    if (hasTime) {
+                        const timeStr = dueDateTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                        dateTimeDisplay = `📅 ${dateStr} at ${timeStr}`;
+                    } else {
+                        dateTimeDisplay = `📅 ${dateStr}`;
+                    }
+                    
+                    // Calculate time until due for urgency alerts (works for both date-only and time-specific tasks)
+                    const now = new Date();
+                    const timeDiff = dueDateTime.getTime() - now.getTime();
+                    const minutesUntilDue = Math.floor(timeDiff / (1000 * 60));
+                    
+                    // Apply urgency styling based on minutes remaining (including 5 minutes)
+                    if (minutesUntilDue <= 2 && minutesUntilDue >= 0) {
+                        urgencyClass = 'urgent-critical'; // 2 minutes or less
+                    } else if (minutesUntilDue <= 5 && minutesUntilDue >= 0) {
+                        urgencyClass = 'urgent-very-high'; // 5 minutes or less
+                    } else if (minutesUntilDue <= 10 && minutesUntilDue >= 0) {
+                        urgencyClass = 'urgent-high'; // 10 minutes or less
+                    } else if (minutesUntilDue <= 15 && minutesUntilDue >= 0) {
+                        urgencyClass = 'urgent-medium'; // 15 minutes or less
+                    } else if (minutesUntilDue <= 20 && minutesUntilDue >= 0) {
+                        urgencyClass = 'urgent-low'; // 20 minutes or less
+                    }
+                }
+                
+                // Enhanced recurring display - combine with date/time
+                let recurringInfo = '';
+                if (task.recurring !== 'none' && task.recurrence) {
+                    const recurrence = task.recurrence;
+                    let recurringText = task.recurring;
+                    
+                    // Add interval information if not 1
+                    if (recurrence.interval && recurrence.interval > 1) {
+                        recurringText = `every ${recurrence.interval} ${task.recurring}`;
+                    }
+                    
+                    // Add weekday information for weekly tasks
+                    if (task.recurring === 'weekly' && recurrence.weekdays && recurrence.weekdays.length > 0) {
+                        const weekdayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                        const selectedDays = recurrence.weekdays.map(day => weekdayNames[day]).join(', ');
+                        recurringText += ` (${selectedDays})`;
+                    }
+                    
+                    recurringInfo = ` 🔁 ${recurringText}`;
+                } else if (task.recurring !== 'none') {
+                    recurringInfo = ` 🔁 ${task.recurring}`;
+                }
+                
+                // Combine date/time and recurring info into one display
+                let combinedDateTimeDisplay = dateTimeDisplay + recurringInfo;
+                
+                // If no date but has recurring info, show just the recurring info
+                if (!dateTimeDisplay && recurringInfo) {
+                    combinedDateTimeDisplay = recurringInfo.trim(); // Remove leading space
+                }
+                
+                return `
+                    <div class="task-card">
+                        <div class="task-header">
+                            <div class="task-emoji">${category.emoji}</div>
+                            <div class="task-content">
+                                <div class="task-title">${task.title}</div>
+                                <div class="task-category">${category.name}</div>
+                            </div>
+                            <div class="task-menu-container">
+                                <button class="task-menu-btn" onclick="toggleTaskMenu(${index})">⋯</button>
+                                <div id="taskMenu${index}" class="task-menu-dropdown">
+                                    <button class="task-menu-item" onclick="editTask(${index}); closeTaskMenu(${index})">
+                                        <span>✏️</span>
+                                        <span>Edit</span>
+                                    </button>
+                                    <button class="task-menu-item delete" onclick="deleteTask(${index}); closeTaskMenu(${index})">
+                                        <span>🗑️</span>
+                                        <span>Delete</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="task-meta">
+                            <span class="task-badge difficulty-${task.difficulty}">${task.difficulty} (${task.points} pts)</span>
+                            <span class="task-badge priority-${task.priority}">${task.priority} priority</span>
+                            ${combinedDateTimeDisplay ? `<span class="task-badge priority-medium"><span class="tr-pill__icon" aria-hidden="true">📅</span>${dateTimeDisplay || ''}</span>${recurringInfo ? `<span class="task-badge priority-medium"><span class="tr-pill__icon" aria-hidden="true">🔁</span>${(task.recurring||"") ? (task.recurring.charAt(0).toUpperCase() + task.recurring.slice(1).toLowerCase()) : ""}</span>` : ''}` : ''}
+                        </div>
+                        <div class="task-actions">
+                            <button class="complete-btn" onclick="completeTask(${index})">Complete</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Task menu functions
+        function toggleTaskMenu(index) {
+            const menu = document.getElementById(`taskMenu${index}`);
+            const isVisible = menu.classList.contains('show');
+            
+            // Close all other menus first
+            document.querySelectorAll('.task-menu-dropdown').forEach(dropdown => {
+                dropdown.classList.remove('show');
+            });
+            
+            // Toggle current menu
+            if (!isVisible) {
+                menu.classList.add('show');
+            }
+        }
+
+        function closeTaskMenu(index) {
+            const menu = document.getElementById(`taskMenu${index}`);
+            menu.classList.remove('show');
+        }
+
+        // Close menus when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.task-menu-container')) {
+                document.querySelectorAll('.task-menu-dropdown').forEach(dropdown => {
+                    dropdown.classList.remove('show');
+                });
+            }
+        });
+
+        // Daily Challenges System
+        
+// Daily Challenges System (Quick Tasks only)
+function generateDailyChallenge() {
+    const quicks = Array.isArray(gameState.selectedQuickTasks) ? gameState.selectedQuickTasks : [];
+
+    const freqByCat = {};
+    quicks.forEach(q => {
+        const cat = q.categoryName || 'General';
+        freqByCat[cat] = (freqByCat[cat] || 0) + 1;
+    });
+    const topCat = Object.entries(freqByCat).sort((a,b) => b[1]-a[1])[0]?.[0];
+
+    const candidates = [
+        { id: 'qt_complete_3', name: 'Quick Blitz', desc: 'Complete 3 quick tasks today', target: 3, progress: 0, reward: 50 },
+        { id: 'qt_morning', name: 'Early Spark', desc: 'Complete a quick task before 10 AM', target: 1, progress: 0, reward: 40 },
+        { id: 'qt_evening', name: 'Night Owl', desc: 'Complete a quick task after 6 PM', target: 1, progress: 0, reward: 40 }
+    ];
+
+    if (topCat) {
+        candidates.push({
+            id: 'qt_cat_' + topCat.replace(/\s+/g, '_').toLowerCase(),
+            name: 'Focus: ' + topCat,
+            desc: 'Complete 2 ' + topCat + ' quick tasks',
+            target: 2,
+            progress: 0,
+            reward: 45,
+            meta: { categoryName: topCat }
+        });
+    }
+
+    const today = new Date().toDateString();
+    if (gameState.lastDailyChallengeDate !== today) {
+        let chosen = candidates[Math.floor(Math.random() * candidates.length)];
+        if (topCat && (freqByCat[topCat] || 0) >= 2) {
+            const catOnly = candidates.filter(c => c.id.startsWith('qt_cat_'));
+            if (catOnly.length) chosen = catOnly[0];
+        }
+        gameState.dailyChallenge = chosen;
+        gameState.dailyChallengeCompleted = false;
+        gameState.lastDailyChallengeDate = today;
+    }
+}
+
+
+
+        function updateDailyChallengeDisplay() {
+    const challengeDisplay = document.getElementById('dailyChallengeDisplay');
+    if (!challengeDisplay) return;
+
+    
+if (!gameState.dailyChallenge) {
+    const themeClass = 'theme-purple';
+challengeDisplay.innerHTML = `
+        <div class="daily-challenge-card ${themeClass}">
+            <div class="challenge-title">📅 No Challenge Today</div>
+            <div class="challenge-desc">Check back tomorrow for a new challenge!</div>
+            <div class="challenge-progress-container">
+                <div class="challenge-progress-label">Progress: 0/0</div>
+                <div class="challenge-progress-bar">
+                    <div class="challenge-progress-fill" style="width: 0%"></div>
+                </div>
+            </div>
+            <div class="challenge-reward">🎁 Reward: 0 points</div>
+        </div>
+    `;
+    return;
+}
+
+
+    
+const themeClass = 'theme-purple';
+const challenge = gameState.dailyChallenge;
+const progressPercent = Math.min(100, (challenge.progress / challenge.target) * 100);
+const isCompleted = gameState.dailyChallengeCompleted;
+
+challengeDisplay.innerHTML = `
+    <div class="daily-challenge-card ${themeClass} ${isCompleted ? 'challenge-completed' : ''}">
+        <div class="challenge-title">📅 ${challenge.name}</div>
+        <div class="challenge-desc">${challenge.desc}</div>
+        <div class="challenge-progress-container">
+            <div class="challenge-progress-label">Progress: ${challenge.progress}/${challenge.target}</div>
+            <div class="challenge-progress-bar">
+                <div class="challenge-progress-fill" style="width: ${gameState.dailyChallengeCompleted ? 100 : progressPercent}%" ></div>
+            </div>
+        </div>
+        <div class="challenge-reward">🎁 Reward: ${challenge.reward} points</div>
+    </div>
+`;
+
+
+    try { if (typeof applyDailyChallengeTheme === 'function') applyDailyChallengeTheme(); } catch(e) {}
+}
+
+// Only progress challenges when the source is Quick Tasks
+let _dcSource = null; // 'quick' when a quick task triggers progress
+let _lastQuickTaskCat = null;
+
+
+
+        function updateDailyChallengeProgress() {
+    if (!gameState.dailyChallenge || gameState.dailyChallengeCompleted) return false;
+    if (_dcSource !== 'quick') return false;
+
+    const challenge = gameState.dailyChallenge;
+    let progressMade = false;
+    const now = new Date();
+
+    switch (challenge.id) {
+        case 'qt_complete_3':
+            challenge.progress = Math.min(challenge.target, challenge.progress + 1);
+            progressMade = true;
+            break;
+        case 'qt_morning':
+            if (now.getHours() < 10) {
+                challenge.progress = Math.min(challenge.target, challenge.progress + 1);
+                progressMade = true;
+            }
+            break;
+        case 'qt_evening':
+            if (now.getHours() >= 18) {
+                challenge.progress = Math.min(challenge.target, challenge.progress + 1);
+                progressMade = true;
+            }
+            break;
+        default:
+            if (challenge.id && challenge.id.indexOf('qt_cat_') === 0) {
+                const targetCat = (challenge.meta && challenge.meta.categoryName) ? challenge.meta.categoryName : null;
+                if (targetCat && _lastQuickTaskCat === targetCat) {
+                    challenge.progress = Math.min(challenge.target, challenge.progress + 1);
+                    progressMade = true;
+                }
+            }
+            break;
+    }
+
+    if (challenge.progress >= challenge.target && !gameState.dailyChallengeCompleted) {
+        gameState.dailyChallengeCompleted = true;
+        gameState.taskPoints += challenge.reward;
+        if (window.fireConfetti) { window.fireConfetti(); }
+        showSuccessMessage(`📅 Daily Challenge Complete!\n${challenge.name}\n+${challenge.reward} bonus points!`);
+        return true;
+    }
+    return progressMade;
+}
+
+
+        // Quick Tasks System
+        function updateQuickTasksDisplay() {
+            const quickTasksList = document.getElementById('quickTasksList');
+            if (!quickTasksList) return;
+            
+            const activeTasks = gameState.selectedQuickTasks || [];
+            
+            if (activeTasks.length === 0) {
+                quickTasksList.innerHTML = `
+                    <div class="quick-tasks-empty">
+                        <div class="quick-tasks-empty-icon">✨</div>
+                        <div class="quick-tasks-empty-text">No quick tasks selected</div>
+                        <div class="quick-tasks-empty-subtext">Add some quick tasks to boost your productivity</div>
+                    </div>
+                `;
+            } else {
+                quickTasksList.innerHTML = activeTasks.map(task => `
+                    <div class="quick-task-item" onclick="completeQuickTask('${task.id}')">
+                        <div class="quick-task-emoji">${task.emoji || '⚡'}</div>
+                        <div class="quick-task-content">
+                            <div class="quick-task-title">${task.title || 'Quick Task'}</div>
+                            <div class="quick-task-category">${task.categoryName || 'General'}</div>
+                        </div>
+                        <div class="quick-task-points">+${task.points || 3} pts</div>
+                        <div class="quick-task-actions">
+        <button class="action-btn action-complete" onclick="event.stopPropagation(); completeQuickTask('${task.id}')" title="Complete" aria-label="Complete"><span class="icon-check">✓</span></button>
+        <button class="action-btn action-remove" onclick="event.stopPropagation(); removeQuickTask('${task.id}')" title="Remove" aria-label="Remove"><span class="icon-x">×</span></button>
+    </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Achievements System
+        function updateAchievementsDisplay() {
+            const achievementsList = document.getElementById('achievementsList');
+            if (!achievementsList) return;
+            
+            achievementsList.innerHTML = achievements.map(achievement => {
+                let isUnlocked = false;
+                let progress = 0;
+                
+                switch (achievement.type) {
+                    case 'streak':
+                        progress = gameState.bestStreak || 0;
+                        isUnlocked = progress >= achievement.requirement;
+                        break;
+                    case 'tasks':
+                        progress = gameState.completedTasks || 0;
+                        isUnlocked = progress >= achievement.requirement;
+                        break;
+                    case 'level':
+                        progress = gameState.jerryLevel || 1;
+                        isUnlocked = progress >= achievement.requirement;
+                        break;
+                }
+                
+                return `
+                    <div class="achievement-card ${isUnlocked ? 'unlocked' : 'locked'}">
+                        <div class="achievement-icon">${achievement.icon}</div>
+                        <div class="achievement-content">
+                            <div class="achievement-name">${achievement.name}</div>
+                            <div class="achievement-desc">${achievement.desc}</div>
+                        </div>
+                        <div class="achievement-status ${isUnlocked ? 'unlocked' : 'locked'}">
+                            ${isUnlocked ? 'Unlocked' : 'Locked'}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Stats System (from Old Task Rock)
+        function updateStatsDisplay() {
+            // Update stats display elements
+            if (document.getElementById('totalTasks')) {
+                // Total tasks = all tasks ever created (not just active ones)
+                document.getElementById('totalTasks').textContent = gameState.totalTasksCreated;
+            }
+            if (document.getElementById('completedTasks')) {
+                document.getElementById('completedTasks').textContent = gameState.completedTasks;
+            }
+            if (document.getElementById('totalPoints')) {
+                document.getElementById('totalPoints').textContent = gameState.taskPoints;
+            }
+            if (document.getElementById('completionRate')) {
+                const completionRate = gameState.totalTasksCreated > 0 
+                    ? Math.round((gameState.completedTasks / gameState.totalTasksCreated) * 100)
+                    : 100;
+                document.getElementById('completionRate').textContent = `${completionRate}%`;
+            }
+            
+            // Update gamification stats
+            if (document.getElementById('currentStreak')) {
+                document.getElementById('currentStreak').textContent = `${gameState.currentStreak} day${gameState.currentStreak !== 1 ? 's' : ''}`;
+            }
+            if (document.getElementById('longestStreak')) {
+                document.getElementById('longestStreak').textContent = `${gameState.longestStreak} day${gameState.longestStreak !== 1 ? 's' : ''}`;
+            }
+            if (document.getElementById('rockLevelLabel')) {
+                document.getElementById('rockLevelLabel').textContent = `⭐ ${gameState.rockName}'s Level`;
+            }
+            if (document.getElementById('jerryLevel')) {
+                document.getElementById('jerryLevel').textContent = `Level ${gameState.jerryLevel}`;
+            }
+            if (document.getElementById('jerryXP')) {
+                document.getElementById('jerryXP').textContent = `${gameState.jerryXP} / ${gameState.jerryXPToNext} XP`;
+            }
+        }
+
+        // Shop Systemm
+        function updateShopDisplay() {
+            updateShopSection('hatsShop', shopItems.hats);
+            updateShopSection('itemsShop', shopItems.items);
+            updateShopSection('paintShop', shopItems.paints);
+        }
+
+        function updateShopSection(containerId, items) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            
+            container.innerHTML = items.map(item => {
+                const canAfford = gameState.taskPoints >= item.price;
+                const isOwned = gameState.ownedItems.includes(item.id);
+                
+                return `
+                    <div class="shop-item ${canAfford ? 'affordable' : 'expensive'}" onclick="buyItem('${item.id}', ${item.price})">
+                        <img src="${item.image}" alt="${item.name}" class="shop-item-image">
+                        <div class="shop-item-name">${item.name}</div>
+                        <div class="shop-item-price">${isOwned ? 'Owned' : `${item.price} Points`}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function buyItem(itemId, price) {
+            if (gameState.ownedItems.includes(itemId)) {
+                showSuccessMessage('You already own this item!');
+                return;
+            }
+            
+            if (gameState.taskPoints < price) {
+                showSuccessMessage('Not enough points!');
+                return;
+            }
+            
+            gameState.taskPoints -= price;
+            gameState.ownedItems.push(itemId);
+            
+            // Auto-equip the item
+            const item = [...shopItems.hats, ...shopItems.items, ...shopItems.paints].find(i => i.id === itemId);
+            if (item) {
+                if (shopItems.hats.includes(item)) {
+                    gameState.currentOutfit.hat = itemId;
+                } else if (shopItems.items.includes(item)) {
+                    if (itemId === 'glasses') gameState.currentOutfit.glasses = itemId;
+                    if (itemId === 'mustache') gameState.currentOutfit.mustache = itemId;
+                } else if (shopItems.paints.includes(item)) {
+                    gameState.currentOutfit.paint = itemId;
+                }
+            }
+            
+            saveGameState();
+            updateUI();
+            showSuccessMessage(`Purchased ${item.name}!`);
+        }
+
+        // Settings System
+        function updateSettingsDisplay() {
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            const notificationsToggle = document.getElementById('notificationsToggle');
+            
+            if (darkModeToggle) {
+                darkModeToggle.classList.toggle('active', gameState.darkMode);
+            }
+            
+            if (notificationsToggle) {
+                notificationsToggle.classList.toggle('active', gameState.notifications);
+            }
+        }
+
+        function toggleDarkMode() {
+            gameState.darkMode = !gameState.darkMode;
+            document.documentElement.setAttribute('data-theme', gameState.darkMode ? 'dark' : 'light');
+            saveGameState();
+            updateSettingsDisplay();
+            
+            // Jerry responds to theme changes
+            if (window.JerryDialogue) {
+                window.JerryDialogue.trigger('themeSwitch');
+            }
+        }
+
+        function toggleNotifications() {
+            gameState.notifications = !gameState.notifications;
+            saveGameState();
+            updateSettingsDisplay();
+            showSuccessMessage(`Notifications ${gameState.notifications ? 'enabled' : 'disabled'}!`);
+            
+            // Jerry responds to notification changes
+            if (window.JerryDialogue && gameState.notifications) {
+                window.JerryDialogue.trigger('notifications');
+            }
+        }
+
+        function shareEtsyStore() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Task Rock - Rock Shop',
+                    text: 'Check out these awesome accessories for Jerry!',
+                    url: 'https://your-etsy-store-url.com'
+                });
+            } else {
+                // Fallback for browsers that don't support Web Share API
+                const url = 'https://your-etsy-store-url.com';
+                navigator.clipboard.writeText(url).then(() => {
+                    showSuccessMessage('Store URL copied to clipboard!');
+                });
+            }
+            
+            // Jerry responds to Etsy store sharing
+            if (window.JerryDialogue) {
+                window.JerryDialogue.trigger('etsyShare');
+            }
+        }
+
+        function showResetOptions() {
+            if (confirm('Are you sure you want to reset your progress? This action cannot be undone.')) {
+                if (confirm('This will delete ALL your tasks, points, and progress. Are you absolutely sure?')) {
+                    localStorage.removeItem('taskRockGameState');
+                    location.reload();
+                }
+            }
+        }
+
+        // Creature name editing
+        function editCreatureName() {
+            const nameElement = document.getElementById('creatureName');
+            const inputElement = document.getElementById('creatureNameInput');
+            
+            nameElement.style.display = 'none';
+            inputElement.style.display = 'block';
+            inputElement.value = gameState.rockName;
+            inputElement.focus();
+            inputElement.select();
+        }
+
+        function saveCreatureName() {
+            const nameElement = document.getElementById('creatureName');
+            const inputElement = document.getElementById('creatureNameInput');
+            
+            const newName = inputElement.value.trim();
+            if (newName && newName !== gameState.rockName) {
+                gameState.rockName = newName;
+                nameElement.textContent = newName;
+                saveGameState();
+                updateStatsDisplay(); // Update stats to reflect the new name
+                showSuccessMessage(`Rock renamed to ${newName}!`);
+            }
+            
+            nameElement.style.display = 'block';
+            inputElement.style.display = 'none';
+        }
+
+        function handleNameKeyPress(event) {
+            if (event.key === 'Enter') {
+                saveCreatureName();
+            }
+        }
+
+        // Modal functions
+        function openCreateTaskModal() {
+            document.getElementById('createTaskModal').style.display = 'block';
+            resetForm();
+        }
+
+        function closeModal() {
+            document.getElementById('createTaskModal').style.display = 'none';
+            resetForm();
+        }
+
+        function openQuickTaskModal() {
+            document.getElementById('quickTaskModal').style.display = 'block';
+            populateQuickTaskCategories();
+        }
+
+        function closeQuickTaskModal() {
+            document.getElementById('quickTaskModal').style.display = 'none';
+        }
+
+        function populateQuickTaskCategories() {
+            const container = document.getElementById('quickTaskCategories');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            Object.keys(quickTasksDatabase).forEach(categoryKey => {
+                const category = quickTasksDatabase[categoryKey];
+                
+                const categorySection = document.createElement('div');
+                categorySection.className = 'category-section';
+                categorySection.innerHTML = `
+                    <div class="category-header">
+                        <div class="category-emoji">${category.emoji}</div>
+                        <div class="category-name">${category.name}</div>
+                    </div>
+                    <div class="category-tasks">
+                        ${category.tasks.map(task => `
+                            <div class="category-task-item" onclick="addQuickTask('${task.id}', '${categoryKey}')">
+                                <div class="quick-task-emoji">${task.emoji}</div>
+                                <div class="quick-task-content">
+                                    <div class="quick-task-title">${task.title}</div>
+                                    <div class="quick-task-category">${category.name}</div>
+                                </div>
+                                <div class="quick-task-points">+${task.points} pts</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                
+                container.appendChild(categorySection);
+            });
+        }
+
+        // Task management functions
+        function selectCategory(category) {
+            // Remove previous selection
+            document.querySelectorAll('[data-category]').forEach(el => el.classList.remove('selected'));
+            // Add selection to clicked item
+            document.querySelector(`[data-category="${category}"]`).classList.add('selected');
+            selectedCategory = category;
+        }
+
+        function selectDifficulty(difficulty) {
+            // Remove previous selection
+            document.querySelectorAll('[data-difficulty]').forEach(el => el.classList.remove('selected'));
+            // Add selection to clicked item
+            document.querySelector(`[data-difficulty="${difficulty}"]`).classList.add('selected');
+            selectedDifficulty = difficulty;
+        }
+
+        function selectPriority(priority) {
+            // Remove previous selection
+            document.querySelectorAll('[data-priority]').forEach(el => el.classList.remove('selected'));
+            // Add selection to clicked item
+            document.querySelector(`[data-priority="${priority}"]`).classList.add('selected');
+            selectedPriority = priority;
+        }
+
+        function selectRecurring(recurring) {
+            // Remove previous selection
+            document.querySelectorAll('[data-recurring]').forEach(el => el.classList.remove('selected'));
+            // Add selection to clicked item
+            document.querySelector(`[data-recurring="${recurring}"]`).classList.add('selected');
+            selectedRecurring = recurring;
+            
+            // Show/hide conditional controls
+            const customDiv = document.getElementById('recurrenceCustom');
+            const weekdayDiv = document.getElementById('weekdayGrid');
+            const previewDiv = document.getElementById('recurrencePreview');
+            
+            // Hide all conditional controls by default
+            customDiv.style.display = 'none';
+            weekdayDiv.style.display = 'none';
+            previewDiv.style.display = 'none';
+            
+            // Show appropriate controls based on selection
+            if (recurring === 'weekly') {
+                customDiv.style.display = 'block';
+                weekdayDiv.style.display = 'block';
+                previewDiv.style.display = 'block';
+            } else if (recurring === 'monthly') {
+                customDiv.style.display = 'block';
+                previewDiv.style.display = 'block';
+            } else if (recurring === 'daily') {
+                previewDiv.style.display = 'block';
+            }
+            
+            // Update preview
+            updateRecurrencePreview();
+        }
+
+        function selectInterval(interval) {
+            // Remove previous selection
+            document.querySelectorAll('[data-interval]').forEach(el => el.classList.remove('selected'));
+            // Add selection to clicked item
+            document.querySelector(`[data-interval="${interval}"]`).classList.add('selected');
+            selectedInterval = interval;
+            
+            // Update preview
+            updateRecurrencePreview();
+        }
+
+        function toggleWeekday(weekday) {
+            const element = document.querySelector(`[data-weekday="${weekday}"]`);
+            const index = selectedWeekdays.indexOf(weekday);
+            
+            if (index > -1) {
+                // Remove weekday
+                selectedWeekdays.splice(index, 1);
+                element.classList.remove('selected');
+            } else {
+                // Add weekday
+                selectedWeekdays.push(weekday);
+                element.classList.add('selected');
+            }
+            
+            // Update preview
+            updateRecurrencePreview();
+        }
+
+        function computeNextDueDate(task, fromDateStr) {
+            if (!task.recurrence || task.recurrence.type === 'none') {
+                return null;
+            }
+            
+            const fromDate = new Date(fromDateStr);
+            const recurrence = task.recurrence;
+            const interval = recurrence.interval || 1;
+            
+            // Preserve the time-of-day from the base due date
+            const baseTime = fromDate.getHours() * 60 + fromDate.getMinutes();
+            
+            let nextDate = new Date(fromDate);
+            
+            switch (recurrence.type) {
+                case 'daily':
+                    nextDate.setDate(nextDate.getDate() + interval);
+                    break;
+                    
+                case 'weekly':
+                    if (recurrence.weekdays && recurrence.weekdays.length > 0) {
+                        // Find next occurrence based on selected weekdays
+                        const sortedWeekdays = [...recurrence.weekdays].sort((a, b) => a - b);
+                        const currentWeekday = fromDate.getDay();
+                        
+                        // Find next weekday after current date
+                        let nextWeekday = null;
+                        for (const weekday of sortedWeekdays) {
+                            if (weekday > currentWeekday) {
+                                nextWeekday = weekday;
+                                break;
+                            }
+                        }
+                        
+                        if (nextWeekday === null) {
+                            // No weekday found this week, go to first weekday of next week
+                            nextWeekday = sortedWeekdays[0];
+                            const daysToAdd = (7 - currentWeekday) + nextWeekday;
+                            nextDate.setDate(nextDate.getDate() + daysToAdd);
+                        } else {
+                            // Found weekday in current week
+                            const daysToAdd = nextWeekday - currentWeekday;
+                            nextDate.setDate(nextDate.getDate() + daysToAdd);
+                        }
+                    } else {
+                        // No specific weekdays, just add weeks
+                        nextDate.setDate(nextDate.getDate() + (7 * interval));
+                    }
+                    break;
+                    
+                case 'monthly':
+                    const currentDay = fromDate.getDate();
+                    nextDate.setMonth(nextDate.getMonth() + interval);
+                    
+                    // Handle month-end clamping (e.g., Jan 31 -> Feb 28/29)
+                    const daysInNextMonth = new Date(nextDate.getFullYear(), nextDate.getMonth() + 1, 0).getDate();
+                    if (currentDay > daysInNextMonth) {
+                        nextDate.setDate(daysInNextMonth);
+                    } else {
+                        nextDate.setDate(currentDay);
+                    }
+                    break;
+                    
+                default:
+                    return null;
+            }
+            
+            // Restore the original time
+            nextDate.setHours(Math.floor(baseTime / 60));
+            nextDate.setMinutes(baseTime % 60);
+            nextDate.setSeconds(0);
+            nextDate.setMilliseconds(0);
+            
+            return nextDate.toISOString();
+        }
+
+        function updateRecurrencePreview() {
+            const previewText = document.getElementById('nextOccurrenceText');
+            if (!previewText) return;
+            
+            const dueDate = document.getElementById('taskDueDate').value;
+            const baseDate = dueDate || new Date().toISOString();
+            
+            if (selectedRecurring === 'none') {
+                previewText.textContent = 'One-time task';
+                return;
+            }
+            
+            try {
+                const nextDate = computeNextDueDate({
+                    recurring: selectedRecurring,
+                    recurrence: {
+                        type: selectedRecurring,
+                        interval: selectedInterval,
+                        weekdays: selectedWeekdays.length > 0 ? selectedWeekdays : null
+                    }
+                }, baseDate);
+                
+                if (nextDate) {
+                    const date = new Date(nextDate);
+                    previewText.textContent = date.toLocaleDateString() + ' at ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                } else {
+                    previewText.textContent = 'Invalid configuration';
+                }
+            } catch (error) {
+                previewText.textContent = 'Error calculating next occurrence';
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('taskForm').reset();
+            document.querySelectorAll('.selection-item').forEach(el => el.classList.remove('selected'));
+            selectedCategory = null;
+            selectedDifficulty = null;
+            selectedPriority = null;
+            selectedRecurring = 'none';
+            selectedInterval = 1;
+            selectedWeekdays = [];
+            editingTaskIndex = null;
+            document.querySelector('.modal-title').textContent = 'Create Task';
+            document.querySelector('.btn-primary').textContent = 'Create Task';
+            // Select default recurring option and interval
+            selectRecurring('none');
+            selectInterval(1);
+        }
+
+        function createTask() {
+            const title = document.getElementById('taskTitle').value.trim();
+            const description = document.getElementById('taskDescription').value.trim();
+            const dueDate = document.getElementById('taskDueDate').value;
+            
+            if (!title) {
+                alert('Please enter a task title');
+                return;
+            }
+            
+            if (!selectedCategory) {
+                alert('Please select a category');
+                return;
+            }
+            
+            if (!selectedDifficulty) {
+                alert('Please select a difficulty');
+                return;
+            }
+            
+            if (!selectedPriority) {
+                alert('Please select a priority');
+                return;
+            }
+            
+            // Validate due date is not in the past
+            if (dueDate) {
+                const selectedDate = new Date(dueDate);
+                const now = new Date();
+                if (selectedDate < now) {
+                    alert('Due date cannot be in the past. Please select today or a future date.');
+                    return;
+                }
+            }
+            
+            const pointsMap = { easy: 2, medium: 5, hard: 10 };
+            
+            // Create recurrence object according to specification
+            let recurrence = null;
+            if (selectedRecurring !== 'none') {
+                recurrence = {
+                    type: selectedRecurring,
+                    interval: selectedInterval,
+                    weekdays: selectedWeekdays.length > 0 ? selectedWeekdays : null
+                };
+            }
+            
+            // If no due date was entered and recurrence ≠ 'none', anchor due to now
+            let finalDueDate = dueDate;
+            if (!dueDate && selectedRecurring !== 'none') {
+                const now = new Date();
+                finalDueDate = now.toISOString().slice(0, 16); // Format for datetime-local
+            }
+            
+            const task = {
+                title,
+                description,
+                category: selectedCategory,
+                difficulty: selectedDifficulty,
+                priority: selectedPriority,
+                points: pointsMap[selectedDifficulty],
+                dueDate: finalDueDate || null,
+                createdAt: new Date().toISOString(),
+                completed: false,
+                recurring: selectedRecurring || 'none', // Legacy field for compatibility
+                recurrence: recurrence, // New rich object
+                lastCompleted: null,
+                streak: 0,
+                totalCompletions: 0
+            };
+            
+            if (editingTaskIndex !== null) {
+                // Update existing task
+                gameState.tasks[editingTaskIndex] = task;
+                try { scheduleTaskNotifications(task); } catch(_) {}
+                showSuccessMessage('Task updated successfully!');
+            } else {
+                // Add new task
+                gameState.tasks.push(task);
+                gameState.totalTasksCreated += 1; // Track total tasks created for stats
+                try { scheduleTaskNotifications(task); } catch(_) {}
+                showSuccessMessage('Task created successfully!');
+            }
+            
+            saveGameState();
+            updateUI();
+            closeModal();
+        }
+
+        function editTask(index) {
+            const task = gameState.tasks[index];
+            if (!task) return;
+            
+            editingTaskIndex = index;
+            
+            // Populate form
+            document.getElementById('taskTitle').value = task.title || '';
+            document.getElementById('taskDescription').value = task.description || '';
+            document.getElementById('taskDueDate').value = task.dueDate || '';
+            
+            // Reset advanced options first
+            selectedInterval = 1;
+            selectedWeekdays = [];
+            
+            // Select category, difficulty, priority, recurring
+            if (task.category) selectCategory(task.category);
+            if (task.difficulty) selectDifficulty(task.difficulty);
+            if (task.priority) selectPriority(task.priority);
+            
+            // Handle recurrence data - check both new and legacy formats
+            if (task.recurrence) {
+                // New format with rich recurrence object
+                selectedInterval = task.recurrence.interval || 1;
+                selectedWeekdays = task.recurrence.weekdays || [];
+                selectRecurring(task.recurrence.type);
+                selectInterval(selectedInterval);
+                
+                // Restore weekday selections
+                selectedWeekdays.forEach(weekday => {
+                    const element = document.querySelector(`[data-weekday="${weekday}"]`);
+                    if (element) element.classList.add('selected');
+                });
+            } else if (task.recurring) {
+                // Legacy format
+                selectRecurring(task.recurring);
+            } else {
+                selectRecurring('none');
+            }
+            
+            document.querySelector('.modal-title').textContent = 'Edit Task';
+            document.querySelector('.btn-primary').textContent = 'Update Task';
+            document.getElementById('createTaskModal').style.display = 'block';
+        }
+
+        function deleteTask(index) {
+            if (confirm('Are you sure you want to delete this task?')) {
+                gameState.tasks.splice(index, 1);
+                saveGameState();
+                updateUI();
+                showSuccessMessage('Task deleted successfully!');
+            }
+        }
+
+        // Auto-scroll to Jerry function
+        function scrollToJerry() {
+            const jerryContainer = document.querySelector('.creature-container') || 
+                                 document.querySelector('.pet-rock-header') ||
+                                 document.querySelector('#jerryContainer');
+            
+            if (jerryContainer) {
+                jerryContainer.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center',
+                    inline: 'nearest'
+                });
+            }
+        }
+
+        
+        // Scroll back to the pet rock and dialogue
+        function scrollToPetRock() {
+            try {
+                var target = document.querySelector('.creature-container')
+                          || document.getElementById('creatureImage')
+                          || document.getElementById('pet-rock-position-fix')
+                          || document.getElementById('pet-rock-float-patch')
+                          || document.getElementById('pet-rock-image-guard');
+                if (!target) return;
+                // Scroll immediately (no smooth) so it feels instant
+                var y = target.getBoundingClientRect().top + window.pageYOffset - 24;
+                window.scrollTo({ top: y, behavior: 'auto' });
+            } catch(e) { /* no-op */ }
+        }
+function completeTask(index) {
+            const task = gameState.tasks[index];
+            if (!task) return;
+            
+            // Track today's completions
+            const today = new Date().toDateString();
+            if (gameState.lastDayTracked !== today) {
+                // New day, reset today's count
+                gameState.completedTasksToday = 0;
+                gameState.lastDayTracked = today;
+            }
+            gameState.completedTasksToday++;
+            
+            // Update streak before processing points
+            updateStreak();
+            
+            // Calculate points with streak multiplier
+            const basePoints = task.points || 5;
+            const multipliedPoints = Math.floor(basePoints * gameState.streakMultiplier);
+            
+            if (gameState.isDead) {
+                // If dead, points go toward revival
+                gameState.revivalPoints += multipliedPoints;
+                if (gameState.revivalPoints >= 25) {
+                    // Revive the rock
+                    gameState.isDead = false;
+                    gameState.health = 100;
+                    gameState.revivalPoints = 0;
+                    gameState.taskPoints += (gameState.revivalPoints - 25); // Any extra points go to regular points
+                    showSuccessMessage(`🎉 ${gameState.rockName} is revived! Welcome back!`);
+                } else {
+                    showSuccessMessage(`💪 Great progress! ${25 - gameState.revivalPoints} more points to revive ${gameState.rockName}!`);
+                }
+            } else {
+                // Normal task completion
+                gameState.taskPoints += multipliedPoints;
+                gameState.health = Math.min(100, gameState.health + 10);
+                
+                // Add XP for Jerry's level system
+                addJerryXP(basePoints * 2); // XP = points * 2
+                
+                // Show completion message
+                const streakBonus = gameState.streakMultiplier > 1 ? ` (${gameState.streakMultiplier}x streak bonus!)` : '';
+                showSuccessMessage(`🎉 Awesome job! Task completed!${streakBonus} +${multipliedPoints} points!`);
+                
+                // Jerry responds to task completion
+                if (window.JerryDialogue) {
+                    window.JerryDialogue.trigger('taskComplete');
+                }
+            }
+            
+            gameState.completedTasks++;
+            
+            // Update daily challenge progress
+            if (task.difficulty === 'hard') {
+                _lastQuickTaskCat = (task && task.categoryName) ? task.categoryName : 'General';
+                updateDailyChallengeProgress();
+            }
+            
+            // Remove task
+            gameState.tasks.splice(index, 1);
+            
+            saveGameState();
+            updateUI();
+            
+            
+            // Auto-scroll to pet rock
+            scrollToPetRock();
+// Fire confetti animation
+            if (window.fireConfetti) {
+                window.fireConfetti();
+            }
+        }
+
+        // Wrap completeTask function to handle recurring tasks
+        (function(){
+            const originalComplete = window.completeTask;
+            window.completeTask = function(index) {
+                const task = gameState.tasks[index];
+                if (!task) return;
+                
+                // Check if this is a recurring task
+                const isRecurring = task.recurrence && task.recurrence.type !== 'none';
+                
+                if (isRecurring) {
+                    // For recurring tasks, calculate next due date before completing
+                    const currentDueDate = task.dueDate || new Date().toISOString();
+                    const nextDueDate = computeNextDueDate(task, currentDueDate);
+                    
+                    if (nextDueDate) {
+                        // Complete the original task first
+                        originalComplete(index);
+                        
+                        // Create a new instance of the recurring task
+                        const newTask = {
+                            ...task,
+                            dueDate: nextDueDate,
+                            completed: false,
+                            createdAt: new Date().toISOString(),
+                            lastCompleted: new Date().toISOString(),
+                            streak: (task.streak || 0) + 1,
+                            totalCompletions: (task.totalCompletions || 0) + 1
+                        };
+                        
+                        // Add the new task instance
+                        gameState.tasks.push(newTask);
+                        gameState.totalTasksCreated += 1; // Track recurring task instances for stats
+                        
+                        // Save and update UI
+                        saveGameState();
+                        updateUI();
+                        
+                        // Show recurring task message
+                        showSuccessMessage(`Recurring task completed! Next occurrence: ${new Date(nextDueDate).toLocaleDateString()}`);
+                        return;
+                    }
+                }
+                
+                // For non-recurring tasks or if next date calculation fails, use original function
+                originalComplete(index);
+            };
+        })();
+
+        function addQuickTask(taskId, categoryKey) {
+            const category = quickTasksDatabase[categoryKey];
+            const task = category.tasks.find(t => t.id === taskId);
+            
+            if (!task) return;
+            
+            // Check if task already exists
+            const exists = gameState.selectedQuickTasks.some(t => t.id === taskId);
+            if (exists) {
+                showSuccessMessage('Task already added!');
+                return;
+            }
+            
+            // Add task with category info
+            const quickTask = {
+                ...task,
+                categoryName: category.name,
+                categoryEmoji: category.emoji
+            };
+            
+            gameState.selectedQuickTasks.push(quickTask);
+            gameState.totalTasksCreated += 1; // Track quick tasks for stats
+            saveGameState();
+            updateUI();
+            closeQuickTaskModal();
+            showSuccessMessage(`Added "${task.title}" to quick tasks!`);
+        }
+
+        function completeQuickTask(taskId) {
+    // Mark DC progress as from Quick Tasks
+    _dcSource = 'quick';
+
+            const taskIndex = gameState.selectedQuickTasks.findIndex(t => t.id === taskId);
+            if (taskIndex === -1) return;
+            
+            const task = gameState.selectedQuickTasks[taskIndex];
+            
+            // Track today's completions
+            const today = new Date().toDateString();
+            if (gameState.lastDayTracked !== today) {
+                // New day, reset today's count
+                gameState.completedTasksToday = 0;
+                gameState.lastDayTracked = today;
+            }
+            gameState.completedTasksToday++;
+            
+            // Update streak before processing points
+            updateStreak();
+            
+            // Calculate points with streak multiplier
+            const basePoints = task.points || 3;
+            const multipliedPoints = Math.floor(basePoints * gameState.streakMultiplier);
+            
+            if (gameState.isDead) {
+                // If dead, points go toward revival
+                gameState.revivalPoints += multipliedPoints;
+                if (gameState.revivalPoints >= 25) {
+                    // Revive the rock
+                    gameState.isDead = false;
+                    gameState.health = 100;
+                    gameState.revivalPoints = 0;
+                    gameState.taskPoints += (gameState.revivalPoints - 25); // Any extra points go to regular points
+                    showSuccessMessage(`🎉 ${gameState.rockName} is revived! Welcome back!`);
+                } else {
+                    showSuccessMessage(`💪 Great progress! ${25 - gameState.revivalPoints} more points to revive ${gameState.rockName}!`);
+                }
+            } else {
+                // Normal task completion
+                gameState.taskPoints += multipliedPoints;
+                gameState.health = Math.min(100, gameState.health + 10);
+                
+                // Add XP for Jerry's level system
+                addJerryXP(basePoints * 2); // XP = points * 2
+                
+                // Show completion message
+                const streakBonus = gameState.streakMultiplier > 1 ? ` (${gameState.streakMultiplier}x streak bonus!)` : '';
+                showSuccessMessage(`🎉 Quick task completed!${streakBonus} +${multipliedPoints} points!`);
+                
+                // Jerry responds to quick task completion
+                if (window.JerryDialogue) {
+                    window.JerryDialogue.trigger('quickTaskComplete');
+                }
+            }
+            
+            gameState.completedTasks++;
+            
+            // Update daily challenge progress
+            _lastQuickTaskCat = (task && task.categoryName) ? task.categoryName : 'General';
+            updateDailyChallengeProgress();
+            
+            // Remove task
+            gameState.selectedQuickTasks.splice(taskIndex, 1);
+            
+            saveGameState();
+            updateUI();
+            
+            
+            // Auto-scroll to pet rock
+            scrollToPetRock();
+// Fire confetti animation
+            if (window.fireConfetti) {
+                window.fireConfetti();
+            }
+        
+    _dcSource = null; _lastQuickTaskCat = null;
+}
+
+        function removeQuickTask(taskId) {
+            const taskIndex = gameState.selectedQuickTasks.findIndex(t => t.id === taskId);
+            if (taskIndex !== -1) {
+                gameState.selectedQuickTasks.splice(taskIndex, 1);
+                saveGameState();
+                updateUI();
+                showSuccessMessage('Quick task removed!');
+            }
+        }
+
+        // ========== STREAK SYSTEM (from Old Task Rock) ==========
+        function updateStreak() {
+            const today = new Date().toDateString();
+            const lastCompletion = gameState.lastCompletionDate;
+            
+            if (!lastCompletion) {
+                // First task completion
+                gameState.currentStreak = 1;
+                gameState.lastCompletionDate = today;
+            } else if (lastCompletion === today) {
+                // Already completed a task today, no streak change
+                return;
+            } else {
+                const lastDate = new Date(lastCompletion);
+                const todayDate = new Date(today);
+                const daysDiff = Math.floor((todayDate - lastDate) / (1000 * 60 * 60 * 24));
+                
+                if (daysDiff === 1) {
+                    // Consecutive day - extend streak
+                    gameState.currentStreak++;
+                    gameState.lastCompletionDate = today;
+                } else {
+                    // Streak broken - reset
+                    gameState.currentStreak = 1;
+                    gameState.lastCompletionDate = today;
+                }
+            }
+            
+            // Update longest streak
+            if (gameState.currentStreak > gameState.longestStreak) {
+                gameState.longestStreak = gameState.currentStreak;
+            }
+            
+            // Update streak multiplier
+            updateStreakMultiplier();
+        }
+        
+        function updateStreakMultiplier() {
+            if (gameState.currentStreak >= 7) {
+                gameState.streakMultiplier = 3;
+            } else if (gameState.currentStreak >= 3) {
+                gameState.streakMultiplier = 2;
+            } else {
+                gameState.streakMultiplier = 1;
+            }
+        }
+        
+        // Enhanced Jerry XP function with level up handling
+        function addJerryXP(xp) {
+            gameState.jerryXP += xp;
+            
+            // Check for level up
+            while (gameState.jerryXP >= gameState.jerryXPToNext) {
+                levelUpJerry();
+            }
+        }
+        
+        function levelUpJerry() {
+            gameState.jerryXP -= gameState.jerryXPToNext;
+            gameState.jerryLevel++;
+            
+            // Increase XP requirement for next level
+            gameState.jerryXPToNext = Math.floor(100 * Math.pow(1.2, gameState.jerryLevel - 1));
+            
+            // Show level up message
+            showSuccessMessage(`🎉 ${gameState.rockName} leveled up! Now Level ${gameState.jerryLevel}!`);
+            
+            // Fire confetti for level up
+            if (window.fireConfetti) {
+                window.fireConfetti();
+            }
+        }
+
+        // Section toggle
+        function toggleSection(sectionName) {
+            const section = document.getElementById(`${sectionName}Section`);
+            const arrow = document.getElementById(`${sectionName}Arrow`);
+            
+            if (section.classList.contains('expanded')) {
+                section.classList.remove('expanded');
+                arrow.textContent = '▼'; // DOWN arrow when collapsed
+            } else {
+                section.classList.add('expanded');
+                arrow.textContent = '▲'; // UP arrow when expanded
+            }
+        }
+
+        // Success message
+        function showSuccessMessage(message) {
+            const successDiv = document.createElement('div');
+            successDiv.className = 'success-message';
+            successDiv.textContent = message;
+            document.body.appendChild(successDiv);
+            
+            setTimeout(() => {
+                successDiv.remove();
+            }, 3000);
+        }
+
+        // Close modal when clicking outside
+        window.addEventListener('click', function(event) {
+            const createModal = document.getElementById('createTaskModal');
+            const quickModal = document.getElementById('quickTaskModal');
+            
+            if (event.target === createModal) {
+                closeModal();
+            }
+            if (event.target === quickModal) {
+                closeQuickTaskModal();
+            }
+        });
+
+        // Initialize section arrows
+        function initializeSectionArrows() {
+            const sections = [
+                { id: 'tasks', expanded: true },
+                { id: 'dailyChallenge', expanded: true },
+                { id: 'quickTasks', expanded: true },
+                { id: 'achievements', expanded: false },
+                { id: 'shop', expanded: false },
+                { id: 'settings', expanded: false }
+            ];
+            
+            sections.forEach(section => {
+                const arrow = document.getElementById(`${section.id}Arrow`);
+                const sectionElement = document.getElementById(`${section.id}Section`);
+                
+                if (arrow && sectionElement) {
+                    if (section.expanded) {
+                        sectionElement.classList.add('expanded');
+                        arrow.textContent = '▲'; // UP arrow when expanded
+                    } else {
+                        sectionElement.classList.remove('expanded');
+                        arrow.textContent = '▼'; // DOWN arrow when collapsed
+                    }
+                }
+            });
+        }
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            loadGameState();
+            generateDailyChallenge();
+            repopulateQuickTasksIfNeeded(false);
+            try { scheduleQuickTasksMidnightRefresh(); } catch (_) {}
+            // Initialize selectedQuickTasks if it doesn't exist
+            if (!gameState.selectedQuickTasks) {
+                gameState.selectedQuickTasks = [];
+            }
+            
+            // Apply dark mode if enabled
+            if (gameState.darkMode) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            }
+            
+            // Initialize section arrows
+            initializeSectionArrows();
+            
+            // Initialize confetti system
+            initializeConfetti();
+            
+            updateUI();
+            
+            // Hide loading screen
+            setTimeout(() => {
+                document.getElementById('loadingScreen').classList.add('hidden');
+                
+                // Jerry greets the user after app loads
+                setTimeout(() => {
+                    if (window.JerryDialogue) {
+                        window.JerryDialogue.trigger('greeting');
+                    }
+                }, 1500); // Wait a bit after loading screen disappears
+            }, 1000);
+        });
+
+        // Confetti Animation System
+        function initializeConfetti() {
+            const canvas = document.getElementById("confetti-canvas");
+            const ctx = canvas.getContext("2d");
+            let particles = [];
+            let animationFrame;
+
+            function resize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            window.addEventListener("resize", resize);
+            resize();
+
+            function createParticle(x, y) {
+                return {
+                    x,
+                    y,
+                    dx: Math.random() * 6 - 3,
+                    dy: Math.random() * -5 - 2,
+                    size: Math.random() * 6 + 4,
+                    color: `hsl(${Math.random() * 360}, 80%, 60%)`,
+                    life: 100
+                };
+            }
+
+            function render() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach((p, i) => {
+                    p.x += p.dx;
+                    p.y += p.dy;
+                    p.dy += 0.1; // gravity
+                    p.life--;
+
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(p.x, p.y, p.size, p.size);
+
+                    if (p.life <= 0) particles.splice(i, 1);
+                });
+                if (particles.length > 0) {
+                    animationFrame = requestAnimationFrame(render);
+                } else {
+                    cancelAnimationFrame(animationFrame);
+                    animationFrame = null;
+                }
+            }
+
+            // Expose global function
+            window.fireConfetti = function(x = canvas.width/2, y = canvas.height/2) {
+                for (let i = 0; i < 80; i++) {
+                    particles.push(createParticle(x, y));
+                }
+                if (!animationFrame) render();
+            };
+        }
+    
+
+document.addEventListener('DOMContentLoaded', () => {
+    try {
+        const container = document.querySelector('#content') || document.body;
+        const quick = document.getElementById('quickTasksSection');
+        const tasks = document.getElementById('tasksSection');
+        const daily = document.getElementById('dailyChallengeSection');
+        if (container && quick && tasks && daily) {
+            container.appendChild(quick);
+            container.appendChild(tasks);
+            container.appendChild(daily);
+        }
+    } catch (e) { /* no-op */ }
+});
+
+
+document.addEventListener('DOMContentLoaded', () => {
+        try {
+            const quick = document.getElementById('quickTasksSection');
+            const tasks = document.getElementById('tasksSection');
+            const daily = document.getElementById('dailyChallengeSection');
+            if (!(quick && tasks && daily)) return;
+            // Anchor = first .section in the document (keeps us in the correct container)
+            const firstSection = document.querySelector('.section');
+            if (!firstSection) return;
+            const parent = firstSection.parentElement;
+            // Insert in reverse order before the first section so final order is Quick, Tasks, Daily
+            parent.insertBefore(daily, firstSection);
+            parent.insertBefore(tasks, firstSection);
+            parent.insertBefore(quick, firstSection);
+        } catch (_) {}
+    });
+
+// ----- Daily Challenge background cycle (scoped) -----
+// 0: purple, 1: green, 2: orange
+function getLocalMidnight(ts = Date.now()) {
+  const d = new Date(ts); d.setHours(0,0,0,0); return d.getTime();
+}
+function getCycleStart() {
+  let start = localStorage.getItem('dailyChallengeCycleStart');
+  if (!start) { start = String(getLocalMidnight()); localStorage.setItem('dailyChallengeCycleStart', start); }
+  return Number(start);
+}
+function getDailyThemeIndex() {
+  const start = getCycleStart();
+  const todayMidnight = getLocalMidnight();
+  const daysSince = Math.floor((todayMidnight - start) / 86400000);
+  return ((daysSince % 3) + 3) % 3;
+}
+function themeClassForIndex(i) { return ['theme-purple','theme-green','theme-orange'][i] || 'theme-purple'; }
+function applyDailyChallengeTheme() {
+  const card = document.querySelector('#dailyChallengeDisplay .daily-challenge-card');
+  if (!card) return;
+  card.classList.remove('theme-purple','theme-green','theme-orange');
+  card.classList.add(themeClassForIndex(getDailyThemeIndex()));
+}
+function scheduleDailyThemeMidnightRefresh() {
+  const now = new Date();
+  const nextMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0, 0).getTime();
+  setTimeout(() => { applyDailyChallengeTheme(); scheduleDailyThemeMidnightRefresh(); }, Math.max(0, nextMidnight - now.getTime()));
+}
+document.addEventListener('visibilitychange', () => { if (!document.hidden) applyDailyChallengeTheme(); });
+window.addEventListener('load', () => scheduleDailyThemeMidnightRefresh());
+
+
+/* ---------- Web Push Setup (iOS & Android PWAs) ---------- */
+const PUSH_SERVER_BASE = '/api';
+async function registerServiceWorker() {
+  if (!('serviceWorker' in navigator)) return null;
+  try {
+    const reg = await navigator.serviceWorker.register('/sw.js');
+    return reg;
+  } catch (e) {
+    console.warn('SW register failed', e);
+    return null;
+  }
+}
+function urlBase64ToUint8Array(base64String) {
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+  const rawData = atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+  for (let i = 0; i < rawData.length; ++i) outputArray[i] = rawData.charCodeAt(i);
+  return outputArray;
+}
+async function getVapidKey() {
+  const r = await fetch(PUSH_SERVER_BASE + '/vapidPublicKey');
+  if (!r.ok) throw new Error('Failed to fetch VAPID key');
+  const { key } = await r.json();
+  return key;
+}
+async function ensurePushSubscription() {
+  if (!('Notification' in window) || Notification.permission === 'denied') return null;
+  const reg = await registerServiceWorker();
+  if (!reg) return null;
+  let sub = await reg.pushManager.getSubscription();
+  if (!sub) {
+    const vapidKey = await getVapidKey();
+    sub = await reg.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlBase64ToUint8Array(vapidKey)
+    });
+  }
+  try {
+    await fetch(PUSH_SERVER_BASE + '/subscribe', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ subscription: sub, client: 'task-rock' })
+    });
+  } catch (_) {}
+  return sub;
+}
+async function disablePushSubscription() {
+  try {
+    const reg = await navigator.serviceWorker.getRegistration();
+    if (reg) {
+      const sub = await reg.pushManager.getSubscription();
+      if (sub) {
+        await fetch(PUSH_SERVER_BASE + '/unsubscribe', {
+          method: 'POST', headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({ endpoint: sub.endpoint })
+        });
+        await sub.unsubscribe();
+      }
+    }
+  } catch (_) {}
+}
+async function scheduleTaskNotifications(task) {
+  if (!task || !task.dueDate) return;
+  try {
+    const reg = await navigator.serviceWorker.getRegistration();
+    const sub = reg ? await reg.pushManager.getSubscription() : null;
+    if (!sub && gameState.notifications) await ensurePushSubscription();
+    await fetch(PUSH_SERVER_BASE + '/schedule', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        title: task.title || 'Task due',
+        taskId: task.id || task.title,
+        dueDate: task.dueDate,
+        offsets: [20,15,10,5,2],
+        subscription: (await (await navigator.serviceWorker.getRegistration())?.pushManager.getSubscription()) || null
+      })
+    });
+  } catch (e) { console.warn('scheduleTaskNotifications failed', e); }
+}
+const _origToggleNotifications = typeof toggleNotifications === 'function' ? toggleNotifications : null;
+window.toggleNotifications = async function() {
+  if (_origToggleNotifications) _origToggleNotifications();
+  if (gameState && gameState.notifications) {
+    await ensurePushSubscription();
+  } else {
+    await disablePushSubscription();
+  }
+};
+window.addEventListener('load', async () => {
+  try { if (gameState && gameState.notifications) await ensurePushSubscription(); } catch(_) {}
+});
+
+
+        
+        // Add event listener for real-time preview updates when due date changes
+        document.addEventListener('DOMContentLoaded', function() {
+            const dueDateInput = document.getElementById('taskDueDate');
+            if (dueDateInput) {
+                // Set minimum date to today
+                const today = new Date();
+                const todayString = today.toISOString().slice(0, 16); // Format: YYYY-MM-DDTHH:MM
+                dueDateInput.min = todayString;
+                
+                dueDateInput.addEventListener('input', function() {
+                    // Update preview when due date/time changes
+                    updateRecurringPreview();
+                    
+                    // Validate date is not in the past
+                    validateDueDate();
+                });
+            }
+        });
+
+        // Function to validate due date is not in the past
+        function validateDueDate() {
+            const dueDateInput = document.getElementById('taskDueDate');
+            const selectedDate = new Date(dueDateInput.value);
+            const now = new Date();
+            
+            // Remove any existing validation message
+            const existingMessage = document.getElementById('dateValidationMessage');
+            if (existingMessage) {
+                existingMessage.remove();
+            }
+            
+            // Check if selected date is in the past
+            if (dueDateInput.value && selectedDate < now) {
+                // Create validation message
+                const validationMessage = document.createElement('div');
+                validationMessage.id = 'dateValidationMessage';
+                validationMessage.style.cssText = `
+                    color: #ef4444;
+                    font-size: 12px;
+                    margin-top: 4px;
+                    padding: 4px 8px;
+                    background: #fef2f2;
+                    border: 1px solid #fecaca;
+                    border-radius: 4px;
+                    display: flex;
+                    align-items: center;
+                    gap: 4px;
+                `;
+                validationMessage.innerHTML = '⚠️ Due date cannot be in the past. Please select today or a future date.';
+                
+                // Insert after the due date input
+                dueDateInput.parentNode.appendChild(validationMessage);
+                
+                // Add visual feedback to input
+                dueDateInput.style.borderColor = '#ef4444';
+                dueDateInput.style.backgroundColor = '#fef2f2';
+                
+                return false;
+            } else {
+                // Reset input styling if date is valid
+                dueDateInput.style.borderColor = '';
+                dueDateInput.style.backgroundColor = '';
+                return true;
+            }
+        }
+    </script>
+</body>
+</html>
+
+    </script>
+<script id="pet-rock-image-guard">
+(function() {
+  var ASSET_PATH = "assets/images/jerry-base.png";
+  function ensureCreatureImage() {
+    var container = document.querySelector('.creature-container');
+    if (!container) return;
+    var img = document.getElementById('creatureImage');
+    if (!img) {
+      img = document.createElement('img');
+      img.id = 'creatureImage';
+      img.alt = 'Jerry the Rock';
+      img.className = 'creature-image';
+      img.src = ASSET_PATH;
+      container.appendChild(img);
+    } else {
+      var currentSrc = img.getAttribute('src') || '';
+      if (!currentSrc.includes('assets/images/')) {
+        img.src = ASSET_PATH;
+      }
+    }
+    img.addEventListener('error', function onErr() {
+      img.removeEventListener('error', onErr);
+      img.src = ASSET_PATH;
+    }, { once: true });
+  }
+
+  function applyThemeFromStorage() {
+    try {
+      var saved = JSON.parse(localStorage.getItem('taskRockGameState'));
+      var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      var dark = (saved && typeof saved.darkMode === 'boolean') ? saved.darkMode : prefersDark;
+      document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+    } catch (e) {}
+  }
+
+  function syncLoadingLogo() {
+    var el = document.querySelector('.loading-brand');
+    if (!el) return;
+    var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    // Use only assets/ logos provided
+    el.src = isDark ? 'assets/logo-dark.png' : 'assets/logo-light.png';
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    applyThemeFromStorage();
+    syncLoadingLogo();
+    ensureCreatureImage();
+  });
+
+  new MutationObserver(syncLoadingLogo).observe(document.documentElement, {
+    attributes: true, attributeFilter: ['data-theme']
+  });
+})();
+</script>
+
+<script defer="" src="assets/js/tr-onboarding.js"></script>
+<script>
+  window.addEventListener('taskrock:app:ready', function () {
+    if (window.initOnboardingModal) window.initOnboardingModal();
+  });
+</script>
+<script id="tr-subcategory-tagger">(function(){
+  try {
+    var labels = ["Hats","Accessories","Paint Jobs"];
+    var root = document.querySelector('#rockShop, [data-rock-shop], .rock-shop') || document;
+    var headings = root.querySelectorAll('h1, h2, h3, h4');
+    headings.forEach(function(h){
+      var t = (h.textContent||"").trim().toLowerCase();
+      labels.some(function(l){
+        if (t.indexOf(l.toLowerCase()) !== -1){
+          h.classList.add('subcategory');
+          return true;
+        }
+        return false;
+      });
+    });
+  } catch(e) { /* no-op */ }
+})();</script><script id="tr-center-show-more-script">(function(){
+  try {
+    var root = document.querySelector('#rockShop, [data-rock-shop], .rock-shop') || document;
+    var nodes = root.querySelectorAll('button, a, [role="button"], .btn, .button');
+    nodes.forEach(function(el){
+      var t = (el.textContent||"").trim().toLowerCase();
+      if (!t.startsWith("show more")) return;
+      el.classList.add('tr-center-show-more');
+      // clear any previous inline tweaks
+      el.style.marginLeft = '';
+      el.style.marginRight = '';
+      el.style.display = '';
+    });
+  } catch(e){ /* noop */ }
+})();</script><script id="tr-name-editing-script">(function(){
+  function isNameField(el){
+    if (!el) return false;
+    var id = (el.id||"").toLowerCase();
+    var cls = (el.className||"").toLowerCase();
+    var aria = (el.getAttribute && (el.getAttribute('aria-label')||"").toLowerCase()) || "";
+    if (el.dataset && (el.dataset.petName || el.dataset.name)) return true;
+    if (id.includes('pet') && id.includes('name')) return true;
+    if (id.includes('rock') && id.includes('name')) return true;
+    if (id.endsWith('name') || id === 'name') return true;
+    if (cls.includes('pet-name') || cls.includes('rock-name') || /\bname\b/.test(cls)) return true;
+    if (aria.includes('name')) return true;
+    if (el.isContentEditable) return true;
+    return false;
+  }
+
+  function findPencil(el){
+    if (!el || !el.parentElement) return null;
+    // Heuristics: sibling icon with pencil emoji or pencil-ish class
+    var sibs = Array.from(el.parentElement.children);
+    for (var i=0;i<sibs.length;i++){
+      var s = sibs[i];
+      if (s === el) continue;
+      var txt = (s.textContent||"").trim();
+      var cl = (s.className||"").toLowerCase();
+      if (txt.includes('✏') || txt.includes('🖊') || txt.includes('📝')) return s;
+      if (cl.includes('pencil') || cl.includes('edit') || cl.includes('name-pencil')) return s;
+      // also check data attributes
+      if (s.dataset && (s.dataset.pencil || s.dataset.edit)) return s;
+    }
+    // one level up (wrapper)
+    var wrap = el.closest && el.closest('[data-name-wrap], .name-wrap, .pet-name-wrap');
+    if (wrap){
+      var hot = wrap.querySelector('.name-pencil, .pencil, .edit-icon');
+      if (hot) return hot;
+    }
+    return null;
+  }
+
+  function applyCenter(el, on){
+    try{
+      var wrap = el.parentElement;
+      if (wrap) wrap.classList.toggle('tr-name-editing', !!on);
+      // Center text inside field too
+      el.style.textAlign = on ? 'center' : '';
+      // Keep element centered if it's block-level
+      if (on){
+        // Don't change display if it's inline by design
+        if (getComputedStyle(el).display === 'block'){
+          el.style.marginLeft = 'auto';
+          el.style.marginRight = 'auto';
+          el.style.width = 'fit-content';
+        }
+      } else {
+        el.style.marginLeft = '';
+        el.style.marginRight = '';
+        el.style.width = '';
+      }
+    }catch(e){}
+  }
+
+  document.addEventListener('focusin', function(e){
+    var el = e.target;
+    if (!isNameField(el)) return;
+    applyCenter(el, true);
+    var pencil = findPencil(el);
+    if (pencil){ pencil.classList.add('tr-hide-pencil'); }
+  });
+
+  document.addEventListener('focusout', function(e){
+    var el = e.target;
+    if (!isNameField(el)) return;
+    applyCenter(el, false);
+    var pencil = findPencil(el);
+    if (pencil){ pencil.classList.remove('tr-hide-pencil'); }
+  });
+})();</script><script id="tr-taskcard-patch-script">
+(function(){
+  try {
+    function $(sel, root){ return (root||document).querySelector(sel); }
+    function $all(sel, root){ return Array.from((root||document).querySelectorAll(sel)); }
+    function txt(el){ return (el && (el.textContent||"")).trim(); }
+
+    function hasDateLike(s){
+      if (!s) return false;
+      s = s.trim();
+      return /\b\d{1,2}\/\d{1,2}\/\d{2,4}\b/.test(s) || /\b([01]?\d):([0-5]\d)\s*([ap]m)\b/i.test(s) || /📅|🗓|calendar/i.test(s);
+    }
+    function isRecurring(s){
+      if (!s) return false;
+      s = s.toLowerCase();
+      return /\b(daily|weekly|monthly)\b/.test(s);
+    }
+    function findTaskCards(){
+      // Common containers; fall back to ancestors of Complete buttons
+      var cards = $all('.task-card, [data-task-card], .todo-card, .card');
+      if (cards.length === 0){
+        $all('button, a').forEach(function(b){
+          if (/^complete$/i.test(txt(b))){
+            var c = b.closest('.task-card, [data-task-card], .todo-card, .card') || b.closest('div');
+            if (c && !cards.includes(c)) cards.push(c);
+          }
+        });
+      }
+      return cards;
+    }
+    function findDifficulty(card){
+      // Look for easy/medium/hard with "(pts)"
+      var nodes = $all('*', card);
+      for (var i=0;i<nodes.length;i++){
+        var t = txt(nodes[i]).toLowerCase();
+        if (/\b(easy|medium|hard)\b/.test(t) && /\bpts?\b/.test(t)) return nodes[i];
+      }
+      return null;
+    }
+    function findPillSample(card){
+      // find typical pill element by class names or by rounded visuals
+      var guess = $all('.pill, .badge, .chip, .tag', card)[0];
+      if (guess) return guess;
+      // otherwise choose difficulty/priority node and use its classes
+      // priority often contains the word 'priority'
+      var nodes = $all('*', card);
+      for (var i=0;i<nodes.length;i++){
+        var t = txt(nodes[i]).toLowerCase();
+        if (/\bpriority\b/.test(t)) return nodes[i];
+      }
+      return findDifficulty(card);
+    }
+    function toPill(elem, sample){
+      if (!elem) return;
+      if (elem.classList.contains('tr-recurring-pilled')) return;
+      if (sample && sample.classList && sample.classList.length){
+        sample.classList.forEach(function(c){ elem.classList.add(c); });
+      } else {
+        elem.classList.add('tr-pill-fallback');
+      }
+      elem.classList.add('tr-recurring-pilled');
+    }
+    function wrapTextNodeAsSpan(n){
+      // If the recurring token is just a text node inside a container, wrap it
+      var parent = n.parentNode;
+      var span = document.createElement('span');
+      span.textContent = n.textContent.trim();
+      parent.replaceChild(span, n);
+      return span;
+    }
+
+    var cards = findTaskCards();
+    cards.forEach(function(card){
+      var samplePill = findPillSample(card);
+      var difficulty = findDifficulty(card);
+
+      // (1) Recurring -> pill
+      // find elements (or text nodes) that contain 'daily/weekly/monthly'
+      var recNodes = [];
+      $all('*', card).forEach(function(el){
+        var t = txt(el);
+        if (isRecurring(t)) recNodes.push(el);
+        // Also check direct text nodes
+        el.childNodes.forEach(function(n){
+          if (n.nodeType === 3 && isRecurring(String(n.textContent||''))){
+            recNodes.push(n);
+          }
+        });
+      });
+      recNodes.forEach(function(node){
+        var targetEl = node.nodeType === 3 ? wrapTextNodeAsSpan(node) : node;
+        toPill(targetEl, samplePill);
+      });
+
+      // (2) Move date/time under difficulty
+      var dateBits = [];
+      var difficulty = document.querySelector('.task-difficulty');
+      if (difficulty) {
+        var walker = document.createTreeWalker(
+          document.body,
+          NodeFilter.SHOW_TEXT,
+          null,
+          false
+        );
+        var node;
+        while (node = walker.nextNode()) {
+          if (/\d{1,2}\/\d{1,2}\/\d{4}/.test(node.nodeValue)) {
+            dateBits.push(node.parentElement);
+          }
+        }
+        if (dateBits.length > 0) {
+          var holder = document.createElement('div');
+          holder.className = 'tr-date-under-difficulty';
+          if (difficulty.nextSibling){
+            difficulty.parentNode.insertBefore(holder, difficulty.nextSibling);
+          } else {
+            difficulty.parentNode.appendChild(holder);
+          }
+          var seen = new Set();
+          dateBits.forEach(function(el){
+            var k = txt(el);
+            if (seen.has(k)) return;
+            holder.appendChild(el);
+            seen.add(k);
+          });
+        }
+      }
+    });
+  } catch(e){ /* no-op */ }
+    </script>
+    
+    <!-- Pet Rock Image Guard Script -->
+    <script>
+    (function(){
+      try {
+        var txt = function(el) { return el.textContent || el.innerText || ''; };
+        var dateBits = [];
+        var difficulty = document.querySelector('.task-difficulty');
+        if (difficulty) {
+          var walker = document.createTreeWalker(
+            document.body,
+            NodeFilter.SHOW_TEXT,
+            null,
+            false
+          );
+          var node;
+          while (node = walker.nextNode()) {
+            if (/\d{1,2}\/\d{1,2}\/\d{4}/.test(node.nodeValue)) {
+              dateBits.push(node.parentElement);
+            }
+          }
+          if (dateBits.length > 0) {
+            var holder = document.createElement('div');
+            holder.className = 'tr-date-under-difficulty';
+            if (difficulty.nextSibling){
+              difficulty.parentNode.insertBefore(holder, difficulty.nextSibling);
+            } else {
+              difficulty.parentNode.appendChild(holder);
+            }
+            var seen = new Set();
+            dateBits.forEach(function(el){
+              var k = txt(el);
+              if (seen.has(k)) return;
+              holder.appendChild(el);
+              seen.add(k);
+            });
+          }
+        }
+      } catch(e){ /* no-op */ }
+    })();
+    </script>
+    
+    <!-- Jerry Dialogue System -->
+    <script src="assets/js/jerry-dialogue.js"></script>
+    
+
+<script id="tr-date-recurring-pills-fix">
+(function(){
+  function $(sel, root){ return (root||document).querySelector(sel); }
+  function $all(sel, root){ return Array.from((root||document).querySelectorAll(sel)); }
+  function txt(n){ return (n && (n.textContent||"")).trim(); }
+  function hasClass(el, c){ return el && el.classList && el.classList.contains(c); }
+
+  // Regexes for detection
+  const reDate = /\b\d{1,2}\/\d{1,2}\/\d{2,4}\b/;
+  const reTime = /\b(0?\d|1[0-2]):[0-5]\d\s?(?:AM|PM)\b/i;
+  const reRecurringWord = /\b(daily|weekly|monthly)\b/i;
+
+  function makeBadge(text){
+    const span = document.createElement('span');
+    // Reuse existing pill styling (same as difficulty/priority)
+    span.className = 'task-badge priority-medium';
+    span.innerHTML = text;
+    return span;
+  }
+
+  function toSafeHTML(s){ return (s||'').replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
+
+  function transformCard(card){
+    if (!card || card.__dateRecurringPatched) return;
+    const meta = $('.task-meta', card);
+    if (!meta) return;
+
+    // Find any existing non-pill date/recurring text node container
+    const raw = $all('span, div', meta).find(el => !el.classList.contains('task-badge') && (
+      reDate.test(txt(el)) || reRecurringWord.test(txt(el)) || txt(el).includes('🔁') || txt(el).includes('📅')
+    ));
+    if (!raw) { card.__dateRecurringPatched = true; return; }
+
+    const rawText = txt(raw);
+
+    // Extract parts
+    const dateMatch = rawText.match(reDate);
+    const timeMatch = rawText.match(reTime);
+    const recurMatch = rawText.match(reRecurringWord);
+
+    // Build badges
+    if (dateMatch || timeMatch){
+      const datePart = dateMatch ? toSafeHTML(dateMatch[0]) : '';
+      const timePart = timeMatch ? toSafeHTML(timeMatch[0].toUpperCase()) : '';
+      const dot = (datePart && timePart) ? ' • ' : ' ';
+      const dueHTML = '<span class="tr-pill__icon" aria-hidden="true">📅</span>' + datePart + (dot) + timePart;
+      meta.insertBefore(makeBadge(dueHTML), raw);
+    }
+    if (recurMatch){
+      const recHTML = '<span class="tr-pill__icon" aria-hidden="true">🔁</span>' + toSafeHTML(recurMatch[0].toLowerCase());
+      meta.insertBefore(makeBadge(recHTML), raw.nextSibling);
+    }
+
+    // Remove the original red/inline element
+    raw.remove();
+    card.__dateRecurringPatched = true;
+  }
+
+  function transformAll(root){
+    $all('.task-card', root || document).forEach(transformCard);
+  }
+
+  // Run after initial render
+  if (document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', function(){ transformAll(); });
+  } else {
+    transformAll();
+  }
+
+  // Also observe list updates (when tasks render/re-render)
+  const tasksList = document.getElementById('tasksList');
+  if (tasksList){
+    const obs = new MutationObserver(() => transformAll(tasksList));
+    obs.observe(tasksList, { childList: true, subtree: true });
+  }
+})();
+</script>
+
+<script id="tr-scroll-to-pet">
+(function(){
+  function scrollToPetRock(){
+    var el = document.getElementById('petRockWrapper') || document.querySelector('.creature-container');
+    if (el){
+      el.scrollIntoView({behavior:'smooth', block:'center'});
+    }
+  }
+  if (window.completeTask){
+    const orig = window.completeTask;
+    window.completeTask = function(){
+      try { orig.apply(this, arguments); } finally { scrollToPetRock(); }
+    };
+  }
+  if (window.completeQuickTask){
+    const origQ = window.completeQuickTask;
+    window.completeQuickTask = function(){
+      try { origQ.apply(this, arguments); } finally { scrollToPetRock(); }
+    };
+  }
+})();</script>
+</body>
+</html>
