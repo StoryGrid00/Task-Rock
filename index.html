@@ -1649,6 +1649,11 @@
 
 /* Helper spacing for icon inside badges (inherits existing badge colors) */
 .task-badge .tr-pill__icon{ margin-right: 6px; line-height: 1; }
+
+/* === Enforce 2-column stats grid on all screens === */
+.stats-grid { display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.expanded-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.stat-card { min-width: 0; }
 </style>
 <style id="pet-rock-float-patch">
 /* Pet Rock floating animation patch (non-destructive) */
