@@ -1833,6 +1833,32 @@ h1.subcategory, h2.subcategory, h3.subcategory, h4.subcategory, .subcategory{
 
 </style>
   <link rel="stylesheet" href="TR/shop.v3.css">
+
+<style id="tr-stats-never-stack">
+/* === Do not stack stats ever: enforce 2 columns at all widths === */
+.section .section-content .stats-grid,
+.stats-grid { 
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  grid-auto-flow: row dense !important;
+}
+.section .section-content .expanded-stats,
+.expanded-stats {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+}
+.expanded-stats.show { 
+  display: grid !important;
+}
+.stats-grid .stat-card,
+.expanded-stats .stat-card {
+  min-width: 0 !important; /* allow content to wrap inside grid tracks */
+  width: auto !important;
+}
+.stats-grid .show-more-btn { 
+  grid-column: 1 / -1 !important; 
+}
+</style>
+
 </head>
 <body>
 <!-- Confetti Canvas -->
