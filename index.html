@@ -1859,6 +1859,57 @@ h1.subcategory, h2.subcategory, h3.subcategory, h4.subcategory, .subcategory{
 }
 </style>
 
+
+<style id="tr-rock-size-tweak">
+/* Slightly larger pet rock (keeps aspect ratio and layout) */
+.creature-container #creatureImage,
+#petRockWrapper #creatureImage {
+  width: clamp(320px, 75vw, 560px) !important;
+  max-width: 90% !important;
+  height: auto !important;
+}
+@media (min-width: 768px) {
+  .creature-container #creatureImage,
+#petRockWrapper #creatureImage {
+  width: clamp(320px, 75vw, 560px) !important;
+  max-width: 90% !important;
+  height: auto !important;
+}
+}
+</style>
+
+
+<style id="tr-rock-name-size-tweak">
+/* Slightly smaller name text under the rock */
+#creatureName {
+  font-size: clamp(22px, 5.2vw, 34px) !important; /* down from very large heading */
+  line-height: 1.15 !important;
+  letter-spacing: -0.2px;
+}
+#creatureName + .pencil-icon, 
+#creatureName + span[role="img"] {
+  vertical-align: middle;
+}
+</style>
+
+
+<style id="tr-stats-padding-tweak">
+/* Reduce gray space but keep comfortable padding */
+.stats-grid {
+  padding: 14px !important; /* was 20px */
+  gap: 12px !important;      /* keep card gaps consistent */
+}
+@media (min-width: 768px) {
+  .stats-grid { padding: 16px !important; }
+}
+</style>
+
+
+<style id="tr-rock-spacing-tweak">
+.creature-container { padding-top: clamp(8px, 2vh, 16px) !important; }
+#petRockWrapper { padding-top: clamp(8px, 2vh, 16px) !important; }
+</style>
+
 </head>
 <body>
 <!-- Confetti Canvas -->
@@ -4597,6 +4648,93 @@ document.addEventListener('DOMContentLoaded', function(){
       if (typeof gameState?.taskPoints === 'number') setTrPointsSync(gameState.taskPoints);
     } catch(_) {}
   });
+})();
+</script>
+
+
+<script>
+// Disable auto-scroll after completing tasks
+(function(){
+  const _scrollIntoView = Element.prototype.scrollIntoView;
+  Element.prototype.scrollIntoView = function(arg){
+    // Ignore smooth programmatic calls; allow user-initiated defaults
+    if (arg && (arg.behavior === 'smooth' || arg === true)) { return; }
+    return _scrollIntoView.apply(this, arguments);
+  };
+  const _wScrollTo = window.scrollTo;
+  window.scrollTo = function(){
+    // Swallow smooth completion scrolls
+    try {
+      if (arguments && arguments[0] && typeof arguments[0] === 'object' && arguments[0].behavior === 'smooth') return;
+    } catch(e){}
+    return _wScrollTo.apply(this, arguments);
+  };
+})();
+</script>
+
+
+
+<script id="tr-tap-to-hide-bubble">
+// Tap on the pet rock: ONLY dismiss a visible speech bubble; otherwise do nothing.
+// We capture at the window level and stop the event before any other handlers can run.
+(function(){
+  function getRockNodes(){
+    const wrap = document.getElementById('petRockWrapper') 
+      || document.querySelector('.creature-container')
+      || document.querySelector('[data-pet-rock]');
+    const img = document.getElementById('creatureImage') || (wrap ? wrap.querySelector('img#creatureImage') : null);
+    return { wrap, img };
+  }
+  function isInsideRock(target){
+    const { wrap, img } = getRockNodes();
+    if (!target) return false;
+    return !!((wrap && wrap.contains(target)) || (img && img.contains(target)));
+  }
+  function findBubble(){
+    const qs = ['.tr-speech-bubble','.speech-bubble','[data-speech-bubble]','#speechBubble','.pet-speech'];
+    for (const sel of qs){
+      const el = document.querySelector(sel);
+      if (el && el.offsetParent !== null) return el;
+    }
+    return null;
+  }
+  function hideBubble(){
+    try {
+      if (typeof window.hideSpeechBubble === 'function') return window.hideSpeechBubble();
+      if (typeof window.dismissSpeechBubble === 'function') return window.dismissSpeechBubble();
+      if (typeof window.closeSpeech === 'function') return window.closeSpeech();
+    } catch(e){}
+    const el = findBubble();
+    if (!el) return;
+    try { el.classList.add('is-hiding'); }catch(_){}
+    try { if (window._speechBubbleTimer){ clearTimeout(window._speechBubbleTimer); window._speechBubbleTimer = null; } } catch(_){}
+    try { el.remove(); } catch(_){ try { el.style.display='none'; }catch(_e){} }
+  }
+  function intercept(ev){
+    if (!isInsideRock(ev.target)) return; // only care about taps on the rock
+    // swallow the event so no other handler can open a bubble
+    try { ev.preventDefault(); } catch(_){}
+    try { ev.stopPropagation(); } catch(_){}
+    try { ev.stopImmediatePropagation(); } catch(_){}
+    const bubble = findBubble();
+    if (bubble) hideBubble();
+    // else: do nothing
+  }
+  function detachInlineHandlers(){
+    const { wrap, img } = getRockNodes();
+    if (wrap){ wrap.onclick = wrap.onpointerdown = wrap.ontouchstart = null; }
+    if (img){ img.onclick = img.onpointerdown = img.ontouchstart = null; }
+  }
+  function attach(){
+    detachInlineHandlers();
+    // Capture at the top so we run before any bubbling/capture listeners elsewhere
+    ['pointerdown','touchstart','click'].forEach(type => {
+      window.addEventListener(type, intercept, { capture: true, passive: false });
+    });
+  }
+  if (document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', attach);
+  } else { attach(); }
 })();
 </script>
 
