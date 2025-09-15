@@ -273,7 +273,7 @@
         /* Modern Stats Grid */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
+            grid-template-columns: repeat(2, 1fr);
             gap: 12px;
             padding: 20px;
             background: var(--bg-tertiary);
@@ -285,17 +285,9 @@
         .stats-grid .stat-card { margin: 0; }
 
 
-        /* Responsive: keep stats in a grid, not stacked */
-        @media (min-width: 768px) {
-            .stats-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-            .expanded-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-        }
-
-
-
         .expanded-stats {
             display: none;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
+            grid-template-columns: repeat(2, 1fr);
             gap: 12px;
             margin-top: 16px;
             padding: 0 20px;
@@ -1075,6 +1067,19 @@
         }
 
         /* Rock Shop Styles */
+        /* Equipped tag */
+        .shop-item { position: relative; }
+        .shop-item .equipped-tag {
+            position: absolute; top: 6px; right: 6px;
+            font-size: 12px; padding: 2px 6px; border-radius: 12px;
+            background: var(--accent); color: var(--bg-primary); font-weight: 700;
+        }
+        .shop-item .equip-btn {
+            margin-top: 6px; display: inline-block; font-size: 12px;
+            padding: 6px 10px; border-radius: 10px;
+            background: var(--bg-tertiary); color: var(--text-primary);
+        }
+    
         .shop-grid {
             display: flex;
             gap: 16px;
@@ -2464,7 +2469,7 @@ h1.subcategory, h2.subcategory, h3.subcategory, h4.subcategory, .subcategory{
         // Shop Items
         const shopItems = {
             hats: [
-                { id: 'blue_cap', name: 'Blue Cap', price: 50, image: 'assets/images/Frame 42.png' },
+                { id: 'blue_cap', name: 'Blue Hat', price: 50, image: 'assets/images/Frame 42.png' },
                 { id: 'top_hat', name: 'Black Top Hat', price: 100, image: 'assets/images/Frame 43.png' },
                 { id: 'army_helmet', name: 'Army Helmet', price: 200, image: 'assets/images/Frame 44.png' },
                 { id: 'wizard_hat', name: 'Wizard Hat', price: 400, image: 'assets/images/Frame 45.png' }
@@ -2615,6 +2620,10 @@ h1.subcategory, h2.subcategory, h3.subcategory, h4.subcategory, .subcategory{
         function updateCreatureImage() {
             const creatureImage = document.getElementById('creatureImage');
             let imagePath = 'assets/images/jerry-base.png';
+            // If Blue Hat equipped, replace with full composite image
+            if (gameState.currentOutfit && gameState.currentOutfit.hat === 'blue_cap') {
+                imagePath = 'assets/images/Frame 42.png';
+            }
             
             // Apply paint first (base layer)
             if (gameState.currentOutfit.paint) {
@@ -4404,6 +4413,162 @@ document.addEventListener('DOMContentLoaded', function(){
 </script>
   <script defer src="TR/shop_compat.v3.js"></script>
   <script defer src="TR/shop.v3.js"></script>
+
+<!-- Blue Hat integration helpers -->
+<script>
+// === Task Rock: Blue Hat integration helpers (non-destructive) ===
+(function(){
+  const HAT_ID_APP = 'blue_cap';       // app's hat id
+  const HAT_ID_TR  = 'blue_hat';       // TR runtime id
+  const HAT_FULL   = 'assets/images/Frame 42.png';     // full composite image (rock + hat)
+
+  // TR storage bridge
+  const TR_KEYS = { inventory:'TR:inventory', purchases:'TR:purchases', equipped:'TR:equipped', points:'TR:points' };
+  const getJSON = (k,f)=>{ try{const v=localStorage.getItem(k);return v?JSON.parse(v):f;}catch(_){return f;} };
+  const setJSON = (k,v)=>{ try{localStorage.setItem(k,JSON.stringify(v));}catch(_){}};
+  function ensureSetHas(key, id){ const s=new Set(getJSON(key,[])); if(!s.has(id)){ s.add(id); setJSON(key, Array.from(s)); } }
+  function setTrEquippedHat(idOrNull){ const eq=getJSON(TR_KEYS.equipped,{}); if(idOrNull) eq.hat=idOrNull; else delete eq.hat; setJSON(TR_KEYS.equipped,eq); }
+  function setTrPointsSync(points){ localStorage.setItem(TR_KEYS.points,String(points)); window.dispatchEvent(new CustomEvent('tr:points:changed',{detail:{points}})); }
+
+  // Remove any overlay to avoid duplicate visuals
+  function removeOverlay(){
+    const wrap = document.getElementById('petRockWrapper') || document.querySelector('.creature-container') || document.querySelector('[data-pet-rock]');
+    if (!wrap) return;
+    const layer = wrap.querySelector('.tr-equipment-layer');
+    if (layer) layer.remove();
+  }
+
+  // Swap the base creature image to the full composite (or back to base)
+  function applyImageReplacement(isEquipped){
+    const el = document.getElementById('creatureImage');
+    if (!el) return;
+    if (isEquipped){
+      el.src = HAT_FULL;
+    } else {
+      try { if (typeof updateCreatureImage === 'function') updateCreatureImage(); }
+      catch(_) { el.src = 'assets/Jerry-Default.png'; }
+    }
+  }
+
+  function maybeConfettiOnce(){
+    const k = 'TR:eq:first:'+HAT_ID_TR;
+    if (!localStorage.getItem(k)){ localStorage.setItem(k,'1'); if (window.fireConfetti) window.fireConfetti(); }
+  }
+
+  // Equip/Unequip
+  window.equipItem = function(itemId){
+    if (itemId !== HAT_ID_APP) return;
+    if (!Array.isArray(gameState.ownedItems)) gameState.ownedItems = [];
+    if (!gameState.ownedItems.includes(itemId)){ showSuccessMessage('You need to purchase this item first.'); return; }
+    if (!gameState.currentOutfit) gameState.currentOutfit = {};
+    gameState.currentOutfit.hat = itemId;
+    try{ if (typeof saveGameState === 'function') saveGameState(); }catch(_){}
+    ensureSetHas(TR_KEYS.inventory, HAT_ID_TR);
+    ensureSetHas(TR_KEYS.purchases, HAT_ID_TR);
+    setTrEquippedHat(HAT_ID_TR);
+    setTrPointsSync(gameState.taskPoints);
+    removeOverlay();
+    applyImageReplacement(true);
+    showSuccessMessage('Equipped the Blue Hat!');
+    maybeConfettiOnce();
+    if (typeof updateShopSection === 'function'){ updateShopSection('hatsShop', (window.shopItems||{}).hats || []); }
+  };
+
+  window.unequipItem = function(itemId){
+    if (itemId !== HAT_ID_APP) return;
+    if (gameState?.currentOutfit?.hat === itemId){
+      delete gameState.currentOutfit.hat;
+      try{ if (typeof saveGameState === 'function') saveGameState(); }catch(_){}
+      setTrEquippedHat(null);
+      removeOverlay();
+      applyImageReplacement(false);
+      showSuccessMessage('Blue Hat unequipped.');
+      if (typeof updateShopSection === 'function'){ updateShopSection('hatsShop', (window.shopItems||{}).hats || []); }
+    }
+  };
+
+  // Wrap buy flow to add confirmation + auto-equip
+  const _origBuyItem = window.buyItem;
+  window.buyItem = function(itemId, price){
+    try { if (_origBuyItem) _origBuyItem(itemId, price); } catch(_){}
+    if (itemId === HAT_ID_APP){
+      setTrPointsSync(gameState.taskPoints);
+      ensureSetHas(TR_KEYS.inventory, HAT_ID_TR);
+      ensureSetHas(TR_KEYS.purchases, HAT_ID_TR);
+      showSuccessMessage('Your pet rock can now wear the Blue Hat!');
+      window.equipItem(HAT_ID_APP);
+    }
+  };
+
+  // Enhance Shop tiles
+  const _origUpdateShopSection = window.updateShopSection;
+  if (typeof _origUpdateShopSection === 'function'){
+    window.updateShopSection = function(containerId, items){
+      const container = document.getElementById(containerId);
+      if (!container) return _origUpdateShopSection(containerId, items);
+
+      container.innerHTML = items.map(item => {
+        const canAfford = gameState.taskPoints >= item.price;
+        const isOwned = (gameState.ownedItems||[]).includes(item.id);
+        const isBlue = item.id === HAT_ID_APP;
+        const isEquipped = gameState.currentOutfit?.hat === item.id;
+
+        const buyOnClick = (!isOwned) ? `onclick="buyItem('${item.id}', ${item.price})"` : '';
+
+        let html = `
+          <div class="shop-item ${canAfford ? 'affordable' : 'expensive'}" ${buyOnClick}>
+            <img src="${item.image}" alt="${item.name}" class="shop-item-image">
+            <div class="shop-item-name">${item.name}</div>
+            <div class="shop-item-price">${isOwned ? (isEquipped ? 'Equipped' : 'Owned') : \`\${item.price} Points\`}</div>
+        `;
+
+        if (isBlue && isEquipped) html += `<div class="equipped-tag">Equipped</div>`;
+
+        if (isBlue && isOwned){
+          html += isEquipped
+            ? `<button class="equip-btn" onclick="event.stopPropagation(); unequipItem('${item.id}')">Unequip</button>`
+            : `<button class="equip-btn" onclick="event.stopPropagation(); equipItem('${item.id}')">Equip</button>`;
+        }
+
+        html += `</div>`;
+        return html;
+      }).join('');
+    };
+  }
+
+  // Persist visual on load
+  document.addEventListener('DOMContentLoaded', function(){
+    try {
+      // --- Blue Hat ownership migration: if TR shows ownership/equipped, mirror to gameState ---
+      (function(){
+        try {
+          const purchases = (function(){ try{ return JSON.parse(localStorage.getItem('TR:purchases')||'[]'); }catch(_){ return []; } })();
+          const inventory = (function(){ try{ return JSON.parse(localStorage.getItem('TR:inventory')||'[]'); }catch(_){ return []; } })();
+          const equipped  = (function(){ try{ return JSON.parse(localStorage.getItem('TR:equipped')||'{}'); }catch(_){ return {}; } })();
+          if (!Array.isArray(gameState.ownedItems)) gameState.ownedItems = [];
+          if ((purchases.includes('blue_hat') || inventory.includes('blue_hat')) && !gameState.ownedItems.includes('blue_cap')){
+            gameState.ownedItems.push('blue_cap');
+            try{ if (typeof saveGameState === 'function') saveGameState(); }catch(_){}
+          }
+          if (equipped && equipped.hat === 'blue_hat'){
+            if (!gameState.currentOutfit) gameState.currentOutfit = {};
+            gameState.currentOutfit.hat = 'blue_cap';
+            try{ if (typeof saveGameState === 'function') saveGameState(); }catch(_){}
+          }
+        } catch(_) {}
+      })();
+
+      if (gameState?.currentOutfit?.hat === HAT_ID_APP){
+        setTrEquippedHat(HAT_ID_TR);
+        removeOverlay();
+        applyImageReplacement(true);
+      }
+      if (typeof gameState?.taskPoints === 'number') setTrPointsSync(gameState.taskPoints);
+    } catch(_) {}
+  });
+})();
+</script>
+
 </body>
 </html>
 
