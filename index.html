@@ -3724,35 +3724,15 @@ let _lastQuickTaskCat = null;
             }
         }
 
-        // Auto-scroll to Jerry function
+        // Auto-scroll to Jerry function removed to disable autoscroll feature
         function scrollToJerry() {
-            const jerryContainer = document.querySelector('.creature-container') || 
-                                 document.querySelector('.pet-rock-header') ||
-                                 document.querySelector('#jerryContainer');
-            
-            if (jerryContainer) {
-                jerryContainer.scrollIntoView({ 
-                    behavior: 'smooth', 
-                    block: 'center',
-                    inline: 'nearest'
-                });
-            }
+            // Function disabled to prevent autoscroll
         }
 
         
-        // Scroll back to the pet rock and dialogue
+        // Scroll back to the pet rock and dialogue function removed to disable autoscroll feature
         function scrollToPetRock() {
-            try {
-                var target = document.querySelector('.creature-container')
-                          || document.getElementById('creatureImage')
-                          || document.getElementById('pet-rock-position-fix')
-                          || document.getElementById('pet-rock-float-patch')
-                          || document.getElementById('pet-rock-image-guard');
-                if (!target) return;
-                // Scroll immediately (no smooth) so it feels instant
-                var y = target.getBoundingClientRect().top + window.pageYOffset - 24;
-                window.scrollTo({ top: y, behavior: 'auto' });
-            } catch(e) { /* no-op */ }
+            // Function disabled to prevent autoscroll
         }
 function completeTask(index) {
             const task = gameState.tasks[index];
@@ -3820,8 +3800,8 @@ function completeTask(index) {
             updateUI();
             
             
-            // Auto-scroll to pet rock
-            scrollToPetRock();
+            // Auto-scroll to pet rock removed to disable autoscroll feature
+            // scrollToPetRock();
 // Fire confetti animation
             if (window.fireConfetti) {
                 window.fireConfetti();
@@ -3981,8 +3961,8 @@ function completeTask(index) {
             updateUI();
             
             
-            // Auto-scroll to pet rock
-            scrollToPetRock();
+            // Auto-scroll to pet rock removed to disable autoscroll feature
+            // scrollToPetRock();
 // Fire confetti animation
             if (window.fireConfetti) {
                 window.fireConfetti();
@@ -4652,89 +4632,200 @@ document.addEventListener('DOMContentLoaded', function(){
 </script>
 
 
-<script>
-// Disable auto-scroll after completing tasks
+<script id="tr-rock-tap-noop">
 (function(){
-  const _scrollIntoView = Element.prototype.scrollIntoView;
-  Element.prototype.scrollIntoView = function(arg){
-    // Ignore smooth programmatic calls; allow user-initiated defaults
-    if (arg && (arg.behavior === 'smooth' || arg === true)) { return; }
-    return _scrollIntoView.apply(this, arguments);
-  };
-  const _wScrollTo = window.scrollTo;
-  window.scrollTo = function(){
-    // Swallow smooth completion scrolls
+  function wrap(){ return document.getElementById('petRockWrapper')||document.querySelector('.creature-container')||document.querySelector('[data-pet-rock]'); }
+  function img(){ const w=wrap(); return document.getElementById('creatureImage')||(w?w.querySelector('#creatureImage'):null); }
+  function isInsideRock(t){ const w=wrap(), i=img(); return !!(t && ((w && w.contains(t)) || (i && i.contains(t)))); }
+  function swallow(ev){ if(!isInsideRock(ev.target)) return; try{ev.preventDefault();}catch(_){}
+    try{ev.stopPropagation();}catch(_){}
+    try{ev.stopImmediatePropagation();}catch(_){}
+  }
+  function detachInline(){ const w=wrap(), i=img(); if(w){ w.onclick=w.onpointerdown=w.ontouchstart=w.onmousedown=null; } if(i){ i.onclick=i.onpointerdown=i.ontouchstart=i.onmousedown=null; } }
+  function attach(){ detachInline(); ['pointerdown','touchstart','click','mousedown'].forEach(t=>{ window.addEventListener(t, swallow, {capture:true, passive:false}); }); }
+  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', attach); } else { attach(); }
+})();
+</script>
+
+<script id="tr-rock-guard">
+(function(){
+  const HAT_ID_APP='blue_cap';
+  const HAT_FULL='assets/images/Frame 42.png';
+  const BASE_FALLBACK='assets/Jerry-Default.png';
+
+  function wrap(){ return document.getElementById('petRockWrapper')||document.querySelector('.creature-container')||document.querySelector('[data-pet-rock]'); }
+  function img(){ return document.getElementById('creatureImage')||(wrap()?wrap().querySelector('#creatureImage'):null); }
+  function baseSrc(){
+    const i=img(); const cached=window._TR_ROCK_BASE_SRC;
+    if(cached) return cached;
+    const cur=i?i.getAttribute('src'):null;
+    if(cur && !/Frame 42\.png$/.test(cur)){ window._TR_ROCK_BASE_SRC=cur; return cur; }
+    return BASE_FALLBACK;
+  }
+  function wantSrc(){
+    try{ if(window.gameState&&gameState.currentOutfit&&gameState.currentOutfit.hat===HAT_ID_APP) return HAT_FULL; }catch(_){}
+    return baseSrc();
+  }
+  function ensure(){
+    const w=wrap(); if(!w) return;
+    let i=img(); const want=wantSrc();
+    if(!i){ i=document.createElement('img'); i.id='creatureImage'; i.alt='Pet Rock'; i.decoding='async'; i.loading='lazy'; i.src=want; w.appendChild(i); return; }
+    const s=i.getAttribute('src');
+    if(!s||s.trim()==='') i.setAttribute('src',want);
+    if(s && s!==want && (s.endsWith('Frame 42.png')||want.endsWith('Frame 42.png'))) i.setAttribute('src',want);
+    i.hidden=false; i.style.display=''; if(i.classList.contains('hidden')) i.classList.remove('hidden');
+  }
+  function boot(){
+    const w=wrap(); if(!w) return;
+    const mo=new MutationObserver(()=>ensure());
+    mo.observe(w,{childList:true,subtree:true,attributes:true,attributeFilter:['src','style','hidden','class']});
+    ['tr:points:changed','task:completed','task:updated','state:save','state:load'].forEach(e=>window.addEventListener(e,ensure));
+    ['completeTask','markTaskDone','handleTaskCompletion','completeQuickTask'].forEach(fn=>{
+      const o=window[fn];
+      if(typeof o==='function'){ window[fn]=function(){ try{return o.apply(this,arguments);}finally{ try{window.dispatchEvent(new CustomEvent('task:completed'));}catch(_){}} }; }
+    });
+    setInterval(ensure,1500);
+    ensure();
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot); else boot();
+})();
+</script>
+
+
+<script id="tr-no-autoscroll">
+// Prevent ALL programmatic auto-scrolls to the pet rock and shortly after task completion.
+(function(){
+  // --- Utils ---
+  function rockWrap(){
+    return document.getElementById('petRockWrapper')
+      || document.querySelector('.creature-container')
+      || document.querySelector('[data-pet-rock]');
+  }
+  function insideRock(el){
+    const wrap = rockWrap();
+    if (!el || !wrap) return false;
+    try { return wrap.contains(el); } catch(_) { return false; }
+  }
+  function lockScrollFor(ms){
+    const until = Date.now() + ms;
+    if (!window._TR_SCROLL_LOCK_UNTIL || window._TR_SCROLL_LOCK_UNTIL < until){
+      window._TR_SCROLL_LOCK_UNTIL = until;
+    }
+  }
+  function isLocked(){ return !!window._TR_SCROLL_LOCK_UNTIL && Date.now() < window._TR_SCROLL_LOCK_UNTIL; }
+
+  // --- Hook known completion functions to set a short lock ---
+  ['completeTask','completeQuickTask','markTaskDone','handleTaskCompletion'].forEach(fn => {
+    const orig = window[fn];
+    if (typeof orig === 'function'){
+      window[fn] = function(){
+        try { return orig.apply(this, arguments); }
+        finally { lockScrollFor(2000); }
+      };
+    }
+  });
+  // Also react to common events
+  ['task:completed','task:updated','tr:points:changed','state:save'].forEach(evt => {
+    window.addEventListener(evt, () => lockScrollFor(2000));
+  });
+
+  // --- Wrap scroll methods with filtering ---
+  // Preserve original refs once
+  if (!window._TR_ORIG_scrollIntoView) window._TR_ORIG_scrollIntoView = Element.prototype.scrollIntoView;
+  if (!window._TR_ORIG_scrollTo) window._TR_ORIG_scrollTo = window.scrollTo;
+  if (!window._TR_ORIG_scrollBy) window._TR_ORIG_scrollBy = window.scrollBy;
+
+  const _SIV = window._TR_ORIG_scrollIntoView;
+  const _STO = window._TR_ORIG_scrollTo;
+  const _SBY = window._TR_ORIG_scrollBy;
+
+  // Ignore any scrollIntoView on or inside the rock, or while locked
+  Element.prototype.scrollIntoView = function(){
     try {
-      if (arguments && arguments[0] && typeof arguments[0] === 'object' && arguments[0].behavior === 'smooth') return;
-    } catch(e){}
-    return _wScrollTo.apply(this, arguments);
+      if (insideRock(this) || isLocked()) return;
+    } catch(_) {}
+    return _SIV.apply(this, arguments);
+  };
+
+  // Filter window.scrollTo/scrollBy during lock periods
+  window.scrollTo = function(){
+    try {
+      // If target coords would place pet rock in view (unknown cheaply), at least block during lock
+      if (isLocked()) return;
+      // If behavior: 'smooth' often used for programmatic autoscroll; block those universally
+      const arg0 = arguments[0];
+      if (arg0 && typeof arg0 === 'object' && arg0.behavior === 'smooth') return;
+    } catch(_) {}
+    return _STO.apply(window, arguments);
+  };
+
+  window.scrollBy = function(){
+    try {
+      if (isLocked()) return;
+      const arg0 = arguments[0];
+      if (arg0 && typeof arg0 === 'object' && arg0.behavior === 'smooth') return;
+    } catch(_) {}
+    return _SBY.apply(window, arguments);
   };
 })();
 </script>
 
 
-
-<script id="tr-tap-to-hide-bubble">
-// Tap on the pet rock: ONLY dismiss a visible speech bubble; otherwise do nothing.
-// We capture at the window level and stop the event before any other handlers can run.
+<script id="tr-no-bubble-autoscroll">
 (function(){
-  function getRockNodes(){
-    const wrap = document.getElementById('petRockWrapper') 
-      || document.querySelector('.creature-container')
-      || document.querySelector('[data-pet-rock]');
-    const img = document.getElementById('creatureImage') || (wrap ? wrap.querySelector('img#creatureImage') : null);
-    return { wrap, img };
-  }
-  function isInsideRock(target){
-    const { wrap, img } = getRockNodes();
-    if (!target) return false;
-    return !!((wrap && wrap.contains(target)) || (img && img.contains(target)));
-  }
-  function findBubble(){
-    const qs = ['.tr-speech-bubble','.speech-bubble','[data-speech-bubble]','#speechBubble','.pet-speech'];
-    for (const sel of qs){
-      const el = document.querySelector(sel);
-      if (el && el.offsetParent !== null) return el;
+  const BUBBLE_SELECTORS = ['.tr-speech-bubble','.speech-bubble','[data-speech-bubble]','#speechBubble','.pet-speech'];
+  function isBubbleNode(el){
+    if (!el) return false;
+    for (const sel of BUBBLE_SELECTORS){
+      try {
+        if (el.matches && el.matches(sel)) return true;
+        const q = el.closest ? el.closest(sel) : null;
+        if (q) return true;
+      } catch(_) {}
     }
-    return null;
+    return false;
   }
-  function hideBubble(){
+  function lockFor(ms){
+    const until = Date.now() + ms;
+    if (!window._TR_BUBBLE_SCROLL_LOCK_UNTIL || window._TR_BUBBLE_SCROLL_LOCK_UNTIL < until){
+      window._TR_BUBBLE_SCROLL_LOCK_UNTIL = until;
+    }
+  }
+  function isLocked(){ return !!window._TR_BUBBLE_SCROLL_LOCK_UNTIL && Date.now() < window._TR_BUBBLE_SCROLL_LOCK_UNTIL; }
+
+  ['completeTask','completeQuickTask','markTaskDone','handleTaskCompletion'].forEach(fn => {
+    const orig = window[fn];
+    if (typeof orig === 'function'){
+      window[fn] = function(){
+        try { return orig.apply(this, arguments); }
+        finally { lockFor(2000); }
+      };
+    }
+  });
+  ['task:completed','task:updated'].forEach(evt => {
+    window.addEventListener(evt, () => lockFor(2000));
+  });
+
+  if (!window._TR_ORIG_scrollIntoView) window._TR_ORIG_scrollIntoView = Element.prototype.scrollIntoView;
+  const _SIV = window._TR_ORIG_scrollIntoView;
+
+  Element.prototype.scrollIntoView = function(){
     try {
-      if (typeof window.hideSpeechBubble === 'function') return window.hideSpeechBubble();
-      if (typeof window.dismissSpeechBubble === 'function') return window.dismissSpeechBubble();
-      if (typeof window.closeSpeech === 'function') return window.closeSpeech();
-    } catch(e){}
-    const el = findBubble();
-    if (!el) return;
-    try { el.classList.add('is-hiding'); }catch(_){}
-    try { if (window._speechBubbleTimer){ clearTimeout(window._speechBubbleTimer); window._speechBubbleTimer = null; } } catch(_){}
-    try { el.remove(); } catch(_){ try { el.style.display='none'; }catch(_e){} }
-  }
-  function intercept(ev){
-    if (!isInsideRock(ev.target)) return; // only care about taps on the rock
-    // swallow the event so no other handler can open a bubble
-    try { ev.preventDefault(); } catch(_){}
-    try { ev.stopPropagation(); } catch(_){}
-    try { ev.stopImmediatePropagation(); } catch(_){}
-    const bubble = findBubble();
-    if (bubble) hideBubble();
-    // else: do nothing
-  }
-  function detachInlineHandlers(){
-    const { wrap, img } = getRockNodes();
-    if (wrap){ wrap.onclick = wrap.onpointerdown = wrap.ontouchstart = null; }
-    if (img){ img.onclick = img.onpointerdown = img.ontouchstart = null; }
-  }
-  function attach(){
-    detachInlineHandlers();
-    // Capture at the top so we run before any bubbling/capture listeners elsewhere
-    ['pointerdown','touchstart','click'].forEach(type => {
-      window.addEventListener(type, intercept, { capture: true, passive: false });
-    });
-  }
-  if (document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', attach);
-  } else { attach(); }
+      if (isLocked() && isBubbleNode(this)) {
+        return;
+      }
+    } catch(_) {}
+    return _SIV.apply(this, arguments);
+  };
+
+  if (!window._TR_ORIG_focus) window._TR_ORIG_focus = HTMLElement.prototype.focus;
+  const _FOC = window._TR_ORIG_focus;
+  HTMLElement.prototype.focus = function(){
+    if (isLocked() && isBubbleNode(this)){
+      try { return _FOC.call(this, { preventScroll: true }); } catch(_){ return _FOC.call(this); }
+    }
+    return _FOC.apply(this, arguments);
+  };
 })();
 </script>
 
@@ -5156,26 +5247,6 @@ document.addEventListener('DOMContentLoaded', function(){
   }
 })();
 </script>
-<script id="tr-scroll-to-pet">
-(function(){
-  function scrollToPetRock(){
-    var el = document.getElementById('petRockWrapper') || document.querySelector('.creature-container');
-    if (el){
-      el.scrollIntoView({behavior:'smooth', block:'center'});
-    }
-  }
-  if (window.completeTask){
-    const orig = window.completeTask;
-    window.completeTask = function(){
-      try { orig.apply(this, arguments); } finally { scrollToPetRock(); }
-    };
-  }
-  if (window.completeQuickTask){
-    const origQ = window.completeQuickTask;
-    window.completeQuickTask = function(){
-      try { origQ.apply(this, arguments); } finally { scrollToPetRock(); }
-    };
-  }
-})();</script>
+<!-- Scroll-to-pet script removed to disable autoscroll feature -->
 
 
