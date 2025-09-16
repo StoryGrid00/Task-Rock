@@ -1910,6 +1910,34 @@ h1.subcategory, h2.subcategory, h3.subcategory, h4.subcategory, .subcategory{
 #petRockWrapper { padding-top: clamp(8px, 2vh, 16px) !important; }
 </style>
 
+
+<style id="tr-create-modal-no-hscroll">
+/* Remove horizontal scroll in Create Task modal (scoped) */
+#createTaskModal .modal-content,
+#createTaskModal .modal-body {
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+}
+
+#createTaskModal .form-input,
+#createTaskModal input[type="text"],
+#createTaskModal input[type="number"],
+#createTaskModal input[type="date"],
+#createTaskModal input[type="time"],
+#createTaskModal input[type="datetime-local"],
+#createTaskModal textarea {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Defensive: grids/lists inside the modal should not overflow horizontally */
+#createTaskModal .selection-grid,
+#createTaskModal .modal-body * {
+  overflow-x: hidden;
+}
+</style>
+
 </head>
 <body>
 <!-- Confetti Canvas -->
@@ -3724,15 +3752,35 @@ let _lastQuickTaskCat = null;
             }
         }
 
-        // Auto-scroll to Jerry function removed to disable autoscroll feature
+        // Auto-scroll to Jerry function
         function scrollToJerry() {
-            // Function disabled to prevent autoscroll
+            const jerryContainer = document.querySelector('.creature-container') || 
+                                 document.querySelector('.pet-rock-header') ||
+                                 document.querySelector('#jerryContainer');
+            
+            if (jerryContainer) {
+                jerryContainer.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center',
+                    inline: 'nearest'
+                });
+            }
         }
 
         
-        // Scroll back to the pet rock and dialogue function removed to disable autoscroll feature
+        // Scroll back to the pet rock and dialogue
         function scrollToPetRock() {
-            // Function disabled to prevent autoscroll
+            try {
+                var target = document.querySelector('.creature-container')
+                          || document.getElementById('creatureImage')
+                          || document.getElementById('pet-rock-position-fix')
+                          || document.getElementById('pet-rock-float-patch')
+                          || document.getElementById('pet-rock-image-guard');
+                if (!target) return;
+                // Scroll immediately (no smooth) so it feels instant
+                var y = target.getBoundingClientRect().top + window.pageYOffset - 24;
+                window.scrollTo({ top: y, behavior: 'auto' });
+            } catch(e) { /* no-op */ }
         }
 function completeTask(index) {
             const task = gameState.tasks[index];
@@ -3800,8 +3848,8 @@ function completeTask(index) {
             updateUI();
             
             
-            // Auto-scroll to pet rock removed to disable autoscroll feature
-            // scrollToPetRock();
+            // Auto-scroll to pet rock
+            scrollToPetRock();
 // Fire confetti animation
             if (window.fireConfetti) {
                 window.fireConfetti();
@@ -3961,8 +4009,8 @@ function completeTask(index) {
             updateUI();
             
             
-            // Auto-scroll to pet rock removed to disable autoscroll feature
-            // scrollToPetRock();
+            // Auto-scroll to pet rock
+            scrollToPetRock();
 // Fire confetti animation
             if (window.fireConfetti) {
                 window.fireConfetti();
@@ -5247,6 +5295,26 @@ document.addEventListener('DOMContentLoaded', function(){
   }
 })();
 </script>
-<!-- Scroll-to-pet script removed to disable autoscroll feature -->
+<script id="tr-scroll-to-pet">
+(function(){
+  function scrollToPetRock(){
+    var el = document.getElementById('petRockWrapper') || document.querySelector('.creature-container');
+    if (el){
+      el.scrollIntoView({behavior:'smooth', block:'center'});
+    }
+  }
+  if (window.completeTask){
+    const orig = window.completeTask;
+    window.completeTask = function(){
+      try { orig.apply(this, arguments); } finally { scrollToPetRock(); }
+    };
+  }
+  if (window.completeQuickTask){
+    const origQ = window.completeQuickTask;
+    window.completeQuickTask = function(){
+      try { origQ.apply(this, arguments); } finally { scrollToPetRock(); }
+    };
+  }
+})();</script>
 
 
