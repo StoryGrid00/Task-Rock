@@ -1925,16 +1925,23 @@ h1.subcategory, h2.subcategory, h3.subcategory, h4.subcategory, .subcategory{
 #createTaskModal input[type="date"],
 #createTaskModal input[type="time"],
 #createTaskModal input[type="datetime-local"],
-#createTaskModal textarea {
+#createTaskModal textarea,
+#createTaskModal select {
   width: 100% !important;
   max-width: 100% !important;
   box-sizing: border-box !important;
 }
 
-/* Defensive: grids/lists inside the modal should not overflow horizontally */
+/* Prevent child grids/lists from creating overflow */
 #createTaskModal .selection-grid,
 #createTaskModal .modal-body * {
-  overflow-x: hidden;
+  overflow-x: hidden !important;
+}
+
+/* Long, unbroken strings won't force horizontal scroll */
+#createTaskModal .modal-body {
+  word-break: break-word;
+  hyphens: auto;
 }
 </style>
 
@@ -3752,35 +3759,15 @@ let _lastQuickTaskCat = null;
             }
         }
 
-        // Auto-scroll to Jerry function
+        // Auto-scroll to Jerry function removed to disable autoscroll feature
         function scrollToJerry() {
-            const jerryContainer = document.querySelector('.creature-container') || 
-                                 document.querySelector('.pet-rock-header') ||
-                                 document.querySelector('#jerryContainer');
-            
-            if (jerryContainer) {
-                jerryContainer.scrollIntoView({ 
-                    behavior: 'smooth', 
-                    block: 'center',
-                    inline: 'nearest'
-                });
-            }
+            // Function disabled to prevent autoscroll
         }
 
         
-        // Scroll back to the pet rock and dialogue
+        // Scroll back to the pet rock and dialogue function removed to disable autoscroll feature
         function scrollToPetRock() {
-            try {
-                var target = document.querySelector('.creature-container')
-                          || document.getElementById('creatureImage')
-                          || document.getElementById('pet-rock-position-fix')
-                          || document.getElementById('pet-rock-float-patch')
-                          || document.getElementById('pet-rock-image-guard');
-                if (!target) return;
-                // Scroll immediately (no smooth) so it feels instant
-                var y = target.getBoundingClientRect().top + window.pageYOffset - 24;
-                window.scrollTo({ top: y, behavior: 'auto' });
-            } catch(e) { /* no-op */ }
+            // Function disabled to prevent autoscroll
         }
 function completeTask(index) {
             const task = gameState.tasks[index];
@@ -3848,8 +3835,8 @@ function completeTask(index) {
             updateUI();
             
             
-            // Auto-scroll to pet rock
-            scrollToPetRock();
+            // Auto-scroll to pet rock removed to disable autoscroll feature
+            // scrollToPetRock();
 // Fire confetti animation
             if (window.fireConfetti) {
                 window.fireConfetti();
@@ -4009,8 +3996,8 @@ function completeTask(index) {
             updateUI();
             
             
-            // Auto-scroll to pet rock
-            scrollToPetRock();
+            // Auto-scroll to pet rock removed to disable autoscroll feature
+            // scrollToPetRock();
 // Fire confetti animation
             if (window.fireConfetti) {
                 window.fireConfetti();
@@ -5295,26 +5282,6 @@ document.addEventListener('DOMContentLoaded', function(){
   }
 })();
 </script>
-<script id="tr-scroll-to-pet">
-(function(){
-  function scrollToPetRock(){
-    var el = document.getElementById('petRockWrapper') || document.querySelector('.creature-container');
-    if (el){
-      el.scrollIntoView({behavior:'smooth', block:'center'});
-    }
-  }
-  if (window.completeTask){
-    const orig = window.completeTask;
-    window.completeTask = function(){
-      try { orig.apply(this, arguments); } finally { scrollToPetRock(); }
-    };
-  }
-  if (window.completeQuickTask){
-    const origQ = window.completeQuickTask;
-    window.completeQuickTask = function(){
-      try { origQ.apply(this, arguments); } finally { scrollToPetRock(); }
-    };
-  }
-})();</script>
+<!-- Scroll-to-pet script removed to disable autoscroll feature -->
 
 
