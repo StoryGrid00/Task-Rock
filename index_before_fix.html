@@ -15,13 +15,12 @@
 <meta content="Task Rock" name="application-name"/>
 <meta content="#9AE34A" name="msapplication-TileColor"/>
 <!-- Icons for Browser Tabs and Mobile -->
-<link rel="icon" type="image/png" sizes="16x16" href="assets/icons/icon-16.png"/>
-<link rel="icon" type="image/png" sizes="32x32" href="assets/icons/icon-32.png"/>
-<link rel="icon" type="image/png" sizes="48x48" href="assets/icons/icon-48.png"/>
-<link rel="icon" type="image/png" sizes="96x96" href="assets/icons/icon-96.png"/>
-<link rel="icon" type="image/png" sizes="192x192" href="assets/icons/icon-192.png"/>
-<link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon-180.png"/>
-<link rel="shortcut icon" href="assets/icons/icon-32.png"/>
+<link href="assets/images/browser-window-tab-thumbnail.png" rel="icon" sizes="32x32" type="image/png"/>
+<link href="assets/images/browser-window-tab-thumbnail.png" rel="icon" sizes="192x192" type="image/png"/>
+<link href="assets/images/browser-window-tab-thumbnail.png" rel="apple-touch-icon" sizes="180x180"/>
+<link color="#9AE34A" href="assets/images/browser-window-tab-thumbnail.png" rel="mask-icon"/>
+<!-- Favicon for older browsers -->
+<link href="assets/images/browser-window-tab-thumbnail.png" rel="shortcut icon"/>
 <!-- SEO Meta Tags -->
 <meta content="Task Rock - A fun task management app with Jerry the Rock, your virtual pet companion" name="description"/>
 <meta content="task manager, productivity, pet rock, jerry, tasks, todo" name="keywords"/>
@@ -270,16 +269,13 @@
             display: inline-block;
         }
 
-        /* Modern Clean Stats Grid - 4 Even Square Columns */
+        /* Modern Stats Grid */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(2, 1fr);
             gap: 12px;
             padding: 20px;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-light);
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-sm);
+            background: var(--bg-tertiary);
         }
         /* Make Show More button sit inside the stats grid as a full-width row */
         .stats-grid .show-more-btn { grid-column: 1 / -1; }
@@ -290,16 +286,10 @@
 
         .expanded-stats {
             display: none;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(2, 1fr);
             gap: 12px;
             margin-top: 16px;
-            padding: 0;
-        }
-        /* Expanded stats inside clean container */
-        .stats-grid .expanded-stats {
-            grid-column: 1 / -1; 
-            padding: 0; 
-            margin-top: 16px;
+            padding: 0 20px;
         }
 
         .expanded-stats.show {
@@ -316,7 +306,7 @@
             font-weight: 600;
             cursor: pointer;
             transition: all var(--transition-fast);
-            margin: 12px 0 0;
+            margin: 12px 20px 0;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -324,59 +314,42 @@
         }
 
         .show-more-btn:hover {
-            background: var(--button-hover-bg);
-            border-color: var(--accent-primary);
+            background: var(--bg-tertiary);
             transform: translateY(-1px);
-            box-shadow: var(--shadow-sm);
         }
 
         .stat-card {
             background: var(--bg-secondary);
-            border-radius: var(--radius-md);
-            padding: 16px 12px;
+            border-radius: var(--radius-lg);
+            padding: 16px;
             text-align: center;
             box-shadow: var(--shadow-sm);
-            border: 1px solid var(--accent-primary);
+            border: 1px solid var(--border-light);
             transition: all var(--transition-fast);
-            aspect-ratio: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
         }
 
         .stat-card:hover {
             transform: translateY(-2px);
-            box-shadow: var(--shadow-md), 0 0 15px rgba(143, 235, 96, 0.3);
-            border-color: var(--accent-primary);
+            box-shadow: var(--shadow-md);
         }
 
         .stat-icon {
-            font-size: 16px;
-            margin-bottom: 6px;
+            font-size: 20px;
+            margin-bottom: 8px;
             display: block;
-            color: var(--accent-primary);
         }
 
         .stat-number {
-            font-size: 16px;
+            font-size: 24px;
             font-weight: 700;
             color: var(--text-primary);
-            margin-bottom: 3px;
-            line-height: 1;
+            margin-bottom: 4px;
         }
 
         .stat-label {
-            font-size: 9px;
+            font-size: 12px;
             color: var(--text-secondary);
             font-weight: 500;
-            line-height: 1.2;
-            text-align: center;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-            hyphens: auto;
-            max-width: 100%;
         }
 
         /* Sections */
@@ -728,7 +701,7 @@
         }
 
         .challenge-progress-bar {
-            width: 100%;
+            width: 100vw;
             height: 24px;
             background: rgba(255, 255, 255, 0.2);
             border-radius: 12px;
@@ -737,7 +710,7 @@
         }
 
         .challenge-progress-fill {
-            height: 100%;
+            height: 100vh;
             background: rgba(255, 255, 255, 0.4);
             border-radius: 12px;
             transition: width 0.3s ease;
@@ -1142,8 +1115,6 @@
             margin: 0 auto 12px;
             display: block;
             border-radius: var(--radius-md);
-            object-fit: contain;
-            object-position: center;
         }
 
         .shop-item-name {
@@ -1165,28 +1136,6 @@
 
         .shop-item.expensive {
             opacity: 0.6;
-        }
-
-        .shop-item.owned {
-            border-color: var(--accent-secondary);
-            background: var(--bg-secondary);
-            opacity: 1 !important;
-        }
-
-        .shop-item.owned:hover {
-            border-color: var(--accent-primary);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .shop-item.equipped {
-            border: 2px solid #A5F247;
-            box-shadow: 0 0 8px rgba(165, 242, 71, 0.3);
-            opacity: 1 !important;
-        }
-
-        .shop-item.equipped:hover {
-            box-shadow: 0 0 12px rgba(165, 242, 71, 0.5), var(--shadow-md);
         }
 
         /* Settings Styles */
@@ -1236,41 +1185,23 @@
 
         /* Success Message - Bottom sticky positioning */
         .success-message {
-            position: fixed;
-            bottom: 16px;
-            left: 50%;
+            position: fixed; inset: 0;
+            bottom: 10px;
+            left: 0;
             transform: translateX(-50%);
             background: var(--success);
             color: white;
-            padding: 8px 16px calc(8px + env(safe-area-inset-bottom));
+            padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
             border-radius: var(--radius-full);
             font-weight: 600;
-            z-index: 9998;
+            z-index: 1001;
             animation: successSlideUp var(--transition-normal);
-            max-width: calc(100vw - 32px);
+            max-width: calc(100vw - 24px);
+            width: calc(100vw - 24px);
+            min-width: 0;
+        
             text-align: center;
-            line-height: 1.2;
-            pointer-events: none;
-            box-shadow: 0 4px 12px rgba(0,0,0,.15);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        /* Mobile-specific styling for full width */
-        @media (max-width: 768px) {
-            .success-message {
-                left: 0;
-                right: 0;
-                bottom: 0;
-                transform: none;
-                max-width: none;
-                width: 100vw;
-                border-radius: 0;
-                padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
-                font-size: 14px;
-            }
-        }
+            line-height: 1.2;}
 
         @keyframes successSlideUp {
             from {
@@ -1439,8 +1370,8 @@
 /* Mobile: make success snackbar full-width and responsive */
 @media (max-width: 480px){
   .success-message{
-    width: calc(100vw - 20px);
-    max-width: calc(100vw - 20px);
+    width: calc(100vw - 20px);   /* Full width with small margins */
+    max-width: none;
     padding: 14px 16px;
     bottom: 10px;
     border-radius: 12px;
@@ -1448,8 +1379,8 @@
     line-height: 1.3;
     text-align: center;
     min-width: unset;
-    left: 50%;
-    right: auto;
+    left: 10px;
+    right: 10px;
     transform: translateX(-50%);
   }
 }
@@ -1458,12 +1389,11 @@
 @media (max-width: 320px){
   .success-message{
     width: calc(100vw - 16px);
-    left: 50%;
-    right: auto;
+    left: 8px;
+    right: 8px;
     bottom: 8px;
     padding: 12px 14px;
     font-size: 13px;
-    transform: translateX(-50%);
   }
 }
 
@@ -1723,15 +1653,9 @@
   width: clamp(220px, 36vw, 300px); /* larger, like the reference */
   height: auto;                      /* preserve natural aspect */
   border-radius: 0;                  /* no circular mask */
-  max-height: 200px;                 /* prevent oversized images like army helmet */
-  object-fit: contain;               /* maintain aspect ratio while fitting within bounds */
-  object-position: center bottom;    /* align to bottom to keep Jerry's base consistent */
 }
 @media (min-width: 768px) {
-  .creature-image { 
-    width: 300px;                    /* desktop consistency */
-    max-height: 250px;               /* slightly larger max height on desktop */
-  }
+  .creature-image { width: 300px; }  /* desktop consistency */
 }
 </style>
 <style id="pet-rock-position-fix">
@@ -1875,18 +1799,7 @@ h1.subcategory, h2.subcategory, h3.subcategory, h4.subcategory, .subcategory{
   transform: translateX(8px) !important;
 }
 </style>
-<style>.loading-screen.hidden{opacity:0;pointer-events:none !important;display:none !important;}
-/* Keep badge/pill colors identical in dark mode */
-[data-theme="dark"] .task-badge.difficulty-easy { background: #dcfce7; color: #166534; }
-[data-theme="dark"] .task-badge.difficulty-medium { background: #fef3c7; color: #92400e; }
-[data-theme="dark"] .task-badge.difficulty-hard { background: #fee2e2; color: #991b1b; }
-[data-theme="dark"] .task-badge.priority-low { background: #f0f9ff; color: #0c4a6e; }
-[data-theme="dark"] .task-badge.priority-medium { background: #fef3c7; color: #92400e; }
-[data-theme="dark"] .task-badge.priority-high { background: #fee2e2; color: #991b1b; }
-
-</style>
-  <link rel="stylesheet" href="TR/shop.v3.css">
-</head>
+<style>.loading-screen.hidden{opacity:0;pointer-events:none !important;display:none !important;}</style></head>
 <body>
 <!-- Confetti Canvas -->
 <canvas id="confetti-canvas" style="position: fixed; inset: 0; inset: 0; width: calc(100vw - 24px); height: 100vh; pointer-events: none; z-index: 9999;"></canvas>
@@ -1967,6 +1880,12 @@ h1.subcategory, h2.subcategory, h3.subcategory, h4.subcategory, .subcategory{
 <div class="stat-label">Completion Rate</div>
 </div>
 <!-- Show More Button -->
+<button class="show-more-btn" id="showMoreBtn" onclick="toggleExpandedStats()">
+<span id="showMoreText">Show More</span>
+<span id="showMoreArrow">▼</span>
+</button>
+</div>
+<!-- Expanded Stats (Hidden by default) -->
 <div class="expanded-stats" id="expandedStats">
 <div class="stat-card">
 <div class="stat-icon">📊</div>
@@ -1999,13 +1918,6 @@ h1.subcategory, h2.subcategory, h3.subcategory, h4.subcategory, .subcategory{
 <div class="stat-label">Achievements</div>
 </div>
 </div>
-<button class="show-more-btn" id="showMoreBtn" onclick="toggleExpandedStats()">
-<span id="showMoreText">Show More</span>
-<span id="showMoreArrow">▼</span>
-</button>
-</div>
-<!-- Expanded Stats (Hidden by default) -->
-
 <!-- Your Tasks Section -->
 <div class="section expanded" id="tasksSection">
 <div class="section-header" onclick="toggleSection('tasks')">
@@ -2072,6 +1984,49 @@ h1.subcategory, h2.subcategory, h3.subcategory, h4.subcategory, .subcategory{
 <div class="section-body">
 <div id="achievementsList">
 <!-- Achievements will be populated here -->
+</div>
+</div>
+</div>
+</div>
+<!-- Stats Section -->
+<div class="section" id="statsSection">
+<div class="section-header" onclick="toggleSection('stats')">
+<div class="section-title">📈 Your Stats</div>
+<div class="section-arrow" id="statsArrow"></div>
+</div>
+<div class="section-content collapsed" id="statsContent">
+<div class="stats-grid">
+<div class="stat-item">
+<div class="stat-label">Total Tasks</div>
+<div class="stat-value" id="totalTasks">0</div>
+</div>
+<div class="stat-item">
+<div class="stat-label">Completed Tasks</div>
+<div class="stat-value" id="completedTasks">0</div>
+</div>
+<div class="stat-item">
+<div class="stat-label">Task Points</div>
+<div class="stat-value" id="totalPoints">0</div>
+</div>
+<div class="stat-item">
+<div class="stat-label">Completion Rate</div>
+<div class="stat-value" id="completionRate">0%</div>
+</div>
+<div class="stat-item">
+<div class="stat-label">🔥 Current Streak</div>
+<div class="stat-value" id="currentStreak">0 days</div>
+</div>
+<div class="stat-item">
+<div class="stat-label">🏆 Best Streak</div>
+<div class="stat-value" id="longestStreak">0 days</div>
+</div>
+<div class="stat-item">
+<div class="stat-label" id="rockLevelLabel">⭐ Rock's Level</div>
+<div class="stat-value" id="jerryLevel">Level 1</div>
+</div>
+<div class="stat-item">
+<div class="stat-label">✨ Experience</div>
+<div class="stat-value" id="jerryXP">0 / 100 XP</div>
 </div>
 </div>
 </div>
@@ -2368,7 +2323,6 @@ h1.subcategory, h2.subcategory, h3.subcategory, h4.subcategory, .subcategory{
             darkMode: false,
             notifications: false,
             ownedItems: [],
-            funFactsUnlocked: false,
             currentOutfit: {
                 hat: null,
                 glasses: null,
@@ -2527,19 +2481,19 @@ h1.subcategory, h2.subcategory, h3.subcategory, h4.subcategory, .subcategory{
         // Shop Items
         const shopItems = {
             hats: [
-                { id: 'blue_cap', name: 'Blue Cap', price: 50, image: 'assets/hats/blue-hat.png' },
-                { id: 'top_hat', name: 'Black Top Hat', price: 100, image: 'assets/images/jerry-top-hat.png' },
-                { id: 'army_helmet', name: 'Army Helmet', price: 200, image: 'assets/images/jerry-army-helmet.png' },
-                { id: 'wizard_hat', name: 'Wizard Hat', price: 400, image: 'assets/images/jerry-wizard-hat.png' }
+                { id: 'blue_cap', name: 'Blue Cap', price: 50, image: 'assets/images/Frame 42.png' },
+                { id: 'top_hat', name: 'Black Top Hat', price: 100, image: 'assets/images/Frame 43.png' },
+                { id: 'army_helmet', name: 'Army Helmet', price: 200, image: 'assets/images/Frame 44.png' },
+                { id: 'wizard_hat', name: 'Wizard Hat', price: 400, image: 'assets/images/Frame 45.png' }
             ],
             items: [
-                { id: 'mustache', name: 'Mustache', price: 350, image: 'assets/images/jerry-base.png' },
-                { id: 'glasses', name: 'Reading Glasses', price: 300, image: 'assets/images/jerry-base.png' }
+                { id: 'mustache', name: 'Mustache', price: 350, image: 'assets/images/mustache-thumbnail.png' },
+                { id: 'glasses', name: 'Reading Glasses', price: 300, image: 'assets/images/Frame 46.png' }
             ],
             paints: [
-                { id: 'buddy_paint', name: 'Buddy Paint', price: 800, image: 'assets/images/jerry-base.png' },
-                { id: 'rock_star', name: 'Rock Star', price: 1000, image: 'assets/images/jerry-base.png' },
-                { id: 'makeup', name: 'Makeup', price: 1100, image: 'assets/images/jerry-base.png' }
+                { id: 'buddy_paint', name: 'Buddy Paint', price: 800, image: 'assets/images/Group 55.png' },
+                { id: 'rock_star', name: 'Rock Star', price: 1000, image: 'assets/images/Group 57.png' },
+                { id: 'makeup', name: 'Makeup', price: 1100, image: 'assets/images/Frame 47.png' }
             ]
         };
 
@@ -2692,34 +2646,6 @@ h1.subcategory, h2.subcategory, h3.subcategory, h4.subcategory, .subcategory{
                         imagePath = 'assets/images/jerry-makeup.png';
                         break;
                 }
-            }
-            
-            // Apply hat (top layer)
-            if (gameState.currentOutfit.hat) {
-                switch (gameState.currentOutfit.hat) {
-                    case 'blue_cap':
-                        imagePath = 'assets/images/jerry-blue-hat.png';
-                        break;
-                    case 'top_hat':
-                        imagePath = 'assets/images/jerry-top-hat.png';
-                        break;
-                    case 'army_helmet':
-                        imagePath = 'assets/images/jerry-army-helmet.png';
-                        break;
-                    case 'wizard_hat':
-                        imagePath = 'assets/images/jerry-wizard-hat.png';
-                        break;
-                }
-            }
-            
-            // Apply special styling for army helmet (larger size)
-            if (gameState.currentOutfit.hat === 'army_helmet') {
-                creatureImage.style.maxHeight = '280px';
-                creatureImage.style.width = 'clamp(260px, 40vw, 350px)';
-            } else {
-                // Reset to default size for other equipment
-                creatureImage.style.maxHeight = '200px';
-                creatureImage.style.width = 'clamp(220px, 36vw, 300px)';
             }
             
             creatureImage.src = imagePath;
@@ -3168,72 +3094,25 @@ let _lastQuickTaskCat = null;
             container.innerHTML = items.map(item => {
                 const canAfford = gameState.taskPoints >= item.price;
                 const isOwned = gameState.ownedItems.includes(item.id);
-                const isEquipped = (containerId === 'hatsShop' && gameState.currentOutfit.hat === item.id) ||
-                                 (containerId === 'paintShop' && gameState.currentOutfit.paint === item.id);
-                
-                // Determine CSS classes based on ownership and affordability
-                let cssClasses = 'shop-item';
-                if (isOwned) {
-                    cssClasses += isEquipped ? ' equipped' : ' owned';
-                } else if (canAfford) {
-                    cssClasses += ' affordable';
-                } else {
-                    cssClasses += ' expensive';
-                }
-                
-                // Determine button text
-                let buttonText;
-                if (isOwned) {
-                    if (isEquipped) {
-                        buttonText = 'Unequip';
-                    } else if (containerId === 'hatsShop' || containerId === 'paintShop') {
-                        buttonText = 'Equip';
-                    } else {
-                        buttonText = 'Owned';
-                    }
-                } else {
-                    buttonText = `${item.price} Points`;
-                }
                 
                 return `
-                    <div class="${cssClasses}" onclick="buyItem('${item.id}', ${item.price})">
+                    <div class="shop-item ${canAfford ? 'affordable' : 'expensive'}" onclick="buyItem('${item.id}', ${item.price})">
                         <img src="${item.image}" alt="${item.name}" class="shop-item-image">
                         <div class="shop-item-name">${item.name}</div>
-                        <div class="shop-item-price">${buttonText}</div>
+                        <div class="shop-item-price">${isOwned ? 'Owned' : `${item.price} Points`}</div>
                     </div>
                 `;
             }).join('');
         }
 
         function buyItem(itemId, price) {
-            const isAlreadyOwned = gameState.ownedItems.includes(itemId);
-            
-            // If it's a hat and owned => toggle equip/unequip
-            if (isAlreadyOwned && isHat(itemId)) {
-                const currentlyEquipped = gameState.currentOutfit.hat === itemId;
-                gameState.currentOutfit.hat = currentlyEquipped ? '' : itemId;
-                saveGameState();
-                updateUI();
-                
-                // Auto-scroll to pet rock when equipping/unequipping items
-                scrollToPetRock();
-                
-                const verb = currentlyEquipped ? 'Unequipped' : 'Equipped';
-                const itemName = itemId.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-                showSuccessMessage(`${verb} ${itemName}!`);
-                return;
-            }
-
-            // If owned but not a hat, provide clearer feedback
-            if (isAlreadyOwned) {
-                const itemName = itemId.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-                showSuccessMessage(`You already own the ${itemName}!`);
+            if (gameState.ownedItems.includes(itemId)) {
+                showSuccessMessage('You already own this item!');
                 return;
             }
             
             if (gameState.taskPoints < price) {
-                const needed = price - gameState.taskPoints;
-                showSuccessMessage(`Need ${needed} more points to purchase this item!`);
+                showSuccessMessage('Not enough points!');
                 return;
             }
             
@@ -3255,17 +3134,7 @@ let _lastQuickTaskCat = null;
             
             saveGameState();
             updateUI();
-            
-            // Auto-scroll to pet rock when equipping items from shop
-            scrollToPetRock();
-            
-            const itemName = itemId.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-            showSuccessMessage(`Purchased and equipped ${itemName}!`);
-        }
-
-        // Helper function to check if an item is a hat
-        function isHat(itemId) {
-            return shopItems.hats && shopItems.hats.some(h => h.id === itemId);
+            showSuccessMessage(`Purchased ${item.name}!`);
         }
 
         // Settings System
@@ -3876,16 +3745,12 @@ function completeTask(index) {
             saveGameState();
             updateUI();
             
-            // Fire confetti animation
+            
+            // Auto-scroll to pet rock
+            scrollToPetRock();
+// Fire confetti animation
             if (window.fireConfetti) {
                 window.fireConfetti();
-            }
-
-            // Unlock fun facts at Level 10 (one-time notice)
-            if (!gameState.funFactsUnlocked && gameState.jerryLevel >= 10) {
-                gameState.funFactsUnlocked = true;
-                showSuccessMessage('💡 Your pet rock has now reached level 10 and will now provide daily facts when you tap it');
-                saveGameState();
             }
         }
 
@@ -4034,7 +3899,10 @@ function completeTask(index) {
             saveGameState();
             updateUI();
             
-            // Fire confetti animation
+            
+            // Auto-scroll to pet rock
+            scrollToPetRock();
+// Fire confetti animation
             if (window.fireConfetti) {
                 window.fireConfetti();
             }
@@ -4122,13 +3990,6 @@ function completeTask(index) {
             // Fire confetti for level up
             if (window.fireConfetti) {
                 window.fireConfetti();
-            }
-
-            // Unlock fun facts at Level 10 (one-time notice)
-            if (!gameState.funFactsUnlocked && gameState.jerryLevel >= 10) {
-                gameState.funFactsUnlocked = true;
-                showSuccessMessage('💡 Your pet rock has now reached level 10 and will now provide daily facts when you tap it');
-                saveGameState();
             }
         }
 
@@ -4277,8 +4138,6 @@ function completeTask(index) {
                 if (particles.length > 0) {
                     animationFrame = requestAnimationFrame(render);
                 } else {
-                    // Final clear so no confetti squares linger
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
                     cancelAnimationFrame(animationFrame);
                     animationFrame = null;
                 }
@@ -4520,111 +4379,6 @@ window.addEventListener('load', async () => {
             }
         }
     </script>
-<script>
-
-// Pet Rock tap functionality disabled - no action on click
-document.addEventListener('DOMContentLoaded', function(){
-  const img = document.getElementById('creatureImage');
-  if (!img) return;
-  // Click functionality removed - pet rock no longer responds to taps
-  // img.addEventListener('click', function(){
-  //   try {
-  //     if (window.gameState && (window.gameState.jerryLevel || 1) >= 10) {
-  //       const fact = (window.JerryDialogue && window.JerryDialogue.getRandomPhrase) ? (getRandomFunFact && getRandomFunFact()) : null;
-  //       if (fact) {
-  //         window.JerryDialogue && window.JerryDialogue.show(`💡 ${fact}`, 13000);
-  //         return;
-  //       }
-  //     }
-  //     // fallback to existing encouragement/motivational
-  //     if (window.JerryDialogue && window.JerryDialogue.trigger){
-  //       window.JerryDialogue.trigger('encouragement');
-  //     }
-  //   } catch(e){ /* no-op */ }
-  // });
-});
-
-</script>
-  <script defer src="TR/shop_compat.v3.js"></script>
-  <script defer src="TR/shop.v3.js"></script>
-
-<!-- Rock Shop Equip/Unequip overrides (behavior-only; no UI/CSS changes) -->
-<script>
-(function(){
-  // Map hat IDs to image paths
-  const HAT_IMAGE_MAP = {
-    'blue_cap': 'assets/images/jerry-blue-hat.png',
-    'top_hat': 'assets/images/jerry-top-hat.png',
-    'wizard_hat': 'assets/images/jerry-wizard-hat.png',
-    'army_helmet': 'assets/images/jerry-army-helmet.png'
-  };
-
-  function isHat(itemId){
-    try { return (window.shopItems && Array.isArray(shopItems.hats)) ? shopItems.hats.some(h => h.id === itemId) : false; }
-    catch { return false; }
-  }
-
-  // The original updateCreatureImage function in the main code already handles hats correctly
-  // No override needed - removed conflicting function
-
-  // 2) Override updateShopSection so owned HATS show "Equip" or "Unequip"
-  //    while keeping markup and styling exactly the same.
-  window.updateShopSection = function updateShopSection(containerId, items){
-    const container = document.getElementById(containerId);
-    if (!container || !Array.isArray(items)) return;
-    const isHatContainer = containerId === 'hatsShop';
-
-    container.innerHTML = items.map(item => {
-      const canAfford = gameState.taskPoints >= item.price;
-      const isOwned = gameState.ownedItems.includes(item.id);
-      const isEquipped = (containerId === 'hatsShop' && gameState.currentOutfit.hat === item.id) ||
-                       (containerId === 'paintShop' && gameState.currentOutfit.paint === item.id);
-      
-      // Determine CSS classes based on ownership and affordability
-      let cssClasses = 'shop-item';
-      if (isOwned) {
-          cssClasses += isEquipped ? ' equipped' : ' owned';
-      } else if (canAfford) {
-          cssClasses += ' affordable';
-      } else {
-          cssClasses += ' expensive';
-      }
-      
-      // Determine button text
-      let buttonText;
-      if (isOwned) {
-          if (isEquipped) {
-              buttonText = 'Unequip';
-          } else if (containerId === 'hatsShop' || containerId === 'paintShop') {
-              buttonText = 'Equip';
-          } else {
-              buttonText = 'Owned';
-          }
-      } else {
-          buttonText = `${item.price} Points`;
-      }
-
-      return `
-        <div class="${cssClasses}" onclick="buyItem('${item.id}', ${item.price})">
-          <img src="${item.image}" alt="${item.name}" class="shop-item-image">
-          <div class="shop-item-name">${item.name}</div>
-          <div class="shop-item-price">${buttonText}</div>
-        </div>
-      `;
-    }).join('');
-  };
-
-  // buyItem function has been updated in the main code to handle equip/unequip
-
-  // Ensure pet rock image is correct on load
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => setTimeout(window.updateCreatureImage, 0));
-  } else {
-    setTimeout(window.updateCreatureImage, 0);
-  }
-})();
-</script>
-
 </body>
 </html>
 
@@ -5043,64 +4797,26 @@ document.addEventListener('DOMContentLoaded', function(){
   }
 })();
 </script>
-<!-- Auto-scroll removed from task completion, preserved only for shop equipping -->
+<script id="tr-scroll-to-pet">
+(function(){
+  function scrollToPetRock(){
+    var el = document.getElementById('petRockWrapper') || document.querySelector('.creature-container');
+    if (el){
+      el.scrollIntoView({behavior:'smooth', block:'center'});
+    }
+  }
+  if (window.completeTask){
+    const orig = window.completeTask;
+    window.completeTask = function(){
+      try { orig.apply(this, arguments); } finally { scrollToPetRock(); }
+    };
+  }
+  if (window.completeQuickTask){
+    const origQ = window.completeQuickTask;
+    window.completeQuickTask = function(){
+      try { origQ.apply(this, arguments); } finally { scrollToPetRock(); }
+    };
+  }
+})();</script>
 
 
-
-        /* Mobile responsive styling for clean stats */
-        @media (max-width: 768px) {
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 10px;
-                padding: 16px;
-            }
-            
-            .expanded-stats {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 10px;
-            }
-            
-            .stat-card {
-                padding: 14px 10px;
-            }
-            
-            .stat-icon {
-                font-size: 14px;
-                margin-bottom: 5px;
-            }
-            
-            .stat-number {
-                font-size: 14px;
-            }
-            
-            .stat-label {
-                font-size: 8px;
-                line-height: 1.3;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 8px;
-                padding: 12px;
-            }
-            
-            .stat-card {
-                padding: 12px 8px;
-            }
-            
-            .stat-icon {
-                font-size: 12px;
-                margin-bottom: 4px;
-            }
-            
-            .stat-number {
-                font-size: 12px;
-            }
-            
-            .stat-label {
-                font-size: 7px;
-                line-height: 1.3;
-            }
-        }
