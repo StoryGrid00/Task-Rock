@@ -15,13 +15,13 @@
 <meta content="Task Rock" name="application-name"/>
 <meta content="#9AE34A" name="msapplication-TileColor"/>
 <!-- Icons for Browser Tabs and Mobile -->
-<link rel="icon" type="image/png" sizes="16x16" href="assets/icons/icon-16.png"/>
-<link rel="icon" type="image/png" sizes="32x32" href="assets/icons/icon-32.png"/>
-<link rel="icon" type="image/png" sizes="48x48" href="assets/icons/icon-48.png"/>
-<link rel="icon" type="image/png" sizes="96x96" href="assets/icons/icon-96.png"/>
-<link rel="icon" type="image/png" sizes="192x192" href="assets/icons/icon-192.png"/>
-<link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon-180.png"/>
-<link rel="shortcut icon" href="assets/icons/icon-32.png"/>
+<link href="assets/icons/icon-16.png" rel="icon" sizes="16x16" type="image/png"/>
+<link href="assets/icons/icon-32.png" rel="icon" sizes="32x32" type="image/png"/>
+<link href="assets/icons/icon-48.png" rel="icon" sizes="48x48" type="image/png"/>
+<link href="assets/icons/icon-96.png" rel="icon" sizes="96x96" type="image/png"/>
+<link href="assets/icons/icon-192.png" rel="icon" sizes="192x192" type="image/png"/>
+<link href="assets/icons/apple-touch-icon-180.png" rel="apple-touch-icon" sizes="180x180"/>
+<link href="assets/icons/icon-32.png" rel="shortcut icon"/>
 <!-- SEO Meta Tags -->
 <meta content="Task Rock - A fun task management app with Jerry the Rock, your virtual pet companion" name="description"/>
 <meta content="task manager, productivity, pet rock, jerry, tasks, todo" name="keywords"/>
@@ -96,25 +96,31 @@
         }
 
         [data-theme="dark"] {
-            --quick-action-bg: var(--bg-tertiary);
-            /* Dark theme colors */
-            --bg-primary: #1a1a1a;
-            --bg-secondary: #2d2d2d;
-            --bg-tertiary: #404040;
+            --quick-action-bg: #0f1611;
+            /* Dark theme colors (Task Rock dark per screenshot) */
+            --bg-primary: #101712;
+            --bg-secondary: #101712;
+            --bg-tertiary: #101712;
             --text-primary: #ffffff;
             --text-secondary: #cccccc;
             --text-tertiary: #999999;
             --border-color: #404040;
             --shadow-color: rgba(0, 0, 0, 0.3);
             --modal-overlay: rgba(0, 0, 0, 0.7);
+            --accent-primary: #A5F247;
+            --accent-secondary: #8EDB3E;
+            --accent-tertiary: #6CB72E;
+            --border-light: #223127;
+            --border-medium: #1b271f;
+            --border-dark: #132018;
             --scrollbar-track: #2d2d2d;
             --scrollbar-thumb: #555555;
             --scrollbar-thumb-hover: #777777;
             --health-bar-bg: #404040;
-            --section-bg: #2d2d2d;
-            --task-item-bg: #2d2d2d;
-            --button-hover-bg: #404040;
-            --congrats-bg: #2d2d2d;
+            --section-bg: #101712;
+            --task-item-bg: #101712;
+            --button-hover-bg: #1a241d;
+            --congrats-bg: #101712;
             --achievement-locked-bg: #333333;
             --achievement-locked-text: #666666;
             --border-light: #374151;
@@ -143,13 +149,13 @@
         }
 
         .app-container {
-            max-width: 420px;
-            margin: 0 auto;
-            background: var(--bg-secondary);
-            min-height: 100vh;
-            position: relative;
-            box-shadow: var(--shadow-xl);
-        }
+  max-width: 420px;
+  margin: 0 auto;
+  background: var(--bg-secondary); /* theme-driven */
+  min-height: 100vh;
+  position: relative;
+  box-shadow: var(--shadow-xl);
+}
 
         /* Pet Rock Header with Theme Background */
         .pet-rock-header {
@@ -162,27 +168,28 @@
 
         
 /* Scoped brand logo swap (no layout change) */
-.app-title{ display:flex; align-items:center; justify-content:center; }
+.app-title{
+  display:flex; align-items:center; justify-content:center;
+  margin: 0 0 0; /* zero out spacing */
+}
 .brand-logo{ height:20px; width:auto; display:block; }
 .brand-logo.dark{ display:none; }
 @media (min-width: 640px){ .brand-logo{ height:24px; } }
 [data-theme="dark"] .brand-logo.light{ display:none; }
 [data-theme="dark"] .brand-logo.dark{ display:block; }
 
-.app-title {
-            font-size: 28px;
-            font-weight: 800;
-            color: var(--text-primary);
-            margin-bottom: 16px;
-        }
+.app-title{
+  display:flex; align-items:center; justify-content:center;
+  margin: 0 0 0; /* zero out spacing */
+}
 
-        .creature-container {
-            position: relative;
-            margin: 16px 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+        .creature-container{
+  position: relative;
+  margin: 0 0 0; /* remove top gap */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
         .creature-image {
             width: 120px;
@@ -277,8 +284,8 @@
             gap: 12px;
             padding: 20px;
             background: var(--bg-secondary);
-            border: none !important;         /* outlines off */
-            border-radius: none !important;         /* outlines off */
+            
+            border-radius: var(--radius-lg);
             box-shadow: var(--shadow-sm);
         }
         /* Make Show More button sit inside the stats grid as a full-width row */
@@ -325,7 +332,7 @@
 
         .show-more-btn:hover {
             background: var(--button-hover-bg);
-            border-color: var(--accent-primary);
+            border-color: var(--border-light);
             transform: translateY(-1px);
             box-shadow: var(--shadow-sm);
         }
@@ -336,7 +343,7 @@
             padding: 16px 12px;
             text-align: center;
             box-shadow: var(--shadow-sm);
-            border: 1px solid var(--accent-primary);
+            border: 1px solid var(--border-light);
             transition: all var(--transition-fast);
             aspect-ratio: 1;
             display: flex;
@@ -348,8 +355,8 @@
 
         .stat-card:hover {
             transform: translateY(-2px);
-            box-shadow: var(--shadow-md), 0 0 15px rgba(143, 235, 96, 0.3);
-            border-color: var(--accent-primary);
+            box-shadow: var(--shadow-md);
+            border-color: var(--border-light);
         }
 
         .stat-icon {
@@ -959,16 +966,37 @@
 
         .modal-body {
             padding: 20px;
-            max-height: 60vh;
+            max-height: calc(90vh - 140px);
             overflow-y: auto;
+            padding-bottom: 80px;
         }
 
         .modal-footer {
+            position: sticky;
+            bottom: 0;
             padding: 20px;
             border-top: 1px solid var(--border-light);
+            background: var(--bg-secondary);
             display: flex;
             gap: 12px;
-            justify-content: flex-end;
+            justify-content: space-between;
+            box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+        }
+
+        .modal-footer .btn-secondary {
+            flex: 1;
+            max-width: 120px;
+            padding: 14px 20px;
+            font-size: 15px;
+        }
+
+        .modal-footer .btn-primary {
+            flex: 2;
+            min-width: 140px;
+            padding: 14px 24px;
+            font-size: 15px;
+            font-weight: 700;
         }
 
         /* Form Elements */
@@ -997,7 +1025,7 @@
 
         .form-input:focus {
             outline: none;
-            border-color: var(--accent-primary);
+            border-color: var(--border-light);
             box-shadow: 0 0 0 3px rgba(143, 235, 96, 0.1);
         }
 
@@ -1081,7 +1109,7 @@
             border-radius: var(--radius-md);
             cursor: pointer;
             transition: all var(--transition-fast);
-            border: 1px solid var(--border-light);
+            border: none;
         }
 
         .category-task-item:hover {
@@ -1124,11 +1152,18 @@
             padding: 16px;
             text-align: center;
             box-shadow: var(--shadow-sm);
-            border: 1px solid var(--border-light);
+            
             transition: all var(--transition-fast);
             cursor: pointer;
             min-width: 150px;
+            max-width: 150px;
+            height: 140px;
             flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        
+            border: 1px solid var(--border-light);
         }
 
         .shop-item:hover {
@@ -1136,27 +1171,45 @@
             box-shadow: var(--shadow-md);
         }
 
+        .shop-item-emoji {
+            font-size: 36px;
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-md);
+            line-height: 1;
+            flex-shrink: 0;
+        }
+
         .shop-item-image {
-            width: 60px;
-            height: 60px;
+            width: 40px;
+            height: 40px;
             margin: 0 auto 12px;
             display: block;
-            border-radius: var(--radius-md);
             object-fit: contain;
-            object-position: center;
+            border-radius: var(--radius-md);
+            flex-shrink: 0;
         }
 
         .shop-item-name {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             color: var(--text-primary);
-            margin-bottom: 4px;
+            margin-bottom: 12px;
+            flex-shrink: 0;
+            text-align: center;
+            line-height: 1.2;
         }
 
         .shop-item-price {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--text-secondary);
             font-weight: 500;
+            flex-shrink: 0;
+            margin-top: auto;
         }
 
         .shop-item.affordable {
@@ -1174,7 +1227,7 @@
         }
 
         .shop-item.owned:hover {
-            border-color: var(--accent-primary);
+            border-color: var(--border-light);
             transform: translateY(-2px);
             box-shadow: var(--shadow-md);
         }
@@ -1216,6 +1269,7 @@
 
         .settings-toggle.active {
             background: var(--accent-primary);
+            box-shadow: 0 0 0 6px rgba(165, 242, 71, 0.15), 0 8px 16px rgba(0,0,0,0.35);
         }
 
         .settings-toggle-slider {
@@ -1333,7 +1387,7 @@
             padding: 16px;
             margin-bottom: 12px;
             box-shadow: var(--shadow-sm);
-            border: 1px solid var(--border-light);
+            border: none;
             display: flex;
             align-items: center;
             gap: 12px;
@@ -1394,9 +1448,13 @@
         /* Responsive Design */
         @media (max-width: 480px) {
             .app-container {
-                max-width: 100vw;
-                box-shadow: none;
-            }
+  max-width: 420px;
+  margin: 0 auto;
+  background: var(--bg-secondary); /* theme-driven */
+  min-height: 100vh;
+  position: relative;
+  box-shadow: var(--shadow-xl);
+}
             
             .stats-grid {
                 grid-template-columns: 1fr;
@@ -1701,6 +1759,28 @@
 
 /* Helper spacing for icon inside badges (inherits existing badge colors) */
 .task-badge .tr-pill__icon{ margin-right: 6px; line-height: 1; }
+
+/* === Pet Rock constant sizing (always same size as default) === */
+:root {
+  --creature-size: clamp(220px, 36vw, 300px);
+  --creature-stage-h: clamp(220px, 36vw, 300px);
+}
+.creature-container{
+  position: relative;
+  margin: 0 0 0; /* remove top gap */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.creature-image {
+  width: var(--creature-size) !important;
+  height: var(--creature-size) !important;
+  max-height: none !important;
+  object-fit: contain !important;
+  object-position: center bottom !important;
+  border-radius: 0 !important;
+}
+
 </style>
 <style id="pet-rock-float-patch">
 /* Pet Rock floating animation patch (non-destructive) */
@@ -1716,6 +1796,28 @@
   0%, 100% { transform: translateY(0); }
   50%      { transform: translateY(-6px); }
 }
+
+/* === Pet Rock constant sizing (always same size as default) === */
+:root {
+  --creature-size: clamp(220px, 36vw, 300px);
+  --creature-stage-h: clamp(220px, 36vw, 300px);
+}
+.creature-container{
+  position: relative;
+  margin: 0 0 0; /* remove top gap */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.creature-image {
+  width: var(--creature-size) !important;
+  height: var(--creature-size) !important;
+  max-height: none !important;
+  object-fit: contain !important;
+  object-position: center bottom !important;
+  border-radius: 0 !important;
+}
+
 </style>
 <style id="pet-rock-size-fix">
 /* Pet Rock size/aspect fix — match reference and prevent distortion */
@@ -1733,6 +1835,28 @@
     max-height: 250px;               /* slightly larger max height on desktop */
   }
 }
+
+/* === Pet Rock constant sizing (always same size as default) === */
+:root {
+  --creature-size: clamp(220px, 36vw, 300px);
+  --creature-stage-h: clamp(220px, 36vw, 300px);
+}
+.creature-container{
+  position: relative;
+  margin: 0 0 0; /* remove top gap */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.creature-image {
+  width: var(--creature-size) !important;
+  height: var(--creature-size) !important;
+  max-height: none !important;
+  object-fit: contain !important;
+  object-position: center bottom !important;
+  border-radius: 0 !important;
+}
+
 </style>
 <style id="pet-rock-position-fix">
 /* Move Pet Rock lower (closer to the name) without affecting other UI */
@@ -1742,6 +1866,28 @@
 @media (min-width: 768px) {
   .creature-image { margin-bottom: 8px; }
 }
+
+/* === Pet Rock constant sizing (always same size as default) === */
+:root {
+  --creature-size: clamp(220px, 36vw, 300px);
+  --creature-stage-h: clamp(220px, 36vw, 300px);
+}
+.creature-container{
+  position: relative;
+  margin: 0 0 0; /* remove top gap */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.creature-image {
+  width: var(--creature-size) !important;
+  height: var(--creature-size) !important;
+  max-height: none !important;
+  object-fit: contain !important;
+  object-position: center bottom !important;
+  border-radius: 0 !important;
+}
+
 </style>
 <style id="pencil-align-fix">
 /* Align pencil icon with name baseline without changing button layout */
@@ -1752,6 +1898,28 @@
 @media (min-width: 768px) {
   .edit-name-btn { transform: translateY(-1px); } /* slightly less on desktop */
 }
+
+/* === Pet Rock constant sizing (always same size as default) === */
+:root {
+  --creature-size: clamp(220px, 36vw, 300px);
+  --creature-stage-h: clamp(220px, 36vw, 300px);
+}
+.creature-container{
+  position: relative;
+  margin: 0 0 0; /* remove top gap */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.creature-image {
+  width: var(--creature-size) !important;
+  height: var(--creature-size) !important;
+  max-height: none !important;
+  object-fit: contain !important;
+  object-position: center bottom !important;
+  border-radius: 0 !important;
+}
+
 </style>
 <style id="pencil-align-fix-2">
 /* Adopt exact pencil alignment relative to name (baseline + slightly higher position) */
@@ -1768,6 +1936,28 @@
 @media (min-width: 768px) {
   .edit-name-btn { transform: translateY(-5px) !important; }
 }
+
+/* === Pet Rock constant sizing (always same size as default) === */
+:root {
+  --creature-size: clamp(220px, 36vw, 300px);
+  --creature-stage-h: clamp(220px, 36vw, 300px);
+}
+.creature-container{
+  position: relative;
+  margin: 0 0 0; /* remove top gap */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.creature-image {
+  width: var(--creature-size) !important;
+  height: var(--creature-size) !important;
+  max-height: none !important;
+  object-fit: contain !important;
+  object-position: center bottom !important;
+  border-radius: 0 !important;
+}
+
 </style>
 <link href="assets/css/tr-onboarding.css" rel="stylesheet"/>
 <link href="favicon.ico" rel="icon"/><link href="favicon.png" rel="icon" sizes="32x32" type="image/png"/><link href="icons/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png"/><link href="apple-touch-icon.png" rel="apple-touch-icon"/><link href="icons/apple-touch-icon.png" rel="apple-touch-icon"/><style id="tr-subcategory-sizing">/* Task Rock — Rock Shop subcategory sizing (16px, weight 600, forced) */
@@ -1776,16 +1966,104 @@ h1.subcategory, h2.subcategory, h3.subcategory, h4.subcategory, .subcategory{
   line-height: 1.25 !important;
   font-weight: 600 !important;
   font-variation-settings: "wght" 600;
-}</style><style id="tr-center-show-more-style">/* Center only the "Show More" button (no parent layout changes) */
+}
+/* === Pet Rock constant sizing (always same size as default) === */
+:root {
+  --creature-size: clamp(220px, 36vw, 300px);
+  --creature-stage-h: clamp(220px, 36vw, 300px);
+}
+.creature-container{
+  position: relative;
+  margin: 0 0 0; /* remove top gap */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.creature-image {
+  width: var(--creature-size) !important;
+  height: var(--creature-size) !important;
+  max-height: none !important;
+  object-fit: contain !important;
+  object-position: center bottom !important;
+  border-radius: 0 !important;
+}
+
+</style><style id="tr-center-show-more-style">/* Center only the "Show More" button (no parent layout changes) */
 .tr-center-show-more{
   display: block;
   width: max-content;
   margin: 12px auto;
-}</style><style id="tr-name-editing-style">/* Keep pet name centered while editing; hide pencil during editing */
+}
+/* === Pet Rock constant sizing (always same size as default) === */
+:root {
+  --creature-size: clamp(220px, 36vw, 300px);
+  --creature-stage-h: clamp(220px, 36vw, 300px);
+}
+.creature-container{
+  position: relative;
+  margin: 0 0 0; /* remove top gap */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.creature-image {
+  width: var(--creature-size) !important;
+  height: var(--creature-size) !important;
+  max-height: none !important;
+  object-fit: contain !important;
+  object-position: center bottom !important;
+  border-radius: 0 !important;
+}
+
+</style><style id="tr-name-editing-style">/* Keep pet name centered while editing; hide pencil during editing */
 .tr-name-editing{ text-align: center !important; }
-.tr-hide-pencil{ visibility: hidden !important; }</style><style id="tr-taskcard-patch-style">/* Task Card patch: helpers */
+.tr-hide-pencil{ visibility: hidden !important; }
+/* === Pet Rock constant sizing (always same size as default) === */
+:root {
+  --creature-size: clamp(220px, 36vw, 300px);
+  --creature-stage-h: clamp(220px, 36vw, 300px);
+}
+.creature-container{
+  position: relative;
+  margin: 0 0 0; /* remove top gap */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.creature-image {
+  width: var(--creature-size) !important;
+  height: var(--creature-size) !important;
+  max-height: none !important;
+  object-fit: contain !important;
+  object-position: center bottom !important;
+  border-radius: 0 !important;
+}
+
+</style><style id="tr-taskcard-patch-style">/* Task Card patch: helpers */
 .tr-date-under-difficulty{ display:block; margin-top:.35rem; opacity:.9; }
-.tr-recurring-pill{ margin-left:.35rem; }</style><style id="tr-taskcard-pill-fallback-style">/* Fallback style for recurring pill if no pill classes are found */
+.tr-recurring-pill{ margin-left:.35rem; }
+/* === Pet Rock constant sizing (always same size as default) === */
+:root {
+  --creature-size: clamp(220px, 36vw, 300px);
+  --creature-stage-h: clamp(220px, 36vw, 300px);
+}
+.creature-container{
+  position: relative;
+  margin: 0 0 0; /* remove top gap */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.creature-image {
+  width: var(--creature-size) !important;
+  height: var(--creature-size) !important;
+  max-height: none !important;
+  object-fit: contain !important;
+  object-position: center bottom !important;
+  border-radius: 0 !important;
+}
+
+</style><style id="tr-taskcard-pill-fallback-style">/* Fallback style for recurring pill if no pill classes are found */
 .tr-pill-fallback{
   display:inline-block;
   padding:2px 8px;
@@ -1806,6 +2084,28 @@ h1.subcategory, h2.subcategory, h3.subcategory, h4.subcategory, .subcategory{
 .name-edit-wrap{ width:100%; display:flex; align-items:center; justify-content:center; gap:4px !important; }
 .creature-name{ display:inline-block; margin:0 auto; text-align:center; }
 .edit-name-btn{ display:inline-flex; align-items:center; justify-content:center; margin-left:4px; font-size:18px; line-height:1; background:transparent; border:0; padding:0; }
+
+/* === Pet Rock constant sizing (always same size as default) === */
+:root {
+  --creature-size: clamp(220px, 36vw, 300px);
+  --creature-stage-h: clamp(220px, 36vw, 300px);
+}
+.creature-container{
+  position: relative;
+  margin: 0 0 0; /* remove top gap */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.creature-image {
+  width: var(--creature-size) !important;
+  height: var(--creature-size) !important;
+  max-height: none !important;
+  object-fit: contain !important;
+  object-position: center bottom !important;
+  border-radius: 0 !important;
+}
+
 </style> <link href="assets/css/speech-bubble.css" rel="stylesheet"/>
 <style id="tr-pencil-next-to-name-fix">
 /* === Surgical: Keep pencil next to name & centered (no layout shifts) === */
@@ -1834,6 +2134,28 @@ h1.subcategory, h2.subcategory, h3.subcategory, h4.subcategory, .subcategory{
 }
 /* Hide pencil while editing (if script toggles the class) */
 .tr-hide-pencil{ display: none !important; }
+
+/* === Pet Rock constant sizing (always same size as default) === */
+:root {
+  --creature-size: clamp(220px, 36vw, 300px);
+  --creature-stage-h: clamp(220px, 36vw, 300px);
+}
+.creature-container{
+  position: relative;
+  margin: 0 0 0; /* remove top gap */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.creature-image {
+  width: var(--creature-size) !important;
+  height: var(--creature-size) !important;
+  max-height: none !important;
+  object-fit: contain !important;
+  object-position: center bottom !important;
+  border-radius: 0 !important;
+}
+
 </style>
 <style id="tr-pencil-baseline-and-spacing-fix">
 /* Space between name and health bar */
@@ -1844,36 +2166,168 @@ h1.subcategory, h2.subcategory, h3.subcategory, h4.subcategory, .subcategory{
   transform: translateY(2px) !important; /* nudge down to align with 'Jerry' baseline */
   vertical-align: baseline !important;
 }
+
+/* === Pet Rock constant sizing (always same size as default) === */
+:root {
+  --creature-size: clamp(220px, 36vw, 300px);
+  --creature-stage-h: clamp(220px, 36vw, 300px);
+}
+.creature-container{
+  position: relative;
+  margin: 0 0 0; /* remove top gap */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.creature-image {
+  width: var(--creature-size) !important;
+  height: var(--creature-size) !important;
+  max-height: none !important;
+  object-fit: contain !important;
+  object-position: center bottom !important;
+  border-radius: 0 !important;
+}
+
 </style>
 <style id="tr-move-name-right-1in">
 /* Move only the rock's name 1 inch to the right so it's closer to the pencil */
 .name-edit-wrap .creature-name{
   transform: translateX(1in) !important;
 }
+
+/* === Pet Rock constant sizing (always same size as default) === */
+:root {
+  --creature-size: clamp(220px, 36vw, 300px);
+  --creature-stage-h: clamp(220px, 36vw, 300px);
+}
+.creature-container{
+  position: relative;
+  margin: 0 0 0; /* remove top gap */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.creature-image {
+  width: var(--creature-size) !important;
+  height: var(--creature-size) !important;
+  max-height: none !important;
+  object-fit: contain !important;
+  object-position: center bottom !important;
+  border-radius: 0 !important;
+}
+
 </style>
 <style id="tr-center-name-next-to-pencil">
 /* Re-center the name + pencil as a single unit; undo prior 1in shift */
 .name-edit-wrap{ justify-content: center !important; text-align: center !important; gap: 8px !important; }
 .name-edit-wrap .creature-name{ transform: none !important; }
 .name-edit-wrap .edit-name-btn{ margin-left: 8px !important; transform: translateY(2px) !important; }
+
+/* === Pet Rock constant sizing (always same size as default) === */
+:root {
+  --creature-size: clamp(220px, 36vw, 300px);
+  --creature-stage-h: clamp(220px, 36vw, 300px);
+}
+.creature-container{
+  position: relative;
+  margin: 0 0 0; /* remove top gap */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.creature-image {
+  width: var(--creature-size) !important;
+  height: var(--creature-size) !important;
+  max-height: none !important;
+  object-fit: contain !important;
+  object-position: center bottom !important;
+  border-radius: 0 !important;
+}
+
 </style>
 <style id="tr-name-nudge-right-2px">
 /* Nudge only the rock's name 2px to the right for tighter proximity to the pencil */
 .name-edit-wrap .creature-name{
   transform: translateX(2px) !important;
 }
+
+/* === Pet Rock constant sizing (always same size as default) === */
+:root {
+  --creature-size: clamp(220px, 36vw, 300px);
+  --creature-stage-h: clamp(220px, 36vw, 300px);
+}
+.creature-container{
+  position: relative;
+  margin: 0 0 0; /* remove top gap */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.creature-image {
+  width: var(--creature-size) !important;
+  height: var(--creature-size) !important;
+  max-height: none !important;
+  object-fit: contain !important;
+  object-position: center bottom !important;
+  border-radius: 0 !important;
+}
+
 </style>
 <style id="tr-name-nudge-right-5px">
 /* Total shift: 5px to the right (adds 3px more from previous) */
 .name-edit-wrap .creature-name{
   transform: translateX(5px) !important;
 }
+
+/* === Pet Rock constant sizing (always same size as default) === */
+:root {
+  --creature-size: clamp(220px, 36vw, 300px);
+  --creature-stage-h: clamp(220px, 36vw, 300px);
+}
+.creature-container{
+  position: relative;
+  margin: 0 0 0; /* remove top gap */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.creature-image {
+  width: var(--creature-size) !important;
+  height: var(--creature-size) !important;
+  max-height: none !important;
+  object-fit: contain !important;
+  object-position: center bottom !important;
+  border-radius: 0 !important;
+}
+
 </style>
 <style id="tr-name-nudge-right-8px">
 /* Total shift: 8px to the right (adds 3px more from previous 5px) */
 .name-edit-wrap .creature-name{
   transform: translateX(8px) !important;
 }
+
+/* === Pet Rock constant sizing (always same size as default) === */
+:root {
+  --creature-size: clamp(220px, 36vw, 300px);
+  --creature-stage-h: clamp(220px, 36vw, 300px);
+}
+.creature-container{
+  position: relative;
+  margin: 0 0 0; /* remove top gap */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.creature-image {
+  width: var(--creature-size) !important;
+  height: var(--creature-size) !important;
+  max-height: none !important;
+  object-fit: contain !important;
+  object-position: center bottom !important;
+  border-radius: 0 !important;
+}
+
 </style>
 <style>.loading-screen.hidden{opacity:0;pointer-events:none !important;display:none !important;}
 /* Keep badge/pill colors identical in dark mode */
@@ -1884,9 +2338,724 @@ h1.subcategory, h2.subcategory, h3.subcategory, h4.subcategory, .subcategory{
 [data-theme="dark"] .task-badge.priority-medium { background: #fef3c7; color: #92400e; }
 [data-theme="dark"] .task-badge.priority-high { background: #fee2e2; color: #991b1b; }
 
+
+/* === Pet Rock constant sizing (always same size as default) === */
+:root {
+  --creature-size: clamp(220px, 36vw, 300px);
+  --creature-stage-h: clamp(220px, 36vw, 300px);
+}
+.creature-container{
+  position: relative;
+  margin: 0 0 0; /* remove top gap */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.creature-image {
+  width: var(--creature-size) !important;
+  height: var(--creature-size) !important;
+  max-height: none !important;
+  object-fit: contain !important;
+  object-position: center bottom !important;
+  border-radius: 0 !important;
+}
+
 </style>
-  <link rel="stylesheet" href="TR/shop.v3.css">
-</head>
+<link href="TR/shop.v3.css" rel="stylesheet"/>
+<style>
+/* FORCE STATS GRID TO 3 COLUMNS ACROSS ALL BREAKPOINTS */
+.stats-grid { grid-template-columns: repeat(3, 1fr) !important; }
+</style><style>
+/* Expanded stats hidden by default; grid shows when toggled */
+.expanded-stats { display: none; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.expanded-stats.show { display: grid !important; }
+</style><style>
+/* Normalize stat grid spacing */
+.stats-grid { gap: 12px !important; }
+.stats-grid .expanded-stats { margin-top: 12px !important; padding: 0 !important; grid-column: 1 / -1; }
+.expanded-stats { grid-template-columns: repeat(3, 1fr); gap: 12px; }
+</style><style>
+/* Shop item outline only when equipped or owned */
+.shop-item { border: 2px solid transparent !important; border-radius: var(--radius-lg); }
+.shop-item.equipped, .shop-item.owned { border-color: var(--accent-primary) !important; }
+</style><style>
+/* Rock Shop layout improvements */
+.shop-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.shop-grid .shop-item {
+  border: 2px solid transparent;
+  border-radius: 12px;
+  padding: 12px;
+  text-align: center;
+  background: var(--bg-secondary);
+  transition: border-color 0.3s ease, transform 0.2s ease;
+}
+.shop-grid .shop-item.equipped {
+  border-color: var(--accent-primary); /* only equipped items show green */
+}
+.shop-grid .shop-item:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Better section spacing */
+.section-body h3 {
+  margin-top: 20px;
+  margin-bottom: 8px;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+</style><style>
+/* ==== Rock Shop layout & state overrides ==== */
+
+/* Use a responsive grid (no horizontal scroll) */
+.shop-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 14px !important;
+  margin-top: 12px !important;
+  padding-bottom: 4px !important;
+  overflow: visible !important;
+}
+@media (min-width: 520px) {
+  .shop-grid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+}
+@media (min-width: 820px) {
+  .shop-grid { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }
+}
+
+/* Card base */
+.shop-grid .shop-item {
+  border: 1px solid var(--border-medium) !important;
+  border-radius: 16px !important;
+  padding: 16px !important;
+  background: var(--bg-secondary) !important;
+  text-align: center;
+  min-height: 160px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+
+/* Thumbnail spacing consistency */
+.shop-grid .shop-item img,
+.shop-grid .shop-item .shop-thumb {
+  max-width: 72px;
+  height: auto;
+  margin: 6px 0 10px;
+}
+
+/* Title & meta spacing */
+.shop-grid .shop-item .item-title { margin: 2px 0 4px; font-weight: 600; }
+.shop-grid .shop-item .item-meta  { margin: 0; opacity: .8; }
+
+/* States */
+.owned { 
+  /* Do NOT highlight owned by default; keep neutral */
+  border-color: var(--border-medium) !important;
+  box-shadow: none !important;
+}
+.equipped {
+  /* Only equipped items get the green highlight */
+  border: 2px solid #A5F247 !important;
+  box-shadow: 0 0 8px rgba(165,242,71,.25) !important;
+}
+
+/* Optional hover (desktop only) */
+@media (hover: hover) {
+  .shop-grid .shop-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+}
+
+/* Section spacing tweaks */
+#shopSection .section-body h3 {
+  margin: 12px 0 8px !important;
+}
+#shopSection .section-body {
+  gap: 12px;
+}
+</style><style>
+/* ==== Rock Shop Fixes ==== */
+
+/* Grid layout ensures no overlap */
+.shop-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)) !important;
+  gap: 16px !important;
+  margin-top: 16px !important;
+  padding: 8px 0 !important;
+  overflow: visible !important;
+}
+
+/* Shop card styling */
+.shop-grid .shop-item {
+  border: 1px solid var(--border-medium) !important;
+  border-radius: 16px !important;
+  padding: 16px !important;
+  background: var(--bg-secondary) !important;
+  text-align: center;
+  min-height: 160px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+
+/* Equipped items glowing neon green/yellow */
+.shop-item.equipped {
+  border: 2px solid #ccff00 !important; /* neon green-yellow */
+  box-shadow: 0 0 12px rgba(204,255,0,0.75), 0 0 24px rgba(204,255,0,0.5) !important;
+}
+
+/* Owned but not equipped: neutral */
+.shop-item.owned {
+  border: 1px solid var(--border-medium) !important;
+  box-shadow: none !important;
+}
+
+/* Hover effect */
+@media (hover: hover) {
+  .shop-grid .shop-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+}
+</style><style>
+/* ===== Rock Shop: prevent overlap & neon equipped glow ===== */
+#shopSection .shop-grid {
+  display: grid !important;
+  grid-auto-flow: row !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 16px !important;
+  margin-top: 12px !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  align-items: stretch !important;
+}
+@media (min-width: 540px) { #shopSection .shop-grid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; } }
+@media (min-width: 900px) { #shopSection .shop-grid { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; } }
+
+#shopSection .shop-grid .shop-item {
+  position: relative !important;
+  width: 100% !important;
+  height: auto !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  border: 1px solid var(--border-medium) !important;
+  border-radius: 16px !important;
+  background: var(--bg-secondary) !important;
+  padding: 16px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  text-align: center !important;
+  overflow: hidden !important;
+  transform: none !important;
+}
+
+#shopSection .shop-grid .shop-item img,
+#shopSection .shop-grid .shop-item .shop-thumb {
+  display: block !important;
+  max-width: 80px !important;
+  width: auto !important;
+  height: auto !important;
+  object-fit: contain !important;
+  margin: 6px 0 10px !important;
+}
+
+/* Owned stays neutral */
+#shopSection .shop-grid .shop-item.owned {
+  border: 1px solid var(--border-medium) !important;
+  box-shadow: none !important;
+}
+
+/* Equipped = neon green/yellow glow */
+#shopSection .shop-grid .shop-item.equipped {
+  border: 2px solid #A5F247 !important; /* neon green/yellow */
+  box-shadow:
+    0 0 0 2px rgba(165, 242, 71, 0.35),
+    0 6px 18px rgba(165, 242, 71, 0.20) !important;
+}
+
+/* So hover doesn't cause overlap */
+@media (hover: hover) {
+  #shopSection .shop-grid .shop-item:hover {
+    transform: translateY(-2px) !important;
+  }
+}
+</style><style>
+/* ===== Rock Shop thumbnail & spacing improvements ===== */
+#shopSection .shop-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)) !important;
+  gap: 20px !important; /* more space between cards */
+  margin-top: 16px !important;
+  padding: 0 4px !important;
+  overflow: visible !important;
+}
+
+#shopSection .shop-grid .shop-item {
+  border: 1px solid var(--border-medium) !important;
+  border-radius: 14px !important;
+  background: var(--bg-secondary) !important;
+  padding: 12px !important;
+  text-align: center;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  min-height: 140px !important;
+  box-sizing: border-box !important;
+}
+
+/* Smaller thumbnails */
+#shopSection .shop-grid .shop-item img,
+#shopSection .shop-grid .shop-item .shop-thumb {
+  max-width: 60px !important;
+  height: auto !important;
+  margin: 4px 0 8px !important;
+  object-fit: contain !important;
+}
+
+/* Equipped glow (neon) */
+#shopSection .shop-grid .shop-item.equipped {
+  border: 2px solid #A5F247 !important;
+  box-shadow: 0 0 0 2px rgba(165, 242, 71, 0.35),
+              0 6px 18px rgba(165, 242, 71, 0.25) !important;
+}
+</style><style>
+/* ==== Rock Shop thumbnail + spacing tweaks ==== */
+
+/* Grid spacing (breathing room between cards) */
+#shopSection .shop-grid {
+  gap: 18px !important;           /* was 16 */
+  margin-top: 14px !important;
+  padding: 0 2px !important;      /* tiny side buffer to avoid edge clipping */
+}
+
+/* Card padding and radius for clean gutters */
+#shopSection .shop-grid .shop-item {
+  padding: 14px 14px 16px !important;  /* slightly tighter top for better rhythm */
+  border-radius: 18px !important;
+}
+
+/* Smaller thumbnails */
+#shopSection .shop-grid .shop-item img,
+#shopSection .shop-grid .shop-item .shop-thumb {
+  max-width: 56px !important;     /* smaller rock thumbnail */
+  width: auto !important;
+  height: auto !important;
+  margin: 4px 0 10px !important;
+}
+
+/* Ensure text doesn't crowd edges */
+#shopSection .shop-grid .shop-item .item-title {
+  margin: 4px 0 6px !important;
+}
+#shopSection .shop-grid .shop-item .item-meta {
+  margin: 0 !important;
+  opacity: .8;
+}
+
+/* Responsive columns stay stable with the new gaps */
+@media (min-width: 540px) {
+  #shopSection .shop-grid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+}
+@media (min-width: 900px) {
+  #shopSection .shop-grid { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }
+}
+</style><style>
+/* ===== Rock Shop compact card layout ===== */
+
+#shopSection .shop-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)) !important;
+  gap: 20px !important;
+  margin-top: 14px !important;
+  padding: 0 !important;
+}
+
+#shopSection .shop-grid .shop-item {
+  padding: 10px !important;
+  border-radius: 14px !important;
+  min-height: 120px !important;
+  max-width: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  text-align: center !important;
+  border: 1px solid var(--border-medium) !important;
+  background: var(--bg-secondary) !important;
+}
+
+#shopSection .shop-grid .shop-item img,
+#shopSection .shop-grid .shop-item .shop-thumb {
+  max-width: 46px !important;
+  height: auto !important;
+  margin: 4px 0 6px !important;
+}
+
+/* Title + meta text smaller */
+#shopSection .shop-grid .shop-item .item-title {
+  font-size: 13px !important;
+  margin: 2px 0 4px !important;
+}
+#shopSection .shop-grid .shop-item .item-meta {
+  font-size: 11px !important;
+  opacity: 0.75 !important;
+}
+
+/* Equipped highlight */
+#shopSection .shop-grid .shop-item.equipped {
+  border: 2px solid #A5F247 !important;
+  box-shadow: 0 0 6px rgba(165, 242, 71, 0.5) !important;
+}
+
+/* Owned neutral */
+#shopSection .shop-grid .shop-item.owned {
+  border: 1px solid var(--border-medium) !important;
+  box-shadow: none !important;
+}
+</style><style>
+/* ===== Rock Shop: smaller cards + tidy spacing ===== */
+
+/* Grid: tighter, even spacing; compact cards */
+#shopSection .shop-grid {
+  display: grid !important;
+  grid-auto-flow: row !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important; /* small phones */
+  gap: 20px !important;            /* generous gutters like the screenshot */
+  margin-top: 10px !important;
+  padding: 0 4px !important;
+  overflow: visible !important;
+}
+@media (min-width: 480px)  { #shopSection .shop-grid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; } }
+@media (min-width: 768px)  { #shopSection .shop-grid { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; } }
+@media (min-width: 1200px) { #shopSection .shop-grid { grid-template-columns: repeat(5, minmax(0, 1fr)) !important; } }
+
+/* Card: much smaller, consistent content rhythm */
+#shopSection .shop-grid .shop-item {
+  position: relative !important;
+  width: 100% !important;
+  min-height: 120px !important;    /* smaller than before */
+  box-sizing: border-box !important;
+  padding: 12px !important;
+  border-radius: 16px !important;
+  border: 1px solid var(--border-medium) !important;
+  background: var(--bg-secondary) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  text-align: center !important;
+  gap: 8px !important;
+}
+
+/* Smaller thumbnails */
+#shopSection .shop-grid .shop-item img,
+#shopSection .shop-grid .shop-item .shop-thumb {
+  max-width: 48px !important;
+  width: auto !important;
+  height: auto !important;
+  object-fit: contain !important;
+  margin: 2px 0 6px !important;
+}
+
+/* Text sizing & spacing */
+#shopSection .shop-grid .shop-item .item-title,
+#shopSection .shop-grid .shop-item .shop-item-name {
+  font-size: 16px !important;
+  line-height: 1.1 !important;
+  margin: 2px 0 4px !important;
+  font-weight: 600 !important;
+}
+#shopSection .shop-grid .shop-item .item-meta,
+#shopSection .shop-grid .shop-item .shop-item-price {
+  font-size: 12px !important;
+  line-height: 1.1 !important;
+  margin: 0 !important;
+  opacity: .8 !important;
+}
+
+/* States: only equipped glows neon */
+#shopSection .shop-grid .shop-item.owned {
+  border: 1px solid var(--border-medium) !important;
+  box-shadow: none !important;
+}
+#shopSection .shop-grid .shop-item.equipped {
+  border: 2px solid #A5F247 !important;
+  box-shadow: 0 0 0 2px rgba(165,242,71,.35), 0 6px 18px rgba(165,242,71,.20) !important;
+}
+
+/* Headings spacing */
+#shopSection .section-body h3 {
+  margin: 12px 0 8px !important;
+}
+</style><style>
+/* ===== Rock Shop: Screenshot-like spacing ===== */
+
+/* Grid layout: even spacing left/right + consistent gutters */
+#shopSection .shop-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)) !important;
+  justify-content: space-between !important;
+  gap: 24px !important;          /* larger gaps to match screenshot */
+  margin: 12px 0 !important;
+  padding: 0 8px !important;     /* side padding for balance */
+  box-sizing: border-box !important;
+}
+
+/* Card sizing: compact like screenshot */
+#shopSection .shop-grid .shop-item {
+  width: 100% !important;
+  min-height: 110px !important;
+  padding: 12px !important;
+  border-radius: 14px !important;
+  border: 1px solid var(--border-medium) !important;
+  background: var(--bg-secondary) !important;
+  text-align: center !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 6px !important;
+}
+
+/* Smaller thumbnails */
+#shopSection .shop-grid .shop-item img,
+#shopSection .shop-grid .shop-item .shop-thumb {
+  max-width: 44px !important;
+  margin: 2px 0 6px !important;
+}
+
+/* Text spacing */
+#shopSection .shop-grid .shop-item .item-title,
+#shopSection .shop-grid .shop-item .shop-item-name {
+  font-size: 14px !important;
+  margin: 2px 0 2px !important;
+}
+#shopSection .shop-grid .shop-item .item-meta,
+#shopSection .shop-grid .shop-item .shop-item-price {
+  font-size: 12px !important;
+  margin: 0 !important;
+  opacity: .8 !important;
+}
+
+/* States */
+#shopSection .shop-grid .shop-item.owned {
+  border: 1px solid var(--border-medium) !important;
+  box-shadow: none !important;
+}
+#shopSection .shop-grid .shop-item.equipped {
+  border: 2px solid #A5F247 !important;
+  box-shadow: 0 0 6px rgba(165,242,71,.35) !important;
+}
+</style><style>
+/* ===== Rock Shop: spacing like screenshot ===== */
+#shopSection .shop-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)) !important; /* card width target */
+  gap: 24px !important;                 /* larger gutters between cards */
+  padding: 0 8px 4px !important;        /* slight side padding */
+  justify-items: stretch !important;
+  align-items: stretch !important;
+  overflow: visible !important;
+}
+
+#shopSection .shop-grid .shop-item {
+  padding: 16px !important;
+  border-radius: 18px !important;
+  border: 1px solid var(--border-medium) !important; /* neutral; equipped state will override */
+  min-height: 140px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  background: var(--bg-secondary) !important;
+}
+
+/* Thumbnail scale to match spacing */
+#shopSection .shop-grid .shop-item img,
+#shopSection .shop-grid .shop-item .shop-thumb {
+  max-width: 54px !important;
+  margin: 6px 0 10px !important;
+}
+
+/* Equipped glow stays neon */
+#shopSection .shop-grid .shop-item.equipped {
+  border: 2px solid #A5F247 !important;
+  box-shadow: 0 0 0 2px rgba(165,242,71,.35), 0 6px 18px rgba(165,242,71,.20) !important;
+}
+</style><style>
+/* ==== Rock Shop: fixed 5 columns with horizontal scroll ==== */
+#shopSection .shop-grid {
+  display: grid !important;
+  grid-template-columns: repeat(5, 1fr) !important;  /* always 5 columns */
+  gap: 16px !important;
+  overflow-x: auto !important;      /* horizontal scroll */
+  overflow-y: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  padding-bottom: 8px !important;
+}
+
+#shopSection .shop-grid .shop-item {
+  min-width: 140px !important;      /* ensure cards stay compact */
+  max-width: 160px !important;
+  flex-shrink: 0 !important;
+}
+</style><style>
+/* ===== Rock Shop: 5 columns with horizontal scroll ===== */
+#shopSection .shop-grid {
+  display: grid !important;
+  grid-auto-flow: column !important;                 /* lay out items left→right */
+  grid-template-rows: 1fr !important;
+  grid-auto-columns: calc((100% - (5 - 1) * 16px) / 5) !important; /* exactly 5 columns in view */
+  gap: 16px !important;
+  padding: 0 4px 10px !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  overscroll-behavior-x: contain !important;
+  scroll-snap-type: x mandatory !important;
+  scrollbar-width: thin;                              /* Firefox */
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+#shopSection .shop-grid::-webkit-scrollbar { height: 6px; }          /* WebKit */
+#shopSection .shop-grid::-webkit-scrollbar-track { background: var(--scrollbar-track); }
+#shopSection .shop-grid::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; }
+
+#shopSection .shop-grid .shop-item {
+  scroll-snap-align: start;
+  width: 100% !important;                             /* fits the auto column */
+  box-sizing: border-box !important;
+  border: 1px solid var(--border-medium) !important;
+  border-radius: 16px !important;
+  background: var(--bg-secondary) !important;
+  padding: 14px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  min-height: 140px !important;
+}
+
+/* Smaller thumbs to keep cards airy */
+#shopSection .shop-grid .shop-item img,
+#shopSection .shop-grid .shop-item .shop-thumb {
+  max-width: 52px !important;
+  height: auto !important;
+  object-fit: contain !important;
+  margin: 6px 0 8px !important;
+}
+
+/* Equipped neon highlight */
+#shopSection .shop-grid .shop-item.equipped {
+  border: 2px solid #A5F247 !important;
+  box-shadow: 0 0 0 2px rgba(165,242,71,.35), 0 6px 18px rgba(165,242,71,.20) !important;
+}
+
+/* Keep owned neutral */
+#shopSection .shop-grid .shop-item.owned {
+  border: 1px solid var(--border-medium) !important;
+  box-shadow: none !important;
+}
+</style><style>
+/* ===== Create Task Modal: no horizontal scroll ===== */
+#createTaskModal,
+#createTaskModal .modal,
+#createTaskModal .modal-content,
+#createTaskModal .modal-body {
+  overflow-x: hidden !important;     /* kill sideways scroll */
+}
+
+/* Constrain modal width to viewport and center it */
+#createTaskModal .modal-content {
+  max-width: 560px !important;
+  width: min(560px, 92vw) !important;
+  margin: 0 auto !important;
+  border-radius: 16px !important;
+}
+
+/* Body scroll only vertical within modal */
+#createTaskModal .modal-body {
+  max-height: calc(100vh - 160px) !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+  -webkit-overflow-scrolling: touch !important;
+  padding-right: 8px; /* room for scrollbar */
+}
+
+/* Form controls fit container */
+#createTaskModal .form-group,
+#createTaskModal .form-input,
+#createTaskModal .form-select,
+#createTaskModal .form-textarea,
+#createTaskModal .btn-primary,
+#createTaskModal .btn-secondary {
+  box-sizing: border-box !important;
+}
+
+/* Selection grid: never forces width */
+#createTaskModal .selection-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+  margin: 8px 0 0 !important;
+}
+@media (max-width: 420px) {
+  #createTaskModal .selection-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+/* Selection items shrink nicely */
+#createTaskModal .selection-item {
+  min-width: 0 !important;
+  padding: 10px !important;
+  border-radius: 12px !important;
+  text-align: center !important;
+}
+
+/* Prevent long text from overflowing */
+#createTaskModal .selection-item-text,
+#createTaskModal .form-label {
+  white-space: normal !important;
+  word-break: break-word !important;
+}
+</style><style>
+/* ===== Rock Shop: larger, uniform thumbnails (match Army Helmet size) ===== */
+#shopSection .shop-grid .shop-item {
+  min-height: 170px !important; /* give room for bigger thumbs + labels */
+}
+
+#shopSection .shop-grid .shop-item img,
+#shopSection .shop-grid .shop-item .shop-thumb {
+  display: block !important;
+  max-width: 84px !important;    /* ~Army Helmet visual size */
+  width: 84px !important;        /* force consistent width */
+  height: auto !important;
+  object-fit: contain !important;
+  margin: 8px 0 10px !important;
+}
+
+/* Slightly tighten text spacing under the larger image */
+#shopSection .shop-grid .shop-item .item-title,
+#shopSection .shop-grid .shop-item .shop-item-name {
+  margin: 2px 0 4px !important;
+}
+</style></head>
 <body>
 <!-- Confetti Canvas -->
 <canvas id="confetti-canvas" style="position: fixed; inset: 0; inset: 0; width: calc(100vw - 24px); height: 100vh; pointer-events: none; z-index: 9999;"></canvas>
@@ -1919,7 +3088,6 @@ h1.subcategory, h2.subcategory, h3.subcategory, h4.subcategory, .subcategory{
   setTimeout(_hideNow, 5000);
 })();
 </script>
-
 <div class="app-container">
 <!-- Pet Rock Header -->
 <div class="pet-rock-header">
@@ -1961,51 +3129,14 @@ h1.subcategory, h2.subcategory, h3.subcategory, h4.subcategory, .subcategory{
 <div class="stat-number" id="completedTasksCount">0</div>
 <div class="stat-label">Completed Tasks</div>
 </div>
-<div class="stat-card">
-<div class="stat-icon">📈</div>
-<div class="stat-number" id="completionRateCount">0%</div>
-<div class="stat-label">Completion Rate</div>
-</div>
 <!-- Show More Button -->
-<div class="expanded-stats" id="expandedStats">
-<div class="stat-card">
-<div class="stat-icon">📊</div>
-<div class="stat-number" id="totalTasksCount">0</div>
-<div class="stat-label">Total Tasks</div>
-</div>
-<div class="stat-card">
-<div class="stat-icon">🔥</div>
-<div class="stat-number" id="currentStreakCount">0</div>
-<div class="stat-label">Current Streak</div>
-</div>
-<div class="stat-card">
-<div class="stat-icon">🏆</div>
-<div class="stat-number" id="bestStreakCount">0</div>
-<div class="stat-label">Best Streak</div>
-</div>
-<div class="stat-card">
-<div class="stat-icon">⭐</div>
-<div class="stat-number" id="jerryLevelCount">1</div>
-<div class="stat-label">Rock Level</div>
-</div>
-<div class="stat-card">
-<div class="stat-icon">🎯</div>
-<div class="stat-number" id="experienceCount">0/100</div>
-<div class="stat-label">Experience</div>
-</div>
-<div class="stat-card">
-<div class="stat-icon">🏅</div>
-<div class="stat-number" id="achievementsCount">0/10</div>
-<div class="stat-label">Achievements</div>
-</div>
-</div>
+<div class="expanded-stats" id="expandedStats"><div class="stat-card"><div class="stat-icon">📈</div><div class="stat-number" id="completionRateCount">0%</div><div class="stat-label">Completion Rate</div></div><div class="stat-card"><div class="stat-icon">📊</div><div class="stat-number" id="totalTasksCount">0</div><div class="stat-label">Total Tasks</div></div><div class="stat-card"><div class="stat-icon">🔥</div><div class="stat-number" id="currentStreakCount">0</div><div class="stat-label">Current Streak</div></div><div class="stat-card"><div class="stat-icon">🏆</div><div class="stat-number" id="bestStreakCount">0</div><div class="stat-label">Best Streak</div></div><div class="stat-card"><div class="stat-icon">⭐</div><div class="stat-number" id="jerryLevelCount">1</div><div class="stat-label">Rock Level</div></div><div class="stat-card"><div class="stat-icon">🎯</div><div class="stat-number" id="experienceCount">0/100</div><div class="stat-label">Experience</div></div><div class="stat-card"><div class="stat-icon">🏅</div><div class="stat-number" id="achievementsCount">0/10</div><div class="stat-label">Achievements</div></div></div>
 <button class="show-more-btn" id="showMoreBtn" onclick="toggleExpandedStats()">
 <span id="showMoreText">Show More</span>
 <span id="showMoreArrow">▼</span>
 </button>
 </div>
 <!-- Expanded Stats (Hidden by default) -->
-
 <!-- Your Tasks Section -->
 <div class="section expanded" id="tasksSection">
 <div class="section-header" onclick="toggleSection('tasks')">
@@ -2188,7 +3319,7 @@ h1.subcategory, h2.subcategory, h3.subcategory, h4.subcategory, .subcategory{
 <div class="selection-item-text">Creative</div>
 </div>
 <div class="selection-item" data-category="social" onclick="selectCategory('social')">
-<div class="selection-item-emoji">🤝</div>
+<div class="selection-item-emoji">🤝🏽</div>
 <div class="selection-item-text">Social</div>
 </div>
 </div>
@@ -2397,14 +3528,14 @@ h1.subcategory, h2.subcategory, h3.subcategory, h4.subcategory, .subcategory{
             'errands': { name: 'Errands & Appointments', emoji: '🚗' },
             'digital': { name: 'Digital & Technology', emoji: '📱' },
             'creative': { name: 'Creative & Arts', emoji: '🎨' },
-            'social': { name: 'Social & Relationships', emoji: '🤝' }
+            'social': { name: 'Social & Relationships', emoji: '🤝🏽' }
         };
 
         // Quick Tasks Database based on FINCH research
         const quickTasksDatabase = {
             'self-care': {
                 name: 'Self-Care & Wellness',
-                emoji: '💆',
+                emoji: '💆🏻',
                 tasks: [
                     { id: 'brush_teeth', title: 'Brush teeth', emoji: '🦷', points: 2 },
                     { id: 'wash_face', title: 'Wash my face', emoji: '🧴', points: 2 },
@@ -2418,20 +3549,20 @@ h1.subcategory, h2.subcategory, h3.subcategory, h4.subcategory, .subcategory{
             },
             'physical': {
                 name: 'Physical Activity',
-                emoji: '🏃',
+                emoji: '🏃🏾',
                 tasks: [
-                    { id: 'pushups', title: 'Do 10 push-ups', emoji: '💪', points: 4 },
-                    { id: 'squats', title: 'Do 15 squats', emoji: '🦵', points: 4 },
-                    { id: 'plank', title: 'Hold plank for 30 seconds', emoji: '🏋️', points: 4 },
-                    { id: 'walk', title: 'Take a 10-minute walk', emoji: '🚶', points: 5 },
-                    { id: 'stretch', title: 'Stretch for 5 minutes', emoji: '🤸', points: 3 },
-                    { id: 'yoga', title: 'Do yoga poses', emoji: '🧘', points: 5 },
+                    { id: 'pushups', title: 'Do 10 push-ups', emoji: '💪🏾', points: 4 },
+                    { id: 'squats', title: 'Do 15 squats', emoji: '🦵🏿', points: 4 },
+                    { id: 'plank', title: 'Hold plank for 30 seconds', emoji: '🏋🏽', points: 4 },
+                    { id: 'walk', title: 'Take a 10-minute walk', emoji: '🚶🏻', points: 5 },
+                    { id: 'stretch', title: 'Stretch for 5 minutes', emoji: '🤸🏽', points: 3 },
+                    { id: 'yoga', title: 'Do yoga poses', emoji: '🧘🏾', points: 5 },
                     { id: 'stairs', title: 'Take the stairs', emoji: '🪜', points: 3 },
-                    { id: 'jumping_jacks', title: 'Do 20 jumping jacks', emoji: '🤸', points: 3 },
-                    { id: 'dance', title: 'Dance to favorite song', emoji: '💃', points: 4 },
-                    { id: 'bike_ride', title: 'Go for a bike ride', emoji: '🚴', points: 5 },
-                    { id: 'run', title: 'Go for a run', emoji: '🏃', points: 5 },
-                    { id: 'workout', title: 'Complete workout routine', emoji: '🏋️', points: 5 }
+                    { id: 'jumping_jacks', title: 'Do 20 jumping jacks', emoji: '🤸🏿', points: 3 },
+                    { id: 'dance', title: 'Dance to favorite song', emoji: '💃🏽', points: 4 },
+                    { id: 'bike_ride', title: 'Go for a bike ride', emoji: '🚴🏻', points: 5 },
+                    { id: 'run', title: 'Go for a run', emoji: '🏃🏿', points: 5 },
+                    { id: 'workout', title: 'Complete workout routine', emoji: '🏋🏾', points: 5 }
                 ]
             },
             'sleep': {
@@ -2442,12 +3573,12 @@ h1.subcategory, h2.subcategory, h3.subcategory, h4.subcategory, .subcategory{
                     { id: 'no_caffeine', title: 'No caffeine after 2 PM', emoji: '☕', points: 3 },
                     { id: 'bedtime_routine', title: 'Start bedtime routine', emoji: '🛏️', points: 4 },
                     { id: 'read_book', title: 'Read before bed', emoji: '📚', points: 4 },
-                    { id: 'meditation', title: 'Do 5-min meditation', emoji: '🧘', points: 4 },
+                    { id: 'meditation', title: 'Do 5-min meditation', emoji: '🧘🏻', points: 4 },
                     { id: 'no_screens', title: 'No screens 1hr before bed', emoji: '📵', points: 4 },
                     { id: 'herbal_tea', title: 'Drink herbal tea', emoji: '🍵', points: 3 },
                     { id: 'dim_lights', title: 'Dim the lights', emoji: '💡', points: 2 },
                     { id: 'comfortable_clothes', title: 'Change to comfy clothes', emoji: '👕', points: 2 },
-                    { id: 'breathing_exercise', title: 'Do breathing exercises', emoji: '🫁', points: 3 },
+                    { id: 'breathing_exercise', title: 'Do breathing exercises', emoji: '🫁🏽', points: 3 },
                     { id: 'journal', title: 'Write in journal', emoji: '📓', points: 4 },
                     { id: 'early_bedtime', title: 'Go to bed early', emoji: '🌙', points: 5 },
                     { id: 'power_nap', title: 'Take a 20-min power nap', emoji: '😴', points: 3 }
@@ -2469,10 +3600,10 @@ h1.subcategory, h2.subcategory, h3.subcategory, h4.subcategory, .subcategory{
                 name: 'Mindfulness & Mental Health',
                 emoji: '🧠',
                 tasks: [
-                    { id: 'deep_breaths', title: 'Take 5 deep breaths', emoji: '🫁', points: 2 },
-                    { id: 'gratitude', title: 'Think of 3 things grateful for', emoji: '🙏', points: 3 },
+                    { id: 'deep_breaths', title: 'Take 5 deep breaths', emoji: '🫁🏾', points: 2 },
+                    { id: 'gratitude', title: 'Think of 3 things grateful for', emoji: '🙏🏿', points: 3 },
                     { id: 'compliment_self', title: 'Give myself a compliment', emoji: '💝', points: 3 },
-                    { id: 'mindful_moment', title: 'Have a mindful moment', emoji: '🧘', points: 4 },
+                    { id: 'mindful_moment', title: 'Have a mindful moment', emoji: '🧘🏽', points: 4 },
                     { id: 'happiness', title: 'Do something that makes me happy', emoji: '😊', points: 5 }
                 ]
             }
@@ -2527,19 +3658,19 @@ h1.subcategory, h2.subcategory, h3.subcategory, h4.subcategory, .subcategory{
         // Shop Items
         const shopItems = {
             hats: [
-                { id: 'blue_cap', name: 'Blue Cap', price: 50, image: 'assets/hats/blue-hat.png' },
-                { id: 'top_hat', name: 'Black Top Hat', price: 100, image: 'assets/images/jerry-top-hat.png' },
-                { id: 'army_helmet', name: 'Army Helmet', price: 200, image: 'assets/images/jerry-army-helmet.png' },
-                { id: 'wizard_hat', name: 'Wizard Hat', price: 400, image: 'assets/images/jerry-wizard-hat.png' }
+                { id: 'blue_cap', name: 'Blue Cap', price: 50, emoji: '🧢' },
+                { id: 'top_hat', name: 'Black Top Hat', price: 100, emoji: '🎩' },
+                { id: 'army_helmet', name: 'Army Helmet', price: 200, emoji: '🪖' },
+                { id: 'wizard_hat', name: 'Wizard Hat', price: 400, emoji: '🧙🏾‍♂️' }
             ],
             items: [
-                { id: 'mustache', name: 'Mustache', price: 350, image: 'assets/images/jerry-base.png' },
-                { id: 'glasses', name: 'Reading Glasses', price: 300, image: 'assets/images/jerry-base.png' }
+                { id: 'mustache', name: 'Mustache', price: 350, image: 'mustache_3d.png' },
+                { id: 'glasses', name: 'Glasses', price: 300, emoji: '👓' }
             ],
             paints: [
-                { id: 'buddy_paint', name: 'Buddy Paint', price: 800, image: 'assets/images/jerry-base.png' },
-                { id: 'rock_star', name: 'Rock Star', price: 1000, image: 'assets/images/jerry-base.png' },
-                { id: 'makeup', name: 'Makeup', price: 1100, image: 'assets/images/jerry-base.png' }
+                { id: 'buddy_paint', name: 'Buddy Paint', price: 800, emoji: '🎨' },
+                { id: 'rock_star', name: 'Rock Star', price: 1000, emoji: '⭐' },
+                { id: 'makeup', name: 'Makeup', price: 1100, emoji: '💄' }
             ]
         };
 
@@ -2712,16 +3843,9 @@ h1.subcategory, h2.subcategory, h3.subcategory, h4.subcategory, .subcategory{
                 }
             }
             
-            // Apply special styling for army helmet (larger size)
-            if (gameState.currentOutfit.hat === 'army_helmet') {
-                creatureImage.style.maxHeight = '280px';
-                creatureImage.style.width = 'clamp(260px, 40vw, 350px)';
-            } else {
-                // Reset to default size for other equipment
-                creatureImage.style.maxHeight = '200px';
-                creatureImage.style.width = 'clamp(220px, 36vw, 300px)';
-            }
-            
+            /* Keep constant size; CSS controls dimensions. */
+            creatureImage.style.maxHeight = '';
+            creatureImage.style.width = '';
             creatureImage.src = imagePath;
         }
 
@@ -3197,7 +4321,7 @@ let _lastQuickTaskCat = null;
                 
                 return `
                     <div class="${cssClasses}" onclick="buyItem('${item.id}', ${item.price})">
-                        <img src="${item.image}" alt="${item.name}" class="shop-item-image">
+                        ${item.image ? `<img src="${item.image}" class="shop-item-image" alt="${item.name}">` : `<div class="shop-item-emoji">${item.emoji || '❓'}</div>`}
                         <div class="shop-item-name">${item.name}</div>
                         <div class="shop-item-price">${buttonText}</div>
                     </div>
@@ -3842,7 +4966,7 @@ function completeTask(index) {
                     gameState.taskPoints += (gameState.revivalPoints - 25); // Any extra points go to regular points
                     showSuccessMessage(`🎉 ${gameState.rockName} is revived! Welcome back!`);
                 } else {
-                    showSuccessMessage(`💪 Great progress! ${25 - gameState.revivalPoints} more points to revive ${gameState.rockName}!`);
+                    showSuccessMessage(`💪🏽 Great progress! ${25 - gameState.revivalPoints} more points to revive ${gameState.rockName}!`);
                 }
             } else {
                 // Normal task completion
@@ -4002,7 +5126,7 @@ function completeTask(index) {
                     gameState.taskPoints += (gameState.revivalPoints - 25); // Any extra points go to regular points
                     showSuccessMessage(`🎉 ${gameState.rockName} is revived! Welcome back!`);
                 } else {
-                    showSuccessMessage(`💪 Great progress! ${25 - gameState.revivalPoints} more points to revive ${gameState.rockName}!`);
+                    showSuccessMessage(`💪🏽 Great progress! ${25 - gameState.revivalPoints} more points to revive ${gameState.rockName}!`);
                 }
             } else {
                 // Normal task completion
@@ -4545,9 +5669,8 @@ document.addEventListener('DOMContentLoaded', function(){
 });
 
 </script>
-  <script defer src="TR/shop_compat.v3.js"></script>
-  <script defer src="TR/shop.v3.js"></script>
-
+<script defer="" src="TR/shop_compat.v3.js"></script>
+<script defer="" src="TR/shop.v3.js"></script>
 <!-- Rock Shop Equip/Unequip overrides (behavior-only; no UI/CSS changes) -->
 <script>
 (function(){
@@ -4606,7 +5729,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
       return `
         <div class="${cssClasses}" onclick="buyItem('${item.id}', ${item.price})">
-          <img src="${item.image}" alt="${item.name}" class="shop-item-image">
+          ${item.image ? `<img src="${item.image}" class="shop-item-image" alt="${item.name}">` : `<div class="shop-item-emoji">${item.emoji || '❓'}</div>`}
           <div class="shop-item-name">${item.name}</div>
           <div class="shop-item-price">${buttonText}</div>
         </div>
@@ -4624,483 +5747,5 @@ document.addEventListener('DOMContentLoaded', function(){
   }
 })();
 </script>
-
 </body>
 </html>
-
-<script id="pet-rock-image-guard">
-(function() {
-  var ASSET_PATH = "assets/images/jerry-base.png";
-  function ensureCreatureImage() {
-    var container = document.querySelector('.creature-container');
-    if (!container) return;
-    var img = document.getElementById('creatureImage');
-    if (!img) {
-      img = document.createElement('img');
-      img.id = 'creatureImage';
-      img.alt = 'Jerry the Rock';
-      img.className = 'creature-image';
-      img.src = ASSET_PATH;
-      container.appendChild(img);
-    } else {
-      var currentSrc = img.getAttribute('src') || '';
-      if (!currentSrc.includes('assets/images/')) {
-        img.src = ASSET_PATH;
-      }
-    }
-    img.addEventListener('error', function onErr() {
-      img.removeEventListener('error', onErr);
-      img.src = ASSET_PATH;
-    }, { once: true });
-  }
-
-  function applyThemeFromStorage() {
-    try {
-      var saved = JSON.parse(localStorage.getItem('taskRockGameState'));
-      var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-      var dark = (saved && typeof saved.darkMode === 'boolean') ? saved.darkMode : prefersDark;
-      document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
-    } catch (e) {}
-  }
-
-  function syncLoadingLogo() {
-    var el = document.querySelector('.loading-brand');
-    if (!el) return;
-    var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    // Use only assets/ logos provided
-    el.src = isDark ? 'assets/logo-dark.png' : 'assets/logo-light.png';
-  }
-
-  document.addEventListener('DOMContentLoaded', function() {
-    applyThemeFromStorage();
-    syncLoadingLogo();
-    ensureCreatureImage();
-  });
-
-  new MutationObserver(syncLoadingLogo).observe(document.documentElement, {
-    attributes: true, attributeFilter: ['data-theme']
-  });
-})();
-</script>
-<script defer="" src="assets/js/tr-onboarding.js"></script>
-<script>
-  window.addEventListener('taskrock:app:ready', function () {
-    if (window.initOnboardingModal) window.initOnboardingModal();
-  });
-</script>
-<script id="tr-subcategory-tagger">(function(){
-  try {
-    var labels = ["Hats","Accessories","Paint Jobs"];
-    var root = document.querySelector('#rockShop, [data-rock-shop], .rock-shop') || document;
-    var headings = root.querySelectorAll('h1, h2, h3, h4');
-    headings.forEach(function(h){
-      var t = (h.textContent||"").trim().toLowerCase();
-      labels.some(function(l){
-        if (t.indexOf(l.toLowerCase()) !== -1){
-          h.classList.add('subcategory');
-          return true;
-        }
-        return false;
-      });
-    });
-  } catch(e) { /* no-op */ }
-})();</script><script id="tr-center-show-more-script">(function(){
-  try {
-    var root = document.querySelector('#rockShop, [data-rock-shop], .rock-shop') || document;
-    var nodes = root.querySelectorAll('button, a, [role="button"], .btn, .button');
-    nodes.forEach(function(el){
-      var t = (el.textContent||"").trim().toLowerCase();
-      if (!t.startsWith("show more")) return;
-      el.classList.add('tr-center-show-more');
-      // clear any previous inline tweaks
-      el.style.marginLeft = '';
-      el.style.marginRight = '';
-      el.style.display = '';
-    });
-  } catch(e){ /* noop */ }
-})();</script><script id="tr-name-editing-script">(function(){
-  function isNameField(el){
-    if (!el) return false;
-    var id = (el.id||"").toLowerCase();
-    var cls = (el.className||"").toLowerCase();
-    var aria = (el.getAttribute && (el.getAttribute('aria-label')||"").toLowerCase()) || "";
-    if (el.dataset && (el.dataset.petName || el.dataset.name)) return true;
-    if (id.includes('pet') && id.includes('name')) return true;
-    if (id.includes('rock') && id.includes('name')) return true;
-    if (id.endsWith('name') || id === 'name') return true;
-    if (cls.includes('pet-name') || cls.includes('rock-name') || /\bname\b/.test(cls)) return true;
-    if (aria.includes('name')) return true;
-    if (el.isContentEditable) return true;
-    return false;
-  }
-
-  function findPencil(el){
-    if (!el || !el.parentElement) return null;
-    // Heuristics: sibling icon with pencil emoji or pencil-ish class
-    var sibs = Array.from(el.parentElement.children);
-    for (var i=0;i<sibs.length;i++){
-      var s = sibs[i];
-      if (s === el) continue;
-      var txt = (s.textContent||"").trim();
-      var cl = (s.className||"").toLowerCase();
-      if (txt.includes('✏') || txt.includes('🖊') || txt.includes('📝')) return s;
-      if (cl.includes('pencil') || cl.includes('edit') || cl.includes('name-pencil')) return s;
-      // also check data attributes
-      if (s.dataset && (s.dataset.pencil || s.dataset.edit)) return s;
-    }
-    // one level up (wrapper)
-    var wrap = el.closest && el.closest('[data-name-wrap], .name-wrap, .pet-name-wrap');
-    if (wrap){
-      var hot = wrap.querySelector('.name-pencil, .pencil, .edit-icon');
-      if (hot) return hot;
-    }
-    return null;
-  }
-
-  function applyCenter(el, on){
-    try{
-      var wrap = el.parentElement;
-      if (wrap) wrap.classList.toggle('tr-name-editing', !!on);
-      // Center text inside field too
-      el.style.textAlign = on ? 'center' : '';
-      // Keep element centered if it's block-level
-      if (on){
-        // Don't change display if it's inline by design
-        if (getComputedStyle(el).display === 'block'){
-          el.style.marginLeft = 'auto';
-          el.style.marginRight = 'auto';
-          el.style.width = 'fit-content';
-        }
-      } else {
-        el.style.marginLeft = '';
-        el.style.marginRight = '';
-        el.style.width = '';
-      }
-    }catch(e){}
-  }
-
-  document.addEventListener('focusin', function(e){
-    var el = e.target;
-    if (!isNameField(el)) return;
-    applyCenter(el, true);
-    var pencil = findPencil(el);
-    if (pencil){ pencil.classList.add('tr-hide-pencil'); }
-  });
-
-  document.addEventListener('focusout', function(e){
-    var el = e.target;
-    if (!isNameField(el)) return;
-    applyCenter(el, false);
-    var pencil = findPencil(el);
-    if (pencil){ pencil.classList.remove('tr-hide-pencil'); }
-  });
-})();</script><script id="tr-taskcard-patch-script">
-(function(){
-  try {
-    function $(sel, root){ return (root||document).querySelector(sel); }
-    function $all(sel, root){ return Array.from((root||document).querySelectorAll(sel)); }
-    function txt(el){ return (el && (el.textContent||"")).trim(); }
-
-    function hasDateLike(s){
-      if (!s) return false;
-      s = s.trim();
-      return /\b\d{1,2}\/\d{1,2}\/\d{2,4}\b/.test(s) || /\b([01]?\d):([0-5]\d)\s*([ap]m)\b/i.test(s) || /📅|🗓|calendar/i.test(s);
-    }
-    function isRecurring(s){
-      if (!s) return false;
-      s = s.toLowerCase();
-      return /\b(daily|weekly|monthly)\b/.test(s);
-    }
-    function findTaskCards(){
-      // Common containers; fall back to ancestors of Complete buttons
-      var cards = $all('.task-card, [data-task-card], .todo-card, .card');
-      if (cards.length === 0){
-        $all('button, a').forEach(function(b){
-          if (/^complete$/i.test(txt(b))){
-            var c = b.closest('.task-card, [data-task-card], .todo-card, .card') || b.closest('div');
-            if (c && !cards.includes(c)) cards.push(c);
-          }
-        });
-      }
-      return cards;
-    }
-    function findDifficulty(card){
-      // Look for easy/medium/hard with "(pts)"
-      var nodes = $all('*', card);
-      for (var i=0;i<nodes.length;i++){
-        var t = txt(nodes[i]).toLowerCase();
-        if (/\b(easy|medium|hard)\b/.test(t) && /\bpts?\b/.test(t)) return nodes[i];
-      }
-      return null;
-    }
-    function findPillSample(card){
-      // find typical pill element by class names or by rounded visuals
-      var guess = $all('.pill, .badge, .chip, .tag', card)[0];
-      if (guess) return guess;
-      // otherwise choose difficulty/priority node and use its classes
-      // priority often contains the word 'priority'
-      var nodes = $all('*', card);
-      for (var i=0;i<nodes.length;i++){
-        var t = txt(nodes[i]).toLowerCase();
-        if (/\bpriority\b/.test(t)) return nodes[i];
-      }
-      return findDifficulty(card);
-    }
-    function toPill(elem, sample){
-      if (!elem) return;
-      if (elem.classList.contains('tr-recurring-pilled')) return;
-      if (sample && sample.classList && sample.classList.length){
-        sample.classList.forEach(function(c){ elem.classList.add(c); });
-      } else {
-        elem.classList.add('tr-pill-fallback');
-      }
-      elem.classList.add('tr-recurring-pilled');
-    }
-    function wrapTextNodeAsSpan(n){
-      // If the recurring token is just a text node inside a container, wrap it
-      var parent = n.parentNode;
-      var span = document.createElement('span');
-      span.textContent = n.textContent.trim();
-      parent.replaceChild(span, n);
-      return span;
-    }
-
-    var cards = findTaskCards();
-    cards.forEach(function(card){
-      var samplePill = findPillSample(card);
-      var difficulty = findDifficulty(card);
-
-      // (1) Recurring -> pill
-      // find elements (or text nodes) that contain 'daily/weekly/monthly'
-      var recNodes = [];
-      $all('*', card).forEach(function(el){
-        var t = txt(el);
-        if (isRecurring(t)) recNodes.push(el);
-        // Also check direct text nodes
-        el.childNodes.forEach(function(n){
-          if (n.nodeType === 3 && isRecurring(String(n.textContent||''))){
-            recNodes.push(n);
-          }
-        });
-      });
-      recNodes.forEach(function(node){
-        var targetEl = node.nodeType === 3 ? wrapTextNodeAsSpan(node) : node;
-        toPill(targetEl, samplePill);
-      });
-
-      // (2) Move date/time under difficulty
-      var dateBits = [];
-      var difficulty = document.querySelector('.task-difficulty');
-      if (difficulty) {
-        var walker = document.createTreeWalker(
-          document.body,
-          NodeFilter.SHOW_TEXT,
-          null,
-          false
-        );
-        var node;
-        while (node = walker.nextNode()) {
-          if (/\d{1,2}\/\d{1,2}\/\d{4}/.test(node.nodeValue)) {
-            dateBits.push(node.parentElement);
-          }
-        }
-        if (dateBits.length > 0) {
-          var holder = document.createElement('div');
-          holder.className = 'tr-date-under-difficulty';
-          if (difficulty.nextSibling){
-            difficulty.parentNode.insertBefore(holder, difficulty.nextSibling);
-          } else {
-            difficulty.parentNode.appendChild(holder);
-          }
-          var seen = new Set();
-          dateBits.forEach(function(el){
-            var k = txt(el);
-            if (seen.has(k)) return;
-            holder.appendChild(el);
-            seen.add(k);
-          });
-        }
-      }
-    });
-  } catch(e){ /* no-op */ }
-    </script>
-<!-- Pet Rock Image Guard Script -->
-<script>
-    (function(){
-      try {
-        var txt = function(el) { return el.textContent || el.innerText || ''; };
-        var dateBits = [];
-        var difficulty = document.querySelector('.task-difficulty');
-        if (difficulty) {
-          var walker = document.createTreeWalker(
-            document.body,
-            NodeFilter.SHOW_TEXT,
-            null,
-            false
-          );
-          var node;
-          while (node = walker.nextNode()) {
-            if (/\d{1,2}\/\d{1,2}\/\d{4}/.test(node.nodeValue)) {
-              dateBits.push(node.parentElement);
-            }
-          }
-          if (dateBits.length > 0) {
-            var holder = document.createElement('div');
-            holder.className = 'tr-date-under-difficulty';
-            if (difficulty.nextSibling){
-              difficulty.parentNode.insertBefore(holder, difficulty.nextSibling);
-            } else {
-              difficulty.parentNode.appendChild(holder);
-            }
-            var seen = new Set();
-            dateBits.forEach(function(el){
-              var k = txt(el);
-              if (seen.has(k)) return;
-              holder.appendChild(el);
-              seen.add(k);
-            });
-          }
-        }
-      } catch(e){ /* no-op */ }
-    })();
-    </script>
-<!-- Jerry Dialogue System -->
-<script src="assets/js/jerry-dialogue.js"></script>
-<script id="tr-date-recurring-pills-fix">
-(function(){
-  function $(sel, root){ return (root||document).querySelector(sel); }
-  function $all(sel, root){ return Array.from((root||document).querySelectorAll(sel)); }
-  function txt(n){ return (n && (n.textContent||"")).trim(); }
-  function hasClass(el, c){ return el && el.classList && el.classList.contains(c); }
-
-  // Regexes for detection
-  const reDate = /\b\d{1,2}\/\d{1,2}\/\d{2,4}\b/;
-  const reTime = /\b(0?\d|1[0-2]):[0-5]\d\s?(?:AM|PM)\b/i;
-  const reRecurringWord = /\b(daily|weekly|monthly)\b/i;
-
-  function makeBadge(text){
-    const span = document.createElement('span');
-    // Reuse existing pill styling (same as difficulty/priority)
-    span.className = 'task-badge priority-medium';
-    span.innerHTML = text;
-    return span;
-  }
-
-  function toSafeHTML(s){ return (s||'').replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
-
-  function transformCard(card){
-    if (!card || card.__dateRecurringPatched) return;
-    const meta = $('.task-meta', card);
-    if (!meta) return;
-
-    // Find any existing non-pill date/recurring text node container
-    const raw = $all('span, div', meta).find(el => !el.classList.contains('task-badge') && (
-      reDate.test(txt(el)) || reRecurringWord.test(txt(el)) || txt(el).includes('🔁') || txt(el).includes('📅')
-    ));
-    if (!raw) { card.__dateRecurringPatched = true; return; }
-
-    const rawText = txt(raw);
-
-    // Extract parts
-    const dateMatch = rawText.match(reDate);
-    const timeMatch = rawText.match(reTime);
-    const recurMatch = rawText.match(reRecurringWord);
-
-    // Build badges
-    if (dateMatch || timeMatch){
-      const datePart = dateMatch ? toSafeHTML(dateMatch[0]) : '';
-      const timePart = timeMatch ? toSafeHTML(timeMatch[0].toUpperCase()) : '';
-      const dot = (datePart && timePart) ? ' • ' : ' ';
-      const dueHTML = '<span class="tr-pill__icon" aria-hidden="true">📅</span>' + datePart + (dot) + timePart;
-      meta.insertBefore(makeBadge(dueHTML), raw);
-    }
-    if (recurMatch){
-      const recHTML = '<span class="tr-pill__icon" aria-hidden="true">🔁</span>' + toSafeHTML(recurMatch[0].toLowerCase());
-      meta.insertBefore(makeBadge(recHTML), raw.nextSibling);
-    }
-
-    // Remove the original red/inline element
-    raw.remove();
-    card.__dateRecurringPatched = true;
-  }
-
-  function transformAll(root){
-    $all('.task-card', root || document).forEach(transformCard);
-  }
-
-  // Run after initial render
-  if (document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', function(){ transformAll(); });
-  } else {
-    transformAll();
-  }
-
-  // Also observe list updates (when tasks render/re-render)
-  const tasksList = document.getElementById('tasksList');
-  if (tasksList){
-    const obs = new MutationObserver(() => transformAll(tasksList));
-    obs.observe(tasksList, { childList: true, subtree: true });
-  }
-})();
-</script>
-<!-- Auto-scroll removed from task completion, preserved only for shop equipping -->
-
-
-
-        /* Mobile responsive styling for clean stats */
-        @media (max-width: 768px) {
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 10px;
-                padding: 16px;
-            }
-            
-            .expanded-stats {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 10px;
-            }
-            
-            .stat-card {
-                padding: 14px 10px;
-            }
-            
-            .stat-icon {
-                font-size: 14px;
-                margin-bottom: 5px;
-            }
-            
-            .stat-number {
-                font-size: 14px;
-            }
-            
-            .stat-label {
-                font-size: 8px;
-                line-height: 1.3;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 8px;
-                padding: 12px;
-            }
-            
-            .stat-card {
-                padding: 12px 8px;
-            }
-            
-            .stat-icon {
-                font-size: 12px;
-                margin-bottom: 4px;
-            }
-            
-            .stat-number {
-                font-size: 12px;
-            }
-            
-            .stat-label {
-                font-size: 7px;
-                line-height: 1.3;
-            }
-        }
